@@ -46,6 +46,27 @@ class _SignupScreenState extends State<SignupScreen> {
                 height: 64,
               ),
               const SizedBox(height: 64),
+              Stack(
+                children: [
+                  const CircleAvatar(
+                    radius: 64,
+                    backgroundImage: NetworkImage(
+                      'https://images.unsplash.com/photo-1503777119540-ce54b422baff?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    ),
+                  ),
+                  Positioned(
+                    bottom: -10,
+                    left: 80,
+                    child: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.add_a_photo),
+                      iconSize: 35,
+                      color: primaryColor,
+                    ),
+                  )
+                ],
+              ),
+              const SizedBox(height: 24),
               TextFieldInput(
                 textEditingController: _usernameController,
                 hintText: 'Enter your Username',
