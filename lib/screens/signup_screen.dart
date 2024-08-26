@@ -112,11 +112,12 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 24),
               InkWell(
                 onTap: () async {
-                  String res = await AuthMethod().signupUser(
+                  await AuthMethod().signupUser(
                     email: _emailController.text,
                     password: _passwordController.text,
                     username: _usernameController.text,
                     bio: _bioController.text,
+                    file: _image!,
                   );
                 },
                 child: Container(

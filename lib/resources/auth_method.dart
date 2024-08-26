@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:instagram_clone/resources/storage_methods.dart';
 
 class AuthMethod {
   final _auth = FirebaseAuth.instance;
@@ -13,7 +14,7 @@ class AuthMethod {
     required String password,
     required String username,
     required String bio,
-    // required Uint8List file,
+    required Uint8List file,
   }) async {
     String res = 'some error occurred';
 
@@ -25,6 +26,9 @@ class AuthMethod {
         final userCred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
+        String photoUrl = await StorageMethods()
+            .uploadImageToStorage('profilePics', file, false);
+
         //* add user to firebase
         await _fireStore.collection('users').doc(userCred.user!.uid).set({
           'username': username,
@@ -33,6 +37,7 @@ class AuthMethod {
           'bio': bio,
           'followers': [],
           'following': [],
+          'photoUrl': photoUrl,
         });
         res = 'success';
       }
