@@ -59,7 +59,7 @@ class AuthMethod {
 
     try {
       if (email.isNotEmpty && password.isNotEmpty) {
-        final userCred = await _auth.signInWithEmailAndPassword(
+        await _auth.signInWithEmailAndPassword(
             email: email, password: password);
 
         res = 'success';
