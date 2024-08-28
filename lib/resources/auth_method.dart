@@ -19,9 +19,9 @@ class AuthMethod {
     String res = 'some error occurred';
 
     try {
-      if (email.isNotEmpty ||
-          password.isNotEmpty ||
-          username.isNotEmpty ||
+      if (email.isNotEmpty &&
+          password.isNotEmpty &&
+          username.isNotEmpty &&
           bio.isNotEmpty) {
         final userCred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
@@ -40,6 +40,31 @@ class AuthMethod {
           'photoUrl': photoUrl,
         });
         res = 'success';
+      } else {
+        res = 'Please enter all the fields';
+      }
+    } catch (err) {
+      res = err.toString();
+    }
+
+    return res;
+  }
+
+  //* logging in user
+  Future<String> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    String res = 'some error occurred';
+
+    try {
+      if (email.isNotEmpty && password.isNotEmpty) {
+        final userCred = await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+
+        res = 'success';
+      } else {
+        res = 'Please enter all the field';
       }
     } catch (err) {
       res = err.toString();
