@@ -16,4 +16,14 @@ class User {
     required this.followers,
     required this.following,
   });
+
+  Map<String, dynamic> toJson() => {
+        'username': username,
+        'uid': uid,
+        'email': email,
+        'bio': bio,
+        'followers': followers,
+        'following': following,
+        'photoUrl': photoUrl,
+      };
 }
