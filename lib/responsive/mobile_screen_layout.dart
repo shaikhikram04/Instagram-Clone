@@ -1,32 +1,83 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/providers/user_provider.dart';
-import 'package:instagram_clone/resources/auth_method.dart';
-import 'package:provider/provider.dart';
+import 'package:instagram_clone/utils/colors.dart';
 
-import '../models/user.dart';
-
-class MobileScreenLayout extends StatelessWidget {
+class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
 
-  void signOutUser() {
-    AuthMethod().signOutUser();
+  @override
+  State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
+}
+
+class _MobileScreenLayoutState extends State<MobileScreenLayout> {
+  int _page = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
+  void navigationTapped(int page) {
+    _pageController.jumpToPage(page);
+  }
+
+  void onPageChanged(int page) {
+    setState(() {
+      _page = page;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(user.username),
-            ElevatedButton(
-              onPressed: signOutUser,
-              child: const Text('Sign Out'),
-            )
-          ],
-        ),
+      body: PageView(
+        onPageChanged: onPageChanged,
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [
+          Center(child: Text('Feed')),
+          Center(child: Text('Search')),
+          Center(child: Text('Add Post')),
+          Center(child: Text('Notification')),
+          Center(child: Text('Profile')),
+        ],
+      ),
+      bottomNavigationBar: CupertinoTabBar(
+        backgroundColor: mobileBackgroundColor,
+        activeColor: primaryColor,
+        inactiveColor: secondaryColor,
+        currentIndex: _page,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle),
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            backgroundColor: primaryColor,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            backgroundColor: primaryColor,
+          ),
+        ],
+        onTap: navigationTapped,
       ),
     );
   }
