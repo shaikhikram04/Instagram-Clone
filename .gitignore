@@ -30,7 +30,15 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-android/app/google-services.json
+android/
+ios/
+linux
+macos/
+test/
+web/
+windows/
+analysis_options.yaml
+*.lock
 
 # Symbolication related
 app.*.symbols
