@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ class AddPostSereen extends StatefulWidget {
 class _AddPostSereenState extends State<AddPostSereen> {
   Uint8List? _file;
   final _descriptionController = TextEditingController();
+  var _isloading = false;
 
   _selectImage() async {
     return showDialog(
@@ -59,6 +61,45 @@ class _AddPostSereenState extends State<AddPostSereen> {
         });
   }
 
+  void _postImage(
+    String uid,
+    String username,
+    String profImage,
+  ) async {
+    try {
+      setState(() {
+        _isloading = true;
+      });
+      String res = await FirestoreMethod().uploadPost(
+        _descriptionController.text,
+        _file!,
+        uid,
+        username,
+        profImage,
+      );
+      setState(() {
+        _isloading = false;
+      });
+
+      if (!mounted) return;
+
+      if (res == 'success') {
+        showSnackBar('Posted', context);
+        _clearImage();
+      } else {
+        showSnackBar('res', context);
+      }
+    } catch (err) {
+      showSnackBar(err.toString(), context);
+    }
+  }
+
+  void _clearImage() {
+    setState(() {
+      _file = null;
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -80,7 +121,7 @@ class _AddPostSereenState extends State<AddPostSereen> {
             appBar: AppBar(
               backgroundColor: mobileBackgroundColor,
               leading: IconButton(
-                onPressed: () {},
+                onPressed: _clearImage,
                 icon: const Icon(Icons.arrow_back),
               ),
               title: const Text(
@@ -89,7 +130,8 @@ class _AddPostSereenState extends State<AddPostSereen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () =>
+                      _postImage(user.uid, user.username, user.photoUrl),
                   child: const Text(
                     'Post',
                     style: TextStyle(
@@ -103,6 +145,11 @@ class _AddPostSereenState extends State<AddPostSereen> {
             ),
             body: Column(
               children: [
+                if (_isloading)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5),
+                    child: LinearProgressIndicator(),
+                  ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
