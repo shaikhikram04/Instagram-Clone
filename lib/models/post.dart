@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:instagram_clone/models/user.dart';
 
 class Post {
   final String description;
@@ -9,7 +8,7 @@ class Post {
   final DateTime datePublished;
   final String postUrl;
   final String profImage;
-  final List<User> likes;
+  final List likes;
 
   Post({
     required this.description,

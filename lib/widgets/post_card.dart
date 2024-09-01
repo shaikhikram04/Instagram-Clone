@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +17,25 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+
+  Future<void> _handleLikeAnimation(User user) async {
+    await FirestoreMethod().likePost(
+      widget.snap['postId'],
+      user.uid,
+      widget.snap['likes'],
+    );
+    setState(() {
+      isLikeAnimating = true;
+    });
+
+    // Set the heart to disappear after the animation ends
+    Future.delayed(const Duration(milliseconds: 600), () {
+      setState(() {
+        isLikeAnimating = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).getUser;
@@ -86,9 +107,7 @@ class _PostCardState extends State<PostCard> {
             children: [
               GestureDetector(
                 onDoubleTap: () {
-                  setState(() {
-                    isLikeAnimating = true;
-                  });
+                  _handleLikeAnimation(user);
                 },
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.32,
@@ -99,24 +118,25 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
               ),
-              AnimatedOpacity(
-                opacity: isLikeAnimating ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: LikeAnimation(
-                  isAnimating: isLikeAnimating,
-                  duration: const Duration(milliseconds: 400),
-                  onEnd: () {
-                    setState(() {
-                      isLikeAnimating = false;
-                    });
-                  },
-                  child: const Icon(
-                    Icons.favorite,
-                    size: 100,
-                    color: Colors.white,
+              if (isLikeAnimating)
+                AnimatedOpacity(
+                  opacity: isLikeAnimating ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: LikeAnimation(
+                    isAnimating: isLikeAnimating,
+                    duration: const Duration(milliseconds: 400),
+                    onEnd: () {
+                      setState(() {
+                        isLikeAnimating = false;
+                      });
+                    },
+                    child: const Icon(
+                      Icons.favorite,
+                      size: 100,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              )
             ],
           ),
 
