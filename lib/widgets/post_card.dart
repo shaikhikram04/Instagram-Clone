@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({super.key});
+  final Map<String, dynamic> snap;
+  const PostCard({super.key, required this.snap});
 
   @override
   Widget build(BuildContext context) {
@@ -15,22 +17,22 @@ class PostCard extends StatelessWidget {
             // .copyWith(right: 0),
             child: Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 18,
                   backgroundImage: NetworkImage(
-                    'https://images.unsplash.com/photo-1719937050814-72892488f741?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8',
+                    snap['profImage'],
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 8),
+                    padding: const EdgeInsets.only(left: 8),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'username',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          snap['username'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -72,7 +74,7 @@ class PostCard extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.32,
             width: double.infinity,
             child: Image.network(
-              'https://images.unsplash.com/photo-1724579242963-ea62ff1f0d72?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw1fHx8ZW58MHx8fHx8',
+              snap['postUrl'],
               fit: BoxFit.cover,
             ),
           ),
@@ -128,7 +130,7 @@ class PostCard extends StatelessWidget {
                       .titleMedium!
                       .copyWith(fontWeight: FontWeight.w800),
                   child: Text(
-                    '1,234 likes',
+                    '${snap['likes'].length} likes',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
@@ -136,15 +138,15 @@ class PostCard extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.only(top: 8),
                   child: RichText(
-                    text: const TextSpan(
-                      style: TextStyle(color: primaryColor),
+                    text: TextSpan(
+                      style: const TextStyle(color: primaryColor),
                       children: [
                         TextSpan(
-                          text: 'username',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          text: snap['username'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: ' Hey! this is some description to be replace',
+                          text: ' ${snap['description']}',
                         ),
                       ],
                     ),
@@ -165,9 +167,9 @@ class PostCard extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: const Text(
-                    '22/08/2024',
-                    style: TextStyle(
+                  child: Text(
+                    DateFormat.yMMMd().format(snap['datePublished'].toDate()),
+                    style: const TextStyle(
                       fontSize: 16,
                       color: secondaryColor,
                     ),
