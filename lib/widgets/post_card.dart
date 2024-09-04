@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/screens/comments_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -26,8 +27,8 @@ class _PostCardState extends State<PostCard> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-            // .copyWith(right: 0),
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16)
+                .copyWith(right: 0),
             child: Row(
               children: [
                 CircleAvatar(
@@ -153,7 +154,9 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const CommentsScreen(),
+                )),
                 icon: const Icon(
                   Icons.comment_outlined,
                   color: primaryColor,
