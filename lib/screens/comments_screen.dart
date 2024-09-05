@@ -3,13 +3,22 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/comment_card.dart';
 
 class CommentsScreen extends StatefulWidget {
-  const CommentsScreen({super.key});
+  final Map<String, dynamic> snap;
+  const CommentsScreen({super.key, required this.snap});
 
   @override
   State<CommentsScreen> createState() => _CommentsScreenState();
 }
 
 class _CommentsScreenState extends State<CommentsScreen> {
+  final controller = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,11 +43,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
                 ),
                 radius: 18,
               ),
-              const Expanded(
+              Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(left: 16, right: 8),
+                  padding: const EdgeInsets.only(left: 16, right: 8),
                   child: TextField(
-                    decoration: InputDecoration(
+                    controller: controller,
+                    decoration: const InputDecoration(
                       hintText: 'Comment as username',
                       border: InputBorder.none,
                     ),

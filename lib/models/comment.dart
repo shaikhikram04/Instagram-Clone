@@ -6,14 +6,14 @@ class Comment {
   final DateTime date;
   final int likes;
   final String username;
-  final String userImage;
+  final String profPicture;
 
   const Comment({
     required this.date,
     required this.id,
     required this.likes,
     required this.text,
-    required this.userImage,
+    required this.profPicture,
     required this.username,
   });
 
@@ -23,7 +23,7 @@ class Comment {
         'date': date,
         'likes': likes,
         'username': username,
-        'userimage': userImage,
+        'profPicture': profPicture,
       };
 
   static Comment fromSnap(DocumentSnapshot<Map<String, dynamic>> snap) {
@@ -32,7 +32,7 @@ class Comment {
       id: snap['id'],
       likes: snap['likes'],
       text: snap['text'],
-      userImage: snap['userImage'],
+      profPicture: snap['userImage'],
       username: snap['username'],
     );
   }
