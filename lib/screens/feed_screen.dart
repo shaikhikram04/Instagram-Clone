@@ -45,6 +45,10 @@ class FeedScreen extends StatelessWidget {
                   snap: snapshot.data!.docs[index].data(),
                 ),
               );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error.toString()),
+              );
             }
 
             return const Center(child: Text('No post available'));
