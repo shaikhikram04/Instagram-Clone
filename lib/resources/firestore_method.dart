@@ -46,38 +46,36 @@ class FirestoreMethod {
     return res;
   }
 
-  Future<String> commentToPost(
+  Future<void> commentToPost(
     String postId,
-    String description,
+    String text,
+    String uid,
     String username,
     String profImage,
   ) async {
-    String res = 'some error occurred';
-
     try {
-      final commentId = uuid.v1();
+      if (text.isNotEmpty) {
+        final commentId = uuid.v1();
+        final comment = Comment(
+          date: DateTime.now(),
+          id: commentId,
+          likes: 0,
+          text: text,
+          profPicture: profImage,
+          username: username,
+          uid: uid,
+        );
 
-      final comment = Comment(
-        date: DateTime.now(),
-        id: commentId,
-        likes: 0,
-        text: description,
-        profPicture: profImage,
-        username: username,
-      );
-      await _firestore
-          .collection('posts')
-          .doc(postId)
-          .collection('comments')
-          .doc(commentId)
-          .set(comment.toJson());
-
-      res = 'success';
+        await _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .set(comment.toJson());
+      }
     } catch (e) {
-      res = e.toString();
+      print(e.toString());
     }
-
-    return res;
   }
 
   Future<void> likePost(String postId, String uid, List likes) async {

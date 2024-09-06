@@ -5,16 +5,19 @@ class Comment {
   final String text;
   final DateTime date;
   final int likes;
+  final String uid;
   final String username;
   final String profPicture;
 
-  const Comment({
+  const Comment(
+    {
     required this.date,
     required this.id,
     required this.likes,
     required this.text,
     required this.profPicture,
     required this.username,
+    required this.uid, 
   });
 
   Map<String, dynamic> toJson() => {
@@ -34,6 +37,7 @@ class Comment {
       text: snap['text'],
       profPicture: snap['userImage'],
       username: snap['username'],
+      uid: snap['uid'],
     );
   }
 }

@@ -84,21 +84,21 @@ class _PostCardState extends State<PostCard> {
             ),
           ),
           //* Image section
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              GestureDetector(
-                onDoubleTap: () async {
-                  await FirestoreMethod().likePost(
-                    widget.snap['postId'],
-                    user.uid,
-                    widget.snap['likes'],
-                  );
-                  setState(() {
-                    isLikeAnimating = true;
-                  });
-                },
-                child: SizedBox(
+          GestureDetector(
+            onDoubleTap: () async {
+              await FirestoreMethod().likePost(
+                widget.snap['postId'],
+                user.uid,
+                widget.snap['likes'],
+              );
+              setState(() {
+                isLikeAnimating = true;
+              });
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.32,
                   width: double.infinity,
                   child: Image.network(
@@ -106,26 +106,26 @@ class _PostCardState extends State<PostCard> {
                     fit: BoxFit.cover,
                   ),
                 ),
-              ),
-              AnimatedOpacity(
-                opacity: isLikeAnimating ? 1 : 0,
-                duration: const Duration(milliseconds: 200),
-                child: LikeAnimation(
-                  isAnimating: isLikeAnimating,
-                  duration: const Duration(milliseconds: 400),
-                  onEnd: () {
-                    setState(() {
-                      isLikeAnimating = false;
-                    });
-                  },
-                  child: const Icon(
-                    Icons.favorite,
-                    size: 100,
-                    color: Colors.white,
+                AnimatedOpacity(
+                  opacity: isLikeAnimating ? 1 : 0,
+                  duration: const Duration(milliseconds: 200),
+                  child: LikeAnimation(
+                    isAnimating: isLikeAnimating,
+                    duration: const Duration(milliseconds: 400),
+                    onEnd: () {
+                      setState(() {
+                        isLikeAnimating = false;
+                      });
+                    },
+                    child: const Icon(
+                      Icons.favorite,
+                      size: 100,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           //* Like comment section
@@ -155,7 +155,8 @@ class _PostCardState extends State<PostCard> {
               ),
               IconButton(
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CommentsScreen(snap: widget.snap),
+                  builder: (context) =>
+                      CommentsScreen(postId: widget.snap['postId'].toString()),
                 )),
                 icon: const Icon(
                   Icons.comment_outlined,
