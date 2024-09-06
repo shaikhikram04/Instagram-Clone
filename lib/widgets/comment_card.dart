@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/widgets/like_animation.dart';
+import 'package:intl/intl.dart';
 
 class CommentCard extends StatefulWidget {
-  const CommentCard({super.key});
+  final Map<String, dynamic> snap;
+  final String postId;
+  final String userId;
+  const CommentCard(
+      {super.key,
+      required this.snap,
+      required this.postId,
+      required this.userId});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
 }
 
 class _CommentCardState extends State<CommentCard> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
+          //* profile picture
+          CircleAvatar(
             backgroundImage: NetworkImage(
-              'https://images.unsplash.com/photo-1719937050640-71cfd3d851be?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D',
+              widget.snap['profPicture'],
             ),
             radius: 18,
           ),
+          //* data
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(left: 16),
@@ -28,34 +40,68 @@ class _CommentCardState extends State<CommentCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  //* username + commentText
                   RichText(
-                    text: const TextSpan(
+                    text: TextSpan(
                       children: [
                         TextSpan(
-                          text: 'username',
-                          style: TextStyle(
+                          text: widget.snap['username'],
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextSpan(text: 'some description to insert'),
+                        TextSpan(text: '   ${widget.snap['text']}'),
                       ],
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 4),
+                  //* date
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      '23/12/23',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                      DateFormat.yMMMd().format(widget.snap['date'].toDate()),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
                 ],
               ),
             ),
           ),
+          //* like button
           Container(
-            padding: const EdgeInsets.all(8),
-            child: const Icon(Icons.favorite, size: 16),
+            margin: const EdgeInsets.only(left: 20, top: 5),
+            child: Column(
+              children: [
+                LikeAnimation(
+                  isAnimating: widget.snap['likes'].contains(widget.userId),
+                  smallLike: true,
+                  child: InkWell(
+                    onTap: () async {
+                      await FirestoreMethod().likeComment(
+                        widget.postId,
+                        widget.snap['id'],
+                        widget.userId,
+                        widget.snap['likes'],
+                      );
+                    },
+                    child: widget.snap['likes'].contains(widget.userId)
+                        ? const Icon(
+                            Icons.favorite,
+                            size: 17,
+                            color: Colors.red,
+                          )
+                        : const Icon(
+                            Icons.favorite_border,
+                            size: 17,
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(widget.snap['likes'].length == 0
+                    ? ''
+                    : widget.snap['likes'].length.toString())
+              ],
+            ),
           )
         ],
       ),

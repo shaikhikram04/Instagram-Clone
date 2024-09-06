@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
@@ -17,7 +18,6 @@ class CommentsScreen extends StatefulWidget {
 
 class _CommentsScreenState extends State<CommentsScreen> {
   final controller = TextEditingController();
-  var _isLoading = false;
 
   @override
   void dispose() {
@@ -27,10 +27,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
   void _comment(User user) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       await FirestoreMethod().commentToPost(
         widget.postId,
         controller.text,
@@ -40,7 +36,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
       );
 
       setState(() {
-        _isLoading = false;
         controller.clear();
       });
     } catch (e) {
@@ -58,7 +53,31 @@ class _CommentsScreenState extends State<CommentsScreen> {
         backgroundColor: mobileBackgroundColor,
         title: const Text('Comments'),
       ),
-      body: const CommentCard(),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.postId)
+            .collection('comments')
+            .orderBy('date', descending: true)
+            .snapshots(),
+        builder: (context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (BuildContext context, int index) => CommentCard(
+              snap: snapshot.data!.docs[index].data(),
+              postId: widget.postId,
+              userId: user.uid,
+            ),
+          );
+        },
+      ),
       bottomNavigationBar: SafeArea(
         child: Container(
           //* toolbar height of appBar
@@ -69,10 +88,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
           padding: const EdgeInsets.only(left: 16, right: 8),
           child: Row(
             children: [
+              //* profile image
               CircleAvatar(
                 backgroundImage: NetworkImage(user.photoUrl),
                 radius: 18,
               ),
+              //* comment text
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, right: 8),
@@ -85,18 +106,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   ),
                 ),
               ),
+              //* Post button
               InkWell(
                 onTap: () => _comment(user),
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(
-                          color: Colors.blueAccent,
-                        )
-                      : const Text(
-                          'Post',
-                          style: TextStyle(color: Colors.blueAccent),
-                        ),
+                  child: const Text(
+                    'Post',
+                    style: TextStyle(color: Colors.blueAccent),
+                  ),
                 ),
               ),
             ],

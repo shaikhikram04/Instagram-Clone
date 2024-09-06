@@ -46,6 +46,22 @@ class FirestoreMethod {
     return res;
   }
 
+  Future<void> likePost(String postId, String uid, List likes) async {
+    try {
+      if (likes.contains(uid)) {
+        _firestore.collection('posts').doc(postId).update({
+          'likes': FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        _firestore.collection('posts').doc(postId).update({
+          'likes': FieldValue.arrayUnion([uid]),
+        });
+      }
+    } catch (e) {
+      return;
+    }
+  }
+
   Future<void> commentToPost(
     String postId,
     String text,
@@ -59,7 +75,7 @@ class FirestoreMethod {
         final comment = Comment(
           date: DateTime.now(),
           id: commentId,
-          likes: 0,
+          likes: [],
           text: text,
           profPicture: profImage,
           username: username,
@@ -74,22 +90,41 @@ class FirestoreMethod {
             .set(comment.toJson());
       }
     } catch (e) {
+      print('Commenting');
       print(e.toString());
+      return;
     }
   }
 
-  Future<void> likePost(String postId, String uid, List likes) async {
+  Future<void> likeComment(
+    String postId,
+    String commentId,
+    String uid,
+    List likes,
+  ) async {
     try {
       if (likes.contains(uid)) {
-        _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove([uid]),
+        await _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'likes': FieldValue.arrayRemove([uid])
         });
       } else {
-        _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion([uid]),
+        await _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'likes': FieldValue.arrayUnion([uid])
         });
       }
     } catch (e) {
+      print('like Comment');
+      print(e.toString());
       return;
     }
   }
