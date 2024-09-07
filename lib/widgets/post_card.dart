@@ -73,14 +73,19 @@ class _PostCardState extends State<PostCard> {
                     ),
                   ),
                 ),
-                PopupMenuButton(
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      onTap: () {},
-                      child: const Text('Delete'),
-                    ),
-                  ],
-                ),
+
+                //* delete option
+
+                if (user.uid == widget.snap['uid'])
+                  PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        onTap: () =>
+                            FirestoreMethod().deletePost(widget.snap['postId']),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),

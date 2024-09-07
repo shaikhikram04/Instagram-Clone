@@ -90,8 +90,6 @@ class FirestoreMethod {
             .set(comment.toJson());
       }
     } catch (e) {
-      print('Commenting');
-      print(e.toString());
       return;
     }
   }
@@ -123,8 +121,14 @@ class FirestoreMethod {
         });
       }
     } catch (e) {
-      print('like Comment');
-      print(e.toString());
+      return;
+    }
+  }
+
+  void deletePost(String postId) async {
+    try {
+      await _firestore.collection('posts').doc(postId).delete();
+    } catch (e) {
       return;
     }
   }

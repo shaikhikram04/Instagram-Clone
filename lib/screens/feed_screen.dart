@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:instagram_clone/resources/auth_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/post_card.dart';
 
@@ -20,6 +21,11 @@ class FeedScreen extends StatelessWidget {
           height: 35,
         ),
         actions: [
+          IconButton(
+            onPressed: AuthMethod().signOutUser,
+            icon: const Icon(Icons.logout),
+            color: Colors.white,
+          ),
           IconButton(
             onPressed: () {},
             icon: const Icon(
