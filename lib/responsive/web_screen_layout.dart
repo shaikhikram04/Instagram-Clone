@@ -3,8 +3,8 @@ import 'package:instagram_clone/resources/auth_method.dart';
 
 class WebScreenLayout extends StatelessWidget {
   const WebScreenLayout({super.key});
-  void signOutUser() {
-    AuthMethod().signOutUser();
+  Future<void> signOutUser() async {
+    await AuthMethod().signOutUser();
   }
 
   @override

@@ -113,7 +113,10 @@ class _AddPostSereenState extends State<AddPostSereen> {
     return _file == null
         ? Center(
             child: IconButton(
-              icon: const Icon(Icons.upload),
+              icon: const Icon(
+                Icons.upload,
+                size: 40,
+              ),
               onPressed: _selectImage,
             ),
           )
