@@ -27,6 +27,7 @@ class _CommentCardState extends State<CommentCard> {
         children: [
           //* profile picture
           CircleAvatar(
+            backgroundColor: Colors.grey,
             backgroundImage: NetworkImage(
               widget.snap['profPicture'],
             ),

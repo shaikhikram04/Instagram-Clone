@@ -158,6 +158,7 @@ class _AddPostSereenState extends State<AddPostSereen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
+                      backgroundColor: Colors.grey,
                       backgroundImage: NetworkImage(user.photoUrl),
                     ),
                     SizedBox(
