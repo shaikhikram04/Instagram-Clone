@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
@@ -114,14 +115,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 borderColor: Colors.grey,
                                                 text: 'Unfollow',
                                                 textColor: Colors.black,
-                                                function: () {},
+                                                function: () async {
+                                                  await FirestoreMethod()
+                                                      .followUser(currentUserId,
+                                                          userData['uid']);
+                                                  setState(() {
+                                                    getData();
+                                                  });
+                                                },
                                               )
                                             : FollowButton(
                                                 backgroundColor: blueColor,
                                                 borderColor: Colors.blue,
                                                 text: 'Follow',
                                                 textColor: Colors.white,
-                                                function: () {},
+                                                function: () async {
+                                                  await FirestoreMethod()
+                                                      .followUser(currentUserId,
+                                                          userData['uid']);
+                                                  setState(() {
+                                                    getData();
+                                                  });
+                                                },
                                               ),
                                   ],
                                 ),
@@ -169,14 +184,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         crossAxisCount: 3,
                         crossAxisSpacing: 5,
                         mainAxisSpacing: 1.5,
-                        childAspectRatio: 1,
+                        childAspectRatio: 0.9,
                       ),
                       itemBuilder: (context, index) {
-                        return Container(
-                          child: Image.network(
-                            snapshot.data!.docs[index].data()['postUrl'],
-                            fit: BoxFit.cover,
-                          ),
+                        return Image.network(
+                          snapshot.data!.docs[index].data()['postUrl'],
+                          fit: BoxFit.cover,
                         );
                       },
                     );
