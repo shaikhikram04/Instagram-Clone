@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/resources/auth_method.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
@@ -64,6 +65,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         title: Text(userData['username']),
+        actions: [
+          if (currentUserId == userData['uid'])
+            IconButton(
+              padding: const EdgeInsets.only(right: 10),
+              onPressed: AuthMethod().signOutUser,
+              icon: const Icon(Icons.logout),
+              color: Colors.white,
+            ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
