@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
@@ -20,6 +21,24 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
   int commentLen = 0;
+  var isFollowing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkFollowing();
+    getComments();
+  }
+
+  Future<void> checkFollowing() async {
+    final currUserID = FirebaseAuth.instance.currentUser!.uid;
+    final userSnap = await FirebaseFirestore.instance
+        .collection('user')
+        .doc(currUserID)
+        .get();
+
+    isFollowing = userSnap['following'].contains(widget.snap['uid']);
+  }
 
   void getComments() async {
     try {
@@ -43,6 +62,7 @@ class _PostCardState extends State<PostCard> {
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).getUser;
     getComments();
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -52,9 +72,10 @@ class _PostCardState extends State<PostCard> {
                 .copyWith(right: 0),
             child: Row(
               children: [
+                //* Profile Picture
                 CircleAvatar(
                   backgroundColor: Colors.grey,
-                  radius: 18,
+                  radius: 20,
                   backgroundImage: NetworkImage(
                     widget.snap['profImage'],
                   ),
@@ -74,6 +95,29 @@ class _PostCardState extends State<PostCard> {
                     ),
                   ),
                 ),
+
+                if (!isFollowing && user.uid != widget.snap['uid'])
+                  ElevatedButton(
+                    onPressed: () async {
+                      await FirestoreMethod()
+                          .followUser(user.uid, widget.snap['uid']);
+                      setState(() {
+                        isFollowing = !isFollowing;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: primaryColor,
+                      backgroundColor: const Color.fromARGB(255, 45, 45, 45),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Follow',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                const SizedBox(width: 10),
 
                 //* delete option
 
@@ -126,7 +170,7 @@ class _PostCardState extends State<PostCard> {
                     },
                     child: const Icon(
                       Icons.favorite,
-                      size: 100,
+                      size: 120,
                       color: Colors.white,
                     ),
                   ),
@@ -166,7 +210,7 @@ class _PostCardState extends State<PostCard> {
                       CommentsScreen(postId: widget.snap['postId'].toString()),
                 )),
                 icon: const Icon(
-                  Icons.comment_outlined,
+                  Icons.mode_comment_outlined,
                   color: primaryColor,
                 ),
               ),
