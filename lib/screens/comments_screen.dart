@@ -18,11 +18,23 @@ class CommentsScreen extends StatefulWidget {
 
 class _CommentsScreenState extends State<CommentsScreen> {
   final controller = TextEditingController();
+  final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        _focusNode.requestFocus();
+      },
+    );
+  }
 
   @override
   void dispose() {
     super.dispose();
     controller.dispose();
+    _focusNode.dispose();
   }
 
   void _comment(User user) async {
@@ -99,6 +111,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   padding: const EdgeInsets.only(left: 16, right: 8),
                   child: TextField(
                     controller: controller,
+                    focusNode: _focusNode,
                     decoration: InputDecoration(
                       hintText: 'Comment as ${user.username}',
                       border: InputBorder.none,
