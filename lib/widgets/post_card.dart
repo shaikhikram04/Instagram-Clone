@@ -33,11 +33,13 @@ class _PostCardState extends State<PostCard> {
   Future<void> checkFollowing() async {
     final currUserID = FirebaseAuth.instance.currentUser!.uid;
     final userSnap = await FirebaseFirestore.instance
-        .collection('user')
+        .collection('users')
         .doc(currUserID)
         .get();
 
-    isFollowing = userSnap['following'].contains(widget.snap['uid']);
+    setState(() {
+      isFollowing = userSnap.data()!['following'].contains(widget.snap['uid']);
+    });
   }
 
   void getComments() async {
@@ -61,6 +63,7 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).getUser;
+    checkFollowing();
     getComments();
 
     return Container(
@@ -96,6 +99,7 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
 
+                //* follow button
                 if (!isFollowing && user.uid != widget.snap['uid'])
                   ElevatedButton(
                     onPressed: () async {
@@ -120,7 +124,6 @@ class _PostCardState extends State<PostCard> {
                 const SizedBox(width: 10),
 
                 //* delete option
-
                 if (user.uid == widget.snap['uid'])
                   PopupMenuButton(
                     itemBuilder: (context) => [
