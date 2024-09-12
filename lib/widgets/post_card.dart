@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/screens/comments_screen.dart';
+import 'package:instagram_clone/screens/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
@@ -76,11 +77,19 @@ class _PostCardState extends State<PostCard> {
             child: Row(
               children: [
                 //* Profile Picture
-                CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  radius: 20,
-                  backgroundImage: NetworkImage(
-                    widget.snap['profImage'],
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          ProfileScreen(uid: widget.snap['uid']),
+                    ));
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    radius: 20,
+                    backgroundImage: NetworkImage(
+                      widget.snap['profImage'],
+                    ),
                   ),
                 ),
                 Expanded(
