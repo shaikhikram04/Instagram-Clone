@@ -67,6 +67,15 @@ class _PostCardState extends State<PostCard> {
     checkFollowing();
     getComments();
 
+    void navigateToCommentScreen(bool isWriteComment) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => CommentsScreen(
+          postId: widget.snap['postId'].toString(),
+          isWrite: isWriteComment,
+        ),
+      ));
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -217,10 +226,7 @@ class _PostCardState extends State<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      CommentsScreen(postId: widget.snap['postId'].toString()),
-                )),
+                onPressed: () => navigateToCommentScreen(true),
                 icon: const Icon(
                   Icons.mode_comment_outlined,
                   color: primaryColor,
@@ -283,7 +289,7 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => navigateToCommentScreen(false),
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(

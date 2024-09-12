@@ -10,7 +10,12 @@ import 'package:provider/provider.dart';
 
 class CommentsScreen extends StatefulWidget {
   final String postId;
-  const CommentsScreen({super.key, required this.postId});
+  final bool isWrite;
+  const CommentsScreen({
+    super.key,
+    required this.postId,
+    this.isWrite = false,
+  });
 
   @override
   State<CommentsScreen> createState() => _CommentsScreenState();
@@ -23,11 +28,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        _focusNode.requestFocus();
-      },
-    );
+
+    if (widget.isWrite) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          _focusNode.requestFocus();
+        },
+      );
+    }
   }
 
   @override
@@ -52,7 +60,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      showSnackBar('Something goes wrong try again...', context);
+      showSnackBar('Something goes wrong, try again...', context);
     }
   }
 
