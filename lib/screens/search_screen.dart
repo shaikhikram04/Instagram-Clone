@@ -26,18 +26,54 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: isShowUser
+            ? IconButton(
+                onPressed: () {
+                  //* Close the keyboard
+                  FocusScope.of(context).unfocus();
+
+                  setState(() {
+                    isShowUser = false;
+                  });
+                },
+                icon: const Icon(Icons.arrow_back))
+            : null,
         backgroundColor: mobileBackgroundColor,
-        title: TextFormField(
-          controller: searchController,
-          decoration: const InputDecoration(
-            labelText: 'Search for a user',
-            border: InputBorder.none,
+        title: SizedBox(
+          height: 45,
+          child: TextFormField(
+            onTap: () {
+              setState(() {
+                isShowUser = true;
+              });
+            },
+            controller: searchController,
+            decoration: InputDecoration(
+              hintText: 'Search',
+              fillColor: Colors.grey.shade800,
+              filled: true,
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          searchController.clear();
+                        });
+                      },
+                    )
+                  : null,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            onChanged: (value) {
+              setState(() {
+                isShowUser = true;
+              });
+            },
           ),
-          onFieldSubmitted: (value) {
-            setState(() {
-              isShowUser = true;
-            });
-          },
         ),
       ),
       body: isShowUser
