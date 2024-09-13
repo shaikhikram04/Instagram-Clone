@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/resources/auth_method.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/screens/setting_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
@@ -64,12 +64,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
-        title: Text(userData['username']),
+        title: Text(
+          userData['username'],
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
           if (currentUserId == userData['uid'])
             IconButton(
               padding: const EdgeInsets.only(right: 10),
-              onPressed: AuthMethod().signOutUser,
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => const SettingScreen(),
+                ));
+              },
               icon: const Icon(Icons.menu),
               color: Colors.white,
             ),
@@ -85,6 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Row(
                         children: [
+                          //* profile picture
                           CircleAvatar(
                             backgroundColor: Colors.grey,
                             backgroundImage: NetworkImage(userData['photoUrl']),
@@ -227,9 +235,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Text(
             label.toString(),
             style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              color: Colors.grey,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
         )
