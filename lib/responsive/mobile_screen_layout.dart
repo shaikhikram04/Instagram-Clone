@@ -60,7 +60,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             backgroundColor: primaryColor,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
+            icon: Icon(Icons.add_box_outlined),
             backgroundColor: primaryColor,
           ),
           BottomNavigationBarItem(

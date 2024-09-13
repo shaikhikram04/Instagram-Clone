@@ -111,14 +111,21 @@ class _AddPostSereenState extends State<AddPostSereen> {
     final user = Provider.of<UserProvider>(context).getUser;
 
     return _file == null
-        ? Center(
-            child: IconButton(
-              icon: const Icon(
-                Icons.upload,
-                size: 40,
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.upload,
+                    size: 40,
+                  ),
+                  onPressed: _selectImage,
+                ),
               ),
-              onPressed: _selectImage,
-            ),
+              const Text('Click here to upload post.')
+            ],
           )
         : Scaffold(
             appBar: AppBar(

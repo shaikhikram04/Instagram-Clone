@@ -86,7 +86,7 @@ class _PostCardState extends State<PostCard> {
             child: Row(
               children: [
                 //* Profile Picture
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>

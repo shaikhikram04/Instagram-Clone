@@ -50,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
             controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search',
-              fillColor: Colors.grey.shade800,
+              fillColor: Colors.grey.shade900,
               filled: true,
               prefixIcon: const Icon(Icons.search),
               suffixIcon: searchController.text.isNotEmpty

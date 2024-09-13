@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               padding: const EdgeInsets.only(right: 10),
               onPressed: AuthMethod().signOutUser,
-              icon: const Icon(Icons.logout),
+              icon: const Icon(Icons.menu),
               color: Colors.white,
             ),
         ],
