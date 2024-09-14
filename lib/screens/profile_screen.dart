@@ -71,13 +71,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           if (currentUserId == userData['uid'])
             IconButton(
-              padding: const EdgeInsets.only(right: 10),
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => const SettingScreen(),
                 ));
               },
-              icon: const Icon(Icons.menu),
+              icon: const Icon(
+                Icons.menu,
+                size: 27,
+              ),
               color: Colors.white,
             ),
         ],
