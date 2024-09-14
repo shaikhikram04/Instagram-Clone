@@ -167,10 +167,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(top: 15, left: 10),
+                        padding: const EdgeInsets.only(top: 12, left: 10),
                         child: Text(
                           userData['username'],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 19),
                         ),
                       ),
                       Container(
@@ -183,7 +184,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                 ),
-                const Divider(),
+                Container(
+                  margin: const EdgeInsets.only(top: 15, bottom: 5),
+                  height: 25,
+                  width: double.infinity,
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.grid_on,
+                        size: 30,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Posts',
+                        style: TextStyle(
+                          color: primaryColor,
+                          fontSize: 21,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  color: primaryColor,
+                ),
                 FutureBuilder(
                   future: FirebaseFirestore.instance
                       .collection('posts')
@@ -193,6 +219,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if (snapshot.data!.size == 0) {
+                      return Container(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Capture the moment with a friend',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 21),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Create your first post',
+                              style: TextStyle(
+                                  color: blueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
                       );
                     }
 
