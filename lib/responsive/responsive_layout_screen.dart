@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/auth_method.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
-import 'package:provider/provider.dart';
 
-class ResponsiveLayout extends StatefulWidget {
+class ResponsiveLayout extends ConsumerStatefulWidget {
   final Widget webScreenLayout;
   final Widget mobileScreenLayout;
   const ResponsiveLayout({
@@ -13,10 +14,10 @@ class ResponsiveLayout extends StatefulWidget {
   });
 
   @override
-  State<ResponsiveLayout> createState() => _ResponsiveLayoutState();
+  ConsumerState<ResponsiveLayout> createState() => _ResponsiveLayoutState();
 }
 
-class _ResponsiveLayoutState extends State<ResponsiveLayout> {
+class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
   @override
   void initState() {
     super.initState();
@@ -24,8 +25,8 @@ class _ResponsiveLayoutState extends State<ResponsiveLayout> {
   }
 
   void addData() async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    await userProvider.refreshUser();
+    final user = await AuthMethod().getUserDetail();
+    ref.read(userProvider.notifier).setUser(user);
   }
 
   @override

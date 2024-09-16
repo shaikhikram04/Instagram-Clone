@@ -1,21 +1,21 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
-import 'package:provider/provider.dart';
 
-class AddPostSereen extends StatefulWidget {
+class AddPostSereen extends ConsumerStatefulWidget {
   const AddPostSereen({super.key});
 
   @override
-  State<AddPostSereen> createState() => _AddPostSereenState();
+  ConsumerState<AddPostSereen> createState() => _AddPostSereenState();
 }
 
-class _AddPostSereenState extends State<AddPostSereen> {
+class _AddPostSereenState extends ConsumerState<AddPostSereen> {
   Uint8List? _file;
   final _descriptionController = TextEditingController();
   var _isloading = false;
@@ -108,7 +108,7 @@ class _AddPostSereenState extends State<AddPostSereen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).getUser;
+    final user = ref.watch(userProvider);
 
     return _file == null
         ? Column(
