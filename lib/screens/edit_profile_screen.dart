@@ -27,6 +27,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget radioTile(
+      int value,
+      String title,
+    ) {
+      return RadioListTile(
+        title: Text(title),
+        activeColor: blueColor,
+        value: value,
+        groupValue: selectedRadioValue,
+        onChanged: (value) {
+          Navigator.of(context).pop(value);
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit profile'),
@@ -63,38 +78,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          RadioListTile<int>(
-                            title: const Text('Male'),
-                            value: 1,
-                            groupValue: selectedRadioValue,
-                            onChanged: (value) {
-                              Navigator.of(context).pop(value);
-                            },
-                          ),
-                          RadioListTile<int>(
-                            title: const Text('Female'),
-                            value: 2,
-                            groupValue: selectedRadioValue,
-                            onChanged: (value) {
-                              Navigator.of(context).pop(value);
-                            },
-                          ),
-                          RadioListTile<int>(
-                            title: const Text('Other'),
-                            value: 3,
-                            groupValue: selectedRadioValue,
-                            onChanged: (value) {
-                              Navigator.of(context).pop(value);
-                            },
-                          ),
-                          RadioListTile<int>(
-                            title: const Text('Prefer not to say'),
-                            value: 4,
-                            groupValue: selectedRadioValue,
-                            onChanged: (value) {
-                              Navigator.of(context).pop(value);
-                            },
-                          ),
+                          radioTile(1, 'Male'),
+                          radioTile(2, 'Female'),
+                          radioTile(3, 'Other'),
+                          radioTile(4, 'Prefer not to say'),
                         ],
                       ),
                     ),
