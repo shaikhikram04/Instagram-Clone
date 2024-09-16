@@ -8,6 +8,7 @@ class User {
   final List followers;
   final List following;
   final String photoUrl;
+  final String gender;
 
   User({
     required this.username,
@@ -17,6 +18,7 @@ class User {
     required this.photoUrl,
     required this.followers,
     required this.following,
+    this.gender = 'Prefer not to say',
   });
 
   Map<String, dynamic> toJson() => {
@@ -40,5 +42,27 @@ class User {
         photoUrl: snap['photoUrl'],
         followers: snap['followers'],
         following: snap['following']);
+  }
+
+  User copyWith({
+    String? username,
+    String? email,
+    String? uid,
+    String? bio,
+    String? photoUrl,
+    List<String>? followers,
+    List<String>? following,
+    String? gender,
+  }) {
+    return User(
+      username: username ?? this.username,
+      email: email ?? this.email,
+      uid: uid ?? this.uid,
+      bio: bio ?? this.bio,
+      photoUrl: photoUrl ?? this.photoUrl,
+      followers: followers ?? this.followers,
+      following: following ?? this.following,
+      gender: gender ?? this.gender,
+    );
   }
 }

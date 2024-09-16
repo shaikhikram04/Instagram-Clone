@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
+  ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final usernameController = TextEditingController();
-  final nameController = TextEditingController();
   final bioController = TextEditingController();
   final genderController = TextEditingController();
+
+  int? selectedRadioValue = 4;
 
   @override
   void dispose() {
     super.dispose();
     usernameController.dispose();
-    nameController.dispose();
     bioController.dispose();
     genderController.dispose();
   }
 
-  int? selectedRadioValue = 4;
-
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    usernameController.text = user.username;
+    bioController.text = user.bio;
+    genderController.text = user.gender;
+
     Widget radioTile(
       int value,
       String title,
@@ -67,7 +72,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   style: TextStyle(fontSize: 17, color: blueColor),
                 ),
               ),
-              myTextField('Name', nameController),
               myTextField('Username', usernameController),
               myTextField('Bio', bioController),
               GestureDetector(

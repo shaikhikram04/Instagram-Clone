@@ -15,8 +15,12 @@ class UserNotifier extends StateNotifier<User> {
           ),
         );
 
-  Future<void> setUser(User user) async {
+  void setUser(User user) {
     state = user;
+  }
+
+  void updateGender(String gender) {
+    state = state.copyWith(gender: gender);
   }
 }
 
