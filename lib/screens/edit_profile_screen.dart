@@ -17,6 +17,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   int? selectedRadioValue = 4;
 
+  Map<int, String> genderFromValue = {
+    1: 'Male',
+    2: 'Female',
+    3: 'Other',
+    4: 'Prefer not to say',
+  };
+
   @override
   void dispose() {
     super.dispose();
@@ -82,10 +89,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          radioTile(1, 'Male'),
-                          radioTile(2, 'Female'),
-                          radioTile(3, 'Other'),
-                          radioTile(4, 'Prefer not to say'),
+                          for (var i = 1; i <= 4; i++)
+                            radioTile(i, genderFromValue[i]!),
                         ],
                       ),
                     ),
@@ -94,14 +99,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   if (selectedGender != null) {
                     setState(() {
                       selectedRadioValue = selectedGender;
-
-                      genderController.text = selectedGender == 1
-                          ? 'Male'
-                          : selectedGender == 2
-                              ? 'Female'
-                              : selectedGender == 3
-                                  ? 'Other'
-                                  : 'Prefer not to say';
+                      ref
+                          .read(userProvider.notifier)
+                          .updateGender(genderFromValue[selectedRadioValue]!);
                     });
                   }
                 },
