@@ -29,19 +29,22 @@ class User {
         'followers': followers,
         'following': following,
         'photoUrl': photoUrl,
+        'gender': gender,
       };
 
   static User fromSeed(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     var snap = snapshot.data()!;
 
     return User(
-        username: snap['username'],
-        email: snap['email'],
-        uid: snap['uid'],
-        bio: snap['bio'],
-        photoUrl: snap['photoUrl'],
-        followers: snap['followers'],
-        following: snap['following']);
+      username: snap['username'],
+      email: snap['email'],
+      uid: snap['uid'],
+      bio: snap['bio'],
+      photoUrl: snap['photoUrl'],
+      followers: snap['followers'],
+      following: snap['following'],
+      gender: snap['gender'],
+    );
   }
 
   User copyWith({

@@ -14,8 +14,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final usernameController = TextEditingController();
   final bioController = TextEditingController();
   final genderController = TextEditingController();
+  late NetworkImage image;
 
-  int? selectedRadioValue = 4;
+  int selectedRadioValue = 4;
 
   Map<int, String> genderFromValue = {
     1: 'Male',
@@ -23,6 +24,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     3: 'Other',
     4: 'Prefer not to say',
   };
+
+  int getKeyOfGender(String gender) {
+    for (final i in genderFromValue.entries) {
+      if (gender == i.value) return i.key;
+    }
+
+    return 4;
+  }
+
+  void saveEdit() {}
 
   @override
   void dispose() {
@@ -35,9 +46,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
+    image = NetworkImage(user.photoUrl);
     usernameController.text = user.username;
     bioController.text = user.bio;
     genderController.text = user.gender;
+    selectedRadioValue = getKeyOfGender(user.gender);
 
     Widget radioTile(
       int value,
@@ -65,11 +78,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 55,
-                backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1725656470843-02e3611ff3f2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxMnx8fGVufDB8fHx8fA%3D%3D',
-                ),
+                backgroundImage: image,
+                backgroundColor: Colors.grey,
               ),
               const SizedBox(height: 8),
               TextButton(
@@ -107,6 +119,23 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 },
                 child: myTextField('Gender', genderController, isGender: true),
               ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Spacer(),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blueColor,
+                      foregroundColor: mobileBackgroundColor,
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(fontSize: 17),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
