@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -14,8 +18,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final usernameController = TextEditingController();
   final bioController = TextEditingController();
   final genderController = TextEditingController();
-  late NetworkImage image;
-
+  late ImageProvider image;
   int selectedRadioValue = 4;
 
   Map<int, String> genderFromValue = {
@@ -33,7 +36,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     return 4;
   }
 
-  void saveEdit() {}
+  void editImage() {
+    final Uint8List im = pickImage(ImageSource.gallery);
+    setState(() {
+      image = MemoryImage(im);
+    });
+  }
+
+  void saveEdits() {}
 
   @override
   void dispose() {
@@ -85,7 +95,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () {},
+                onPressed: editImage,
                 child: const Text(
                   'Edit picture',
                   style: TextStyle(fontSize: 17, color: blueColor),
@@ -128,7 +138,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       backgroundColor: blueColor,
                       foregroundColor: mobileBackgroundColor,
                     ),
-                    onPressed: () {},
+                    onPressed: saveEdits,
                     child: const Text(
                       'Save',
                       style: TextStyle(fontSize: 17),
