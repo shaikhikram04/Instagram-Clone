@@ -1,9 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 
@@ -19,7 +21,43 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   final bioController = TextEditingController();
   final genderController = TextEditingController();
   late ImageProvider image;
+  String imageUrl = '';
+  Uint8List? newImage;
   int selectedRadioValue = 4;
+  bool isLoading = false;
+
+  String username = '';
+  String bio = '';
+  String gender = '';
+
+  @override
+  initState() {
+    super.initState();
+    loadDetails();
+  }
+
+  Future<void> loadDetails() async {
+    setState(() {
+      isLoading = true;
+    });
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    final snap =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    username = snap['username'];
+    bio = snap['bio'];
+    gender = snap['gender'];
+    imageUrl = snap['photoUrl'];
+    image = NetworkImage(imageUrl);
+
+    usernameController.text = username;
+    bioController.text = bio;
+    genderController.text = gender;
+    selectedRadioValue = getKeyOfGender(gender);
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   Map<int, String> genderFromValue = {
     1: 'Male',
@@ -36,14 +74,30 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     return 4;
   }
 
-  void editImage() {
-    final Uint8List im = pickImage(ImageSource.gallery);
+  Future<void> editImage() async {
+    newImage = await pickImage(ImageSource.gallery);
     setState(() {
-      image = MemoryImage(im);
+      image = MemoryImage(newImage!);
     });
   }
 
-  void saveEdits() {}
+  Future<void> saveEdits() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    final res = await FirestoreMethod().editProfile(
+      uid,
+      usernameController.text,
+      bioController.text,
+      genderController.text,
+      imageUrl,
+      newImage,
+    );
+
+    if (res == 'success') {
+      if (!mounted) return;
+      showSnackBar('Profile Edited', context);
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   void dispose() {
@@ -55,13 +109,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
-    image = NetworkImage(user.photoUrl);
-    usernameController.text = user.username;
-    bioController.text = user.bio;
-    genderController.text = user.gender;
-    selectedRadioValue = getKeyOfGender(user.gender);
-
     Widget radioTile(
       int value,
       String title,
@@ -82,74 +129,78 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         title: const Text('Edit profile'),
         backgroundColor: mobileBackgroundColor,
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              CircleAvatar(
-                radius: 55,
-                backgroundImage: image,
-                backgroundColor: Colors.grey,
-              ),
-              const SizedBox(height: 8),
-              TextButton(
-                onPressed: editImage,
-                child: const Text(
-                  'Edit picture',
-                  style: TextStyle(fontSize: 17, color: blueColor),
-                ),
-              ),
-              myTextField('Username', usernameController),
-              myTextField('Bio', bioController),
-              GestureDetector(
-                onTap: () async {
-                  final selectedGender = await showDialog(
-                    context: context,
-                    builder: (ctx) => Dialog(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          for (var i = 1; i <= 4; i++)
-                            radioTile(i, genderFromValue[i]!),
-                        ],
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+              width: double.infinity,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 55,
+                      backgroundImage: image,
+                      backgroundColor: Colors.grey,
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: editImage,
+                      child: const Text(
+                        'Edit picture',
+                        style: TextStyle(fontSize: 17, color: blueColor),
                       ),
                     ),
-                  );
+                    myTextField('Username', usernameController),
+                    myTextField('Bio', bioController),
+                    GestureDetector(
+                      onTap: () async {
+                        final selectedGender = await showDialog(
+                          context: context,
+                          builder: (ctx) => Dialog(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (var i = 1; i <= 4; i++)
+                                  radioTile(i, genderFromValue[i]!),
+                              ],
+                            ),
+                          ),
+                        );
 
-                  if (selectedGender != null) {
-                    setState(() {
-                      selectedRadioValue = selectedGender;
-                      ref
-                          .read(userProvider.notifier)
-                          .updateGender(genderFromValue[selectedRadioValue]!);
-                    });
-                  }
-                },
-                child: myTextField('Gender', genderController, isGender: true),
+                        if (selectedGender != null) {
+                          setState(() {
+                            selectedRadioValue = selectedGender;
+                            genderController.text =
+                                genderFromValue[selectedGender]!;
+                          });
+                        }
+                      },
+                      child: myTextField('Gender', genderController,
+                          isGender: true),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Spacer(),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: blueColor,
+                            foregroundColor: mobileBackgroundColor,
+                          ),
+                          onPressed: saveEdits,
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Spacer(),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
-                      foregroundColor: mobileBackgroundColor,
-                    ),
-                    onPressed: saveEdits,
-                    child: const Text(
-                      'Save',
-                      style: TextStyle(fontSize: 17),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 

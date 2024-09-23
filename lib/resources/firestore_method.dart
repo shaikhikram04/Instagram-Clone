@@ -157,4 +157,35 @@ class FirestoreMethod {
       return;
     }
   }
+
+  Future<String> editProfile(
+    String uid,
+    String username,
+    String bio,
+    String gender,
+    String imageUrl,
+    Uint8List? newImage,
+  ) async {
+    String res = 'some error';
+
+    try {
+      if (newImage != null) {
+        StorageMethods().deleteImage('profilePics');
+        imageUrl = await StorageMethods()
+            .uploadImageToStorage('profilePics', newImage, false);
+      }
+
+      _firestore.collection('users').doc(uid).update({
+        'username': username,
+        'bio': bio,
+        'gender': gender,
+        'photoUrl': imageUrl,
+      });
+      res = 'success';
+    } catch (e) {
+      res = e.toString();
+    }
+
+    return res;
+  }
 }

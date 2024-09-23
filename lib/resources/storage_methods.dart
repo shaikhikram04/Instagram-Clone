@@ -28,4 +28,8 @@ class StorageMethods {
 
     return downloadURL;
   }
+
+  Future<void> deleteImage(String child) async {
+    _storage.ref().child(child).child(_auth.currentUser!.uid).delete();
+  }
 }

@@ -65,10 +65,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
-        title: Text(
-          userData['username'],
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: isLoading
+            ? const CircularProgressIndicator(color: blueColor)
+            : Text(
+                userData['username'],
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
         actions: [
           if (currentUserId == userData['uid'])
             IconButton(
@@ -86,7 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: blueColor,
+            ))
           : ListView(
               children: [
                 Padding(
