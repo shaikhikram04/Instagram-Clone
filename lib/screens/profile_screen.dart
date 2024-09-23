@@ -179,16 +179,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(top: 12, left: 10),
+                        padding: const EdgeInsets.only(top: 12),
                         child: Text(
                           userData['username'],
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 19),
+                              fontWeight: FontWeight.bold, fontSize: 17),
                         ),
                       ),
                       Container(
                         alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.only(top: 1, left: 10),
+                        padding: const EdgeInsets.only(top: 1),
                         child: Text(
                           userData['bio'],
                         ),

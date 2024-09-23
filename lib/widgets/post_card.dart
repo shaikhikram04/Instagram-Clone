@@ -32,15 +32,28 @@ class _PostCardState extends ConsumerState<PostCard> {
   }
 
   Future<void> checkFollowing() async {
-    final currUserID = FirebaseAuth.instance.currentUser!.uid;
-    final userSnap = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(currUserID)
-        .get();
+    if (!context.mounted) return;
 
-    setState(() {
-      isFollowing = userSnap.data()!['following'].contains(widget.snap['uid']);
-    });
+    try {
+      final currUserID = FirebaseAuth.instance.currentUser!.uid;
+      final userSnap = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currUserID)
+          .get();
+
+      if (!userSnap.exists || userSnap.data() == null) {
+        //! Handle case where user document doesn't exist or has no data
+        return;
+      }
+
+      setState(() {
+        if (!context.mounted) return; // Check again after async call
+        isFollowing =
+            userSnap.data()!['following'].contains(widget.snap['uid']);
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   void getComments() async {

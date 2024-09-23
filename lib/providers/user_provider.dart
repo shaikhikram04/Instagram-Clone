@@ -18,10 +18,6 @@ class UserNotifier extends StateNotifier<User> {
   void setUser(User user) {
     state = user;
   }
-
-  void updateGender(String gender) {
-    state = state.copyWith(gender: gender);
-  }
 }
 
 final userProvider =

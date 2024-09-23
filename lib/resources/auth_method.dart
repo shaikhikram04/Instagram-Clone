@@ -95,6 +95,11 @@ class AuthMethod {
   }
 
   Future<void> signOutUser() async {
-    await _auth.signOut();
+    try {
+      await _auth.signOut();
+      print("User signed out successfully");
+    } catch (e) {
+      print('Error during sign out: $e');
+    }
   }
 }

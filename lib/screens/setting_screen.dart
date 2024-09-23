@@ -1,5 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/resources/auth_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/settings_button.dart';
 
@@ -31,7 +31,9 @@ class SettingScreen extends StatelessWidget {
           SettingsButton(
             text: 'Log out',
             iconData: Icons.logout,
-            onTap: AuthMethod().signOutUser,
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+            },
             color: Colors.red,
           )
         ],

@@ -39,11 +39,12 @@ class _LoginScreenState extends State<LoginScreen> {
       password: _passwordController.text,
     );
 
+      if (!mounted) return;
+
     setState(() {
       _isLoading = false;
     });
 
-    if (!mounted) return;
     if (res != 'success') {
       showSnackBar(res, context);
     } else {
