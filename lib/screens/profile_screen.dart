@@ -66,7 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         title: isLoading
-            ? const CircularProgressIndicator(color: blueColor)
+            ? Container()
             : Text(
                 userData['username'],
                 style: const TextStyle(fontWeight: FontWeight.bold),

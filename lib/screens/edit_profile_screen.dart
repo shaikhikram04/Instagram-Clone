@@ -124,83 +124,129 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit profile'),
-        backgroundColor: mobileBackgroundColor,
-      ),
-      body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
-              width: double.infinity,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 55,
-                      backgroundImage: image,
-                      backgroundColor: Colors.grey,
-                    ),
-                    const SizedBox(height: 8),
-                    TextButton(
-                      onPressed: editImage,
-                      child: const Text(
-                        'Edit picture',
-                        style: TextStyle(fontSize: 17, color: blueColor),
-                      ),
-                    ),
-                    myTextField('Username', usernameController),
-                    myTextField('Bio', bioController),
-                    GestureDetector(
-                      onTap: () async {
-                        final selectedGender = await showDialog(
-                          context: context,
-                          builder: (ctx) => Dialog(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                for (var i = 1; i <= 4; i++)
-                                  radioTile(i, genderFromValue[i]!),
-                              ],
-                            ),
-                          ),
-                        );
-
-                        if (selectedGender != null) {
-                          setState(() {
-                            selectedRadioValue = selectedGender;
-                            genderController.text =
-                                genderFromValue[selectedGender]!;
-                          });
-                        }
-                      },
-                      child: myTextField('Gender', genderController,
-                          isGender: true),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Spacer(),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: blueColor,
-                            foregroundColor: mobileBackgroundColor,
-                          ),
-                          onPressed: saveEdits,
-                          child: const Text(
-                            'Save',
-                            style: TextStyle(fontSize: 17),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+    Future<bool?> showBackDialog() async {
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Are you sure?'),
+          content: const Text('Do you want to discard changes?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                'No',
+                style: TextStyle(color: blueColor),
               ),
             ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'Yes',
+                style: TextStyle(color: blueColor),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        if (username != usernameController.text ||
+            bio != bioController.text ||
+            gender != genderController.text ||
+            newImage != null) {
+          final bool shouldPop = await showBackDialog() ?? false;
+
+          if (shouldPop && context.mounted) {
+            Navigator.of(context).pop();
+          }
+        } else {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit profile'),
+          backgroundColor: mobileBackgroundColor,
+        ),
+        body: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+                width: double.infinity,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 55,
+                        backgroundImage: image,
+                        backgroundColor: Colors.grey,
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: editImage,
+                        child: const Text(
+                          'Edit picture',
+                          style: TextStyle(fontSize: 17, color: blueColor),
+                        ),
+                      ),
+                      myTextField('Username', usernameController),
+                      myTextField('Bio', bioController),
+                      GestureDetector(
+                        onTap: () async {
+                          final selectedGender = await showDialog(
+                            context: context,
+                            builder: (ctx) => Dialog(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  for (var i = 1; i <= 4; i++)
+                                    radioTile(i, genderFromValue[i]!),
+                                ],
+                              ),
+                            ),
+                          );
+
+                          if (selectedGender != null) {
+                            setState(() {
+                              selectedRadioValue = selectedGender;
+                              genderController.text =
+                                  genderFromValue[selectedGender]!;
+                            });
+                          }
+                        },
+                        child: myTextField('Gender', genderController,
+                            isGender: true),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Spacer(),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: blueColor,
+                              foregroundColor: mobileBackgroundColor,
+                            ),
+                            onPressed: saveEdits,
+                            child: const Text(
+                              'Save',
+                              style: TextStyle(fontSize: 17),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+      ),
     );
   }
 

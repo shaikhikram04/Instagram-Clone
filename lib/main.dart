@@ -2,13 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/responsive/mobile_screen_layout.dart';
 import 'package:instagram_clone/responsive/responsive_layout_screen.dart';
 import 'package:instagram_clone/responsive/web_screen_layout.dart';
 import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +26,7 @@ void main() async {
     await Firebase.initializeApp();
   }
 
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
