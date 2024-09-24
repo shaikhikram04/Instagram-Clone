@@ -52,7 +52,7 @@ class _PostCardState extends ConsumerState<PostCard> {
             userSnap.data()!['following'].contains(widget.snap['uid']);
       });
     } catch (e) {
-      print(e.toString());
+      return;
     }
   }
 
@@ -64,14 +64,16 @@ class _PostCardState extends ConsumerState<PostCard> {
           .collection('comments')
           .get();
 
-      commentLen = snap.size;
+      if (context.mounted) {
+        setState(() {
+          commentLen = snap.size;
+        });
+      }
     } catch (e) {
       if (!mounted) return;
 
       showSnackBar(e.toString(), context);
     }
-
-    // setState(() {});
   }
 
   @override
