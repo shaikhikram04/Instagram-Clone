@@ -25,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _bioController = TextEditingController();
   late Uint8List _image;
   bool isLoading = false;
+  bool isAssigningImage = false;
 
   @override
   void initState() {
@@ -34,13 +35,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Future<void> loadAssetImage() async {
     setState(() {
-      isLoading = true;
+      isAssigningImage = true;
     });
     final byte =
         await rootBundle.load('assets/images/instagram_default_pfp.png');
     setState(() {
       _image = byte.buffer.asUint8List();
-      isLoading = false;
+      isAssigningImage = false;
     });
   }
 
@@ -129,25 +130,28 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 64,
                   ),
                   const SizedBox(height: 64),
-                  Stack(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        radius: 64,
-                        backgroundImage: MemoryImage(_image),
-                      ),
-                      Positioned(
-                        bottom: -10,
-                        left: 80,
-                        child: IconButton(
-                          onPressed: selectImage,
-                          icon: const Icon(Icons.add_a_photo),
-                          iconSize: 30,
-                          color: primaryColor,
+                  //* Profile image
+                  isAssigningImage
+                      ? const CircularProgressIndicator(color: blueColor)
+                      : Stack(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              radius: 64,
+                              backgroundImage: MemoryImage(_image),
+                            ),
+                            Positioned(
+                              bottom: -10,
+                              left: 80,
+                              child: IconButton(
+                                onPressed: selectImage,
+                                icon: const Icon(Icons.add_a_photo),
+                                iconSize: 30,
+                                color: primaryColor,
+                              ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
-                  ),
                   const SizedBox(height: 24),
                   TextFieldInput(
                     textEditingController: _usernameController,

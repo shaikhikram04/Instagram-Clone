@@ -9,8 +9,8 @@ class User {
   final List following;
   final String photoUrl;
   final String gender;
-  final List<String> likedPosts;
-  final List<String> savedPosts;
+  final List likedPosts;
+  final List savedPosts;
 
   User({
     required this.username,
@@ -61,11 +61,11 @@ class User {
     String? uid,
     String? bio,
     String? photoUrl,
-    List<String>? followers,
-    List<String>? following,
+    List? followers,
+    List? following,
     String? gender,
-    List<String>? likedPosts,
-    List<String>? savedPosts,
+    List? likedPosts,
+    List? savedPosts,
   }) {
     return User(
       username: username ?? this.username,

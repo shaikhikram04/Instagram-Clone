@@ -46,8 +46,8 @@ class _PostCardState extends ConsumerState<PostCard> {
         return;
       }
 
+      if (!mounted) return; // Check again after async call
       setState(() {
-        if (!context.mounted) return; // Check again after async call
         isFollowing =
             userSnap.data()!['following'].contains(widget.snap['uid']);
       });
@@ -64,7 +64,7 @@ class _PostCardState extends ConsumerState<PostCard> {
           .collection('comments')
           .get();
 
-      if (context.mounted) {
+      if (mounted) {
         setState(() {
           commentLen = snap.size;
         });

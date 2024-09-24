@@ -32,7 +32,7 @@ class _AddPostSereenState extends ConsumerState<AddPostSereen> {
                 child: const Text('Take a Photo'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  Uint8List file = await pickImage(ImageSource.camera);
+                  final file = await pickImage(ImageSource.camera);
                   setState(() {
                     _file = file;
                   });
@@ -43,7 +43,7 @@ class _AddPostSereenState extends ConsumerState<AddPostSereen> {
                 child: const Text('Choose from gallery'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  Uint8List file = await pickImage(ImageSource.gallery);
+                  final file = await pickImage(ImageSource.gallery);
                   setState(() {
                     _file = file;
                   });

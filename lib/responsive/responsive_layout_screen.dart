@@ -21,7 +21,12 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
   @override
   void initState() {
     super.initState();
-    addData();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        addData();
+      },
+    );
   }
 
   void addData() async {
