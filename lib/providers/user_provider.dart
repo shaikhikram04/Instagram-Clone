@@ -20,6 +20,31 @@ class UserNotifier extends StateNotifier<User> {
   void setUser(User user) {
     state = user;
   }
+
+  void updateField({
+    String? username,
+    String? email,
+    String? uid,
+    String? bio,
+    String? photoUrl,
+    List? followers,
+    List? following,
+    String? gender,
+    List? likedPosts,
+    List? savedPosts,
+  }) {
+    state = User(
+      username: username ?? state.username,
+      email: email ?? state.email,
+      uid: uid ?? state.uid,
+      bio: bio ?? state.bio,
+      photoUrl: photoUrl ?? state.photoUrl,
+      followers: followers ?? state.followers,
+      following: following ?? state.following,
+      likedPosts: likedPosts ?? state.likedPosts,
+      savedPosts: savedPosts ?? state.savedPosts,
+    );
+  }
 }
 
 final userProvider =

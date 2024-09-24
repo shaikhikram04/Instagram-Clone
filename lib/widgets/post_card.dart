@@ -257,11 +257,21 @@ class _PostCardState extends ConsumerState<PostCard> {
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.bookmark_border,
-                      color: primaryColor,
+                  child: LikeAnimation(
+                    isAnimating:
+                        user.savedPosts.contains(widget.snap['postId']),
+                    smallLike: true,
+                    child: IconButton(
+                      onPressed: () {
+                        FirestoreMethod().savePost(user.uid,
+                            widget.snap['postId'], user.savedPosts, ref);
+                      },
+                      icon: Icon(
+                        user.savedPosts.contains(widget.snap['postId'])
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                        color: primaryColor,
+                      ),
                     ),
                   ),
                 ),

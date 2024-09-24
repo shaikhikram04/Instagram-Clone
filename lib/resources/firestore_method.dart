@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/comment.dart';
 import 'package:instagram_clone/models/post.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
@@ -48,17 +50,54 @@ class FirestoreMethod {
 
   Future<void> likePost(String postId, String uid, List likes) async {
     try {
+      //! if user already liked post
       if (likes.contains(uid)) {
+        //*! remove userId from likes list
         _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayRemove([uid]),
         });
+
+        //! remove postId from user LidedPost list
+        _firestore.collection('users').doc(uid).update({
+          'likedPosts': FieldValue.arrayRemove([postId]),
+        });
       } else {
+        //! is like post
+        //*! add userId to likes list
         _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([uid]),
+        });
+
+        //! add postId from to LidedPost list
+        _firestore.collection('users').doc(uid).update({
+          'likedPosts': FieldValue.arrayUnion([postId]),
         });
       }
     } catch (e) {
       return;
+    }
+  }
+
+  void savePost(String uid, String postId, List savedPosts, WidgetRef ref) {
+    //* already saved -> unsave
+    if (savedPosts.contains(postId)) {
+      //! remove postId from savedPost of firebase
+      _firestore.collection('users').doc(uid).update({
+        'savedPosts': FieldValue.arrayRemove([postId])
+      });
+
+      //! remove postId from list of provider
+      savedPosts.remove(postId);
+      ref.read(userProvider.notifier).updateField(savedPosts: savedPosts);
+    } else {
+      //! add postId to savedPost of firebase
+      _firestore.collection('users').doc(uid).update({
+        'savedPosts': FieldValue.arrayUnion([postId])
+      });
+
+      //! remove postId from list of provider
+      savedPosts.add(postId);
+      ref.read(userProvider.notifier).updateField(savedPosts: savedPosts);
     }
   }
 
