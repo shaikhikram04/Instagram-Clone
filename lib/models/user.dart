@@ -9,6 +9,8 @@ class User {
   final List following;
   final String photoUrl;
   final String gender;
+  final List<String> likedPosts;
+  final List<String> savedPosts;
 
   User({
     required this.username,
@@ -18,6 +20,8 @@ class User {
     required this.photoUrl,
     required this.followers,
     required this.following,
+    required this.likedPosts,
+    required this.savedPosts,
     this.gender = 'Prefer not to say',
   });
 
@@ -30,6 +34,8 @@ class User {
         'following': following,
         'photoUrl': photoUrl,
         'gender': gender,
+        'likedPosts': likedPosts,
+        'savedPosts': savedPosts,
       };
 
   static User fromSeed(DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -44,6 +50,8 @@ class User {
       followers: snap['followers'],
       following: snap['following'],
       gender: snap['gender'],
+      likedPosts: snap['likedPosts'],
+      savedPosts: snap['savedPosts'],
     );
   }
 
@@ -56,6 +64,8 @@ class User {
     List<String>? followers,
     List<String>? following,
     String? gender,
+    List<String>? likedPosts,
+    List<String>? savedPosts,
   }) {
     return User(
       username: username ?? this.username,
@@ -66,6 +76,8 @@ class User {
       followers: followers ?? this.followers,
       following: following ?? this.following,
       gender: gender ?? this.gender,
+      likedPosts: this.likedPosts,
+      savedPosts: this.savedPosts,
     );
   }
 }

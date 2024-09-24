@@ -12,6 +12,8 @@ class UserNotifier extends StateNotifier<User> {
             photoUrl: '',
             followers: [],
             following: [],
+            likedPosts: [],
+            savedPosts: [],
           ),
         );
 

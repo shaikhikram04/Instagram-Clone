@@ -53,6 +53,8 @@ class AuthMethod {
           photoUrl: photoUrl,
           followers: [],
           following: [],
+          likedPosts: [],
+          savedPosts: [],
         );
 
         //* add user to firebase
