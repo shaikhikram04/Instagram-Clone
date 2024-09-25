@@ -48,7 +48,8 @@ class FirestoreMethod {
     return res;
   }
 
-  Future<void> likePost(String postId, String uid, List likes) async {
+  Future<void> likePost(
+      String postId, String uid, List likes, WidgetRef ref) async {
     try {
       //! if user already liked post
       if (likes.contains(uid)) {
@@ -61,6 +62,9 @@ class FirestoreMethod {
         _firestore.collection('users').doc(uid).update({
           'likedPosts': FieldValue.arrayRemove([postId]),
         });
+
+        likes.remove(postId);
+        ref.read(userProvider.notifier).updateField(likedPosts: likes);
       } else {
         //! is like post
         //*! add userId to likes list
@@ -72,6 +76,9 @@ class FirestoreMethod {
         _firestore.collection('users').doc(uid).update({
           'likedPosts': FieldValue.arrayUnion([postId]),
         });
+
+        likes.add(postId);
+        ref.read(userProvider.notifier).updateField(likedPosts: likes);
       }
     } catch (e) {
       return;
