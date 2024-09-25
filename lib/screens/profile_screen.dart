@@ -7,6 +7,7 @@ import 'package:instagram_clone/screens/setting_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
+import 'package:instagram_clone/widgets/post_grid.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String uid;
@@ -258,23 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       );
                     }
 
-                    return GridView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.size,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 1.5,
-                        childAspectRatio: 0.9,
-                      ),
-                      itemBuilder: (context, index) {
-                        return Image.network(
-                          snapshot.data!.docs[index].data()['postUrl'],
-                          fit: BoxFit.cover,
-                        );
-                      },
-                    );
+                    return PostGrid(postList: snapshot.data!.docs);
                   },
                 ),
               ],
