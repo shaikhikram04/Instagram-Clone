@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/screens/add_post_sereen.dart';
+import 'package:instagram_clone/screens/feed_screen.dart';
+import 'package:instagram_clone/screens/profile_screen.dart';
+import 'package:instagram_clone/screens/search_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
-import 'package:instagram_clone/utils/global_variables.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -43,7 +47,15 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         onPageChanged: onPageChanged,
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        children: homeScreenItems,
+        children: [
+          const FeedScreen(),
+          const SearchScreen(),
+          const AddPostSereen(),
+          const Center(child: Text('Notification')),
+          ProfileScreen(
+            uid: FirebaseAuth.instance.currentUser!.uid,
+          ),
+        ],
       ),
       bottomNavigationBar: CupertinoTabBar(
         backgroundColor: mobileBackgroundColor,

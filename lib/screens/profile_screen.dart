@@ -236,27 +236,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
 
                     if (snapshot.data!.size == 0) {
-                      return Container(
-                        padding: const EdgeInsets.only(top: 50),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Capture the moment with a friend',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 21),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Create your first post',
-                              style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                      );
+                      if (currentUserId == widget.uid) {
+                        return Container(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Capture the moment with a friend',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 21),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Create your first post',
+                                style: TextStyle(
+                                    color: blueColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                              )
+                            ],
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                'assets/images/Insta_NTF.png',
+                                height: 200,
+                              ),
+                              const Text(
+                                'No Posts yet!',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 21),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     }
 
                     return PostGrid(postList: snapshot.data!.docs);
