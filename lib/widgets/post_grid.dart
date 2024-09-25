@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/screens/post_screen.dart';
 
 class PostGrid extends StatelessWidget {
   const PostGrid({super.key, required this.postList});
@@ -17,9 +18,16 @@ class PostGrid extends StatelessWidget {
         childAspectRatio: 0.9,
       ),
       itemBuilder: (context, index) {
-        return Image.network(
-          postList[index]['postUrl'],
-          fit: BoxFit.cover,
+        return InkWell(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => PostScreen(snap: postList[index].data()),
+            ));
+          },
+          child: Image.network(
+            postList[index]['postUrl'],
+            fit: BoxFit.cover,
+          ),
         );
       },
     );
