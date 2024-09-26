@@ -58,13 +58,26 @@ class _MessageScreenState extends State<MessageScreen> {
                   });
                 }),
             const SizedBox(height: 15),
-            const Text(
-              'Messages',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+            Row(
+              children: [
+                const Text(
+                  'Messages',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text(
+                    'Request',
+                    style: TextStyle(color: blueColor, fontSize: 18),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 3),
             Expanded(
               child: ListView.builder(
-                itemCount: 3,
+                itemCount: 10,
                 itemBuilder: (BuildContext context, int index) {
                   return const ChatCard();
                 },
