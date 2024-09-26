@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/widgets/new_message.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -25,7 +26,7 @@ class ChatScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(child: Container()),
-          
+          const NewMessage(),
         ],
       ),
     );
