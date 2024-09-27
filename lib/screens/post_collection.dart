@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/post_grid.dart';
 
 class PostCollectionScreen extends ConsumerWidget {

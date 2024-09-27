@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/post_card.dart';
 
 class PostScreen extends StatelessWidget {
