@@ -93,7 +93,7 @@ class _MessageScreenState extends State<MessageScreen> {
               child: ListView.builder(
                 itemCount: 10,
                 itemBuilder: (BuildContext context, int index) {
-                  return const ChatCard();
+                  return const ChatCard(isActiveChat: true,);
                 },
               ),
             ),
