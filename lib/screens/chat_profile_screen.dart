@@ -26,9 +26,7 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
-      ),
+      appBar: AppBar(),
       body: Center(
         child: Column(
           children: [

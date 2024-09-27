@@ -171,7 +171,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Edit profile'),
-          backgroundColor: mobileBackgroundColor,
         ),
         body: isLoading
             ? const Center(

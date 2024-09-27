@@ -39,7 +39,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
                 icon: const Icon(Icons.arrow_back))
             : null,
-        backgroundColor: mobileBackgroundColor,
         title: SizedBox(
           height: 45,
           child: TextFormField(
@@ -53,10 +52,16 @@ class _SearchScreenState extends State<SearchScreen> {
               hintText: 'Search',
               fillColor: Colors.grey.shade900,
               filled: true,
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: primaryColor,
+              ),
               suffixIcon: searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear),
+                      icon: const Icon(
+                        Icons.clear,
+                        color: primaryColor,
+                      ),
                       onPressed: () {
                         setState(() {
                           searchController.clear();

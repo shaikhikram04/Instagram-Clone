@@ -70,7 +70,6 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
         title: const Text('Comments'),
       ),
       body: StreamBuilder(

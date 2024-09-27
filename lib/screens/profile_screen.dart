@@ -65,7 +65,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
         title: isLoading
             ? Container()
             : Text(
@@ -84,7 +83,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icons.menu,
                 size: 27,
               ),
-              color: Colors.white,
             ),
         ],
       ),

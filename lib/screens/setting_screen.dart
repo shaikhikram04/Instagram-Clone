@@ -75,8 +75,6 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     return Scaffold(
       backgroundColor: mobileBackgroundColor,
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
-        foregroundColor: primaryColor,
         title: const Text('Settings and activity'),
       ),
       body: ListView(

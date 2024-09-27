@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/chat_profile_screen.dart';
-import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/type_new_message.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -10,7 +9,6 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
         title: ListTile(
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => const ChatProfileScreen(),

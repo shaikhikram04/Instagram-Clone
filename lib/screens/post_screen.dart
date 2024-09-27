@@ -10,7 +10,6 @@ class PostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
         title: Text(snap['username']),
       ),
       body: SafeArea(child: PostCard(snap: snap)),

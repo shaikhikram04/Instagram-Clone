@@ -12,7 +12,6 @@ class PostCollectionScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
         title: Text(title),
       ),
       body: postList.isNotEmpty

@@ -129,7 +129,6 @@ class _AddPostSereenState extends ConsumerState<AddPostSereen> {
           )
         : Scaffold(
             appBar: AppBar(
-              backgroundColor: mobileBackgroundColor,
               leading: IconButton(
                 onPressed: _clearImage,
                 icon: const Icon(Icons.arrow_back),

@@ -13,7 +13,6 @@ class FeedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: mobileBackgroundColor,
         title: SvgPicture.asset(
           'assets/images/ic_instagram.svg',
           // ignore: deprecated_member_use
