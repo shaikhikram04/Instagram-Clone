@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
-class NewMessage extends StatefulWidget {
-  const NewMessage({super.key});
+class TypeNewMessage extends StatefulWidget {
+  const TypeNewMessage({super.key});
 
   @override
-  State<NewMessage> createState() => _NewMessageState();
+  State<TypeNewMessage> createState() => _NewMessageState();
 }
 
-class _NewMessageState extends State<NewMessage> {
+class _NewMessageState extends State<TypeNewMessage> {
   final messageController = TextEditingController();
   bool isMessaging = false;
 

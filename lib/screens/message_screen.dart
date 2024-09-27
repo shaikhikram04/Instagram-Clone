@@ -14,6 +14,7 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: const Text(
           'username',
           style: TextStyle(fontWeight: FontWeight.w600),
