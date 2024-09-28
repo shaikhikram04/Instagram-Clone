@@ -179,7 +179,10 @@ class _SignupScreenState extends State<SignupScreen> {
                     textInputType: TextInputType.text,
                   ),
                   const SizedBox(height: 24),
-                  BlueButton(isLoading: isLoading, onTap: signupUser),
+                  BlueButton(
+                    onTap: signupUser,
+                    label: 'Send',
+                  ),
                   const SizedBox(height: 12),
                   Flexible(
                     flex: 2,

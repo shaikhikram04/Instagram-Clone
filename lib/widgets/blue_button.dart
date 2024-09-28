@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class BlueButton extends StatelessWidget {
-  const BlueButton({super.key, required this.isLoading, required this.onTap});
+  const BlueButton({
+    super.key,
+    this.isLoading = false,
+    required this.onTap,
+    required this.label,
+  });
 
   final bool isLoading;
+  final String label;
   final void Function() onTap;
 
   @override
@@ -14,10 +20,10 @@ class BlueButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 15),
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(10),
           ),
           color: blueColor,
         ),
@@ -26,7 +32,13 @@ class BlueButton extends StatelessWidget {
                 child: CircularProgressIndicator(
                 color: primaryColor,
               ))
-            : const Text('Signup'),
+            : Text(
+                label,
+                style: const TextStyle(
+                    fontSize: 17,
+                    color: primaryColor,
+                    fontWeight: FontWeight.w700),
+              ),
       ),
     );
   }

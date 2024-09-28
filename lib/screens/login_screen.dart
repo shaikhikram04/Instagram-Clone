@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPass: true,
               ),
               const SizedBox(height: 24),
-              BlueButton(isLoading: _isLoading, onTap: loginUser),
+              BlueButton(isLoading: _isLoading, onTap: loginUser, label: 'Login',),
               const SizedBox(height: 12),
               Flexible(
                 flex: 2,
