@@ -5,9 +5,9 @@ import 'package:instagram_clone/responsive/mobile_screen_layout.dart';
 import 'package:instagram_clone/responsive/responsive_layout_screen.dart';
 import 'package:instagram_clone/responsive/web_screen_layout.dart';
 import 'package:instagram_clone/screens/signup_screen.dart';
-import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
 import 'package:instagram_clone/utils/utils.dart';
+import 'package:instagram_clone/widgets/blue_button.dart';
 import 'package:instagram_clone/widgets/text_field_input.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -100,23 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPass: true,
               ),
               const SizedBox(height: 24),
-              InkWell(
-                onTap: loginUser,
-                child: Container(
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    color: blueColor,
-                  ),
-                  child: _isLoading == true
-                      ? const CircularProgressIndicator()
-                      : const Text('Login'),
-                ),
-              ),
+              BlueButton(isLoading: _isLoading, onTap: loginUser),
               const SizedBox(height: 12),
               Flexible(
                 flex: 2,

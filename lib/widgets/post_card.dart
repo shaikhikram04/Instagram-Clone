@@ -6,6 +6,7 @@ import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/screens/comments_screen.dart';
 import 'package:instagram_clone/screens/profile_screen.dart';
+import 'package:instagram_clone/screens/share_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
@@ -74,6 +75,16 @@ class _PostCardState extends ConsumerState<PostCard> {
 
       showSnackBar(e.toString(), context);
     }
+  }
+
+  void showShareBar() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => const ShareScreen(),
+    );
   }
 
   @override
@@ -242,7 +253,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: showShareBar,
                 icon: const Icon(
                   Icons.send,
                   color: primaryColor,

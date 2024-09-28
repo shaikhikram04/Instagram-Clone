@@ -9,6 +9,7 @@ import 'package:instagram_clone/responsive/web_screen_layout.dart';
 import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
+import 'package:instagram_clone/widgets/blue_button.dart';
 import 'package:instagram_clone/widgets/text_field_input.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -178,26 +179,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     textInputType: TextInputType.text,
                   ),
                   const SizedBox(height: 24),
-                  InkWell(
-                    onTap: signupUser,
-                    child: Container(
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        color: blueColor,
-                      ),
-                      child: isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                              color: primaryColor,
-                            ))
-                          : const Text('Signup'),
-                    ),
-                  ),
+                  BlueButton(isLoading: isLoading, onTap: signupUser),
                   const SizedBox(height: 12),
                   Flexible(
                     flex: 2,
