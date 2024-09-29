@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/comment.dart';
+import 'package:instagram_clone/models/conversation.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
@@ -11,7 +12,7 @@ import 'package:uuid/uuid.dart';
 class FirestoreMethod {
   static final _firestore = FirebaseFirestore.instance;
 
-  static final uuid = const Uuid();
+  static const uuid = Uuid();
 
   //* upload post
   static Future<String> uploadPost(
@@ -228,6 +229,46 @@ class FirestoreMethod {
         'gender': gender,
         'photoUrl': imageUrl,
       });
+      res = 'success';
+    } catch (e) {
+      res = e.toString();
+    }
+
+    return res;
+  }
+
+  static Future<String> establishConversation(
+    String selfUid,
+    String selfPhotoUrl,
+    String otherUid,
+    String otherPhotoUrl,
+  ) async {
+    String res = 'some error occurred';
+
+    try {
+      final String id = uuid.v4();
+
+      final conversation = Conversation(
+        id: id,
+        lastMessage: '',
+        participants: [
+          {
+            'uid': selfUid,
+            'photoUrl': selfPhotoUrl,
+          },
+          {
+            'uid': otherUid,
+            'photoUrl': otherPhotoUrl,
+          }
+        ],
+        timeStamp: DateTime.now(),
+      );
+
+      await _firestore
+          .collection('conversations')
+          .doc(conversation.id)
+          .set(conversation.toJson);
+
       res = 'success';
     } catch (e) {
       res = e.toString();
