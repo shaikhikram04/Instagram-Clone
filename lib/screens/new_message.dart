@@ -1,17 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_card.dart';
 
-class NewMessage extends StatefulWidget {
+class NewMessage extends ConsumerStatefulWidget {
   const NewMessage({super.key});
 
   @override
-  State<NewMessage> createState() => _NewMessageState();
+  ConsumerState<NewMessage> createState() => _NewMessageState();
 }
 
-class _NewMessageState extends State<NewMessage> {
+class _NewMessageState extends ConsumerState<NewMessage> {
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -58,14 +62,38 @@ class _NewMessageState extends State<NewMessage> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (BuildContext context, int index) {
-                  return const ChatCard(
-                    isActiveChat: false,
-                  );
-                },
-              ),
+              child: user.following.isNotEmpty
+                  ? FutureBuilder(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .where('uid', whereIn: user.following)
+                          .get(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data.size,
+                            itemBuilder: (BuildContext context, int index) {
+                              return const ChatCard(
+                                isActiveChat: false,
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(snapshot.error.toString()),
+                          );
+                        }
+
+                        return const Center(
+                            child: CircularProgressIndicator(
+                          color: blueColor,
+                        ));
+                      },
+                    )
+                  : const Center(
+                      child: Text('Please Follow someone to communicate'),
+                    ),
             ),
           ],
         ),

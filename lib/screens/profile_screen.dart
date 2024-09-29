@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/screens/edit_profile_screen.dart';
 import 'package:instagram_clone/screens/setting_screen.dart';
@@ -9,24 +11,25 @@ import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
 import 'package:instagram_clone/widgets/post_grid.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   final String uid;
   const ProfileScreen({super.key, required this.uid});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Map<String, dynamic> userData = {};
   var postLen = 0;
   var isFollowing = false;
-  String currentUserId = '';
   var isLoading = false;
+  late User user;
 
   @override
   void initState() {
     super.initState();
+    user = ref.read(userProvider);
     getData();
   }
 
@@ -47,9 +50,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       postLen = postSnap.docs.length;
       userData = snap.data()!;
+      user = ref.watch(userProvider);
+      isFollowing = userData['followers'].contains(user.uid);
       if (!mounted) return;
-      currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      isFollowing = userData['followers'].contains(currentUserId);
       setState(() {});
     } catch (e) {
       if (!mounted) return;
@@ -63,6 +66,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
         title: isLoading
@@ -72,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
         actions: [
-          if (currentUserId == userData['uid'])
+          if (user.uid == userData['uid'])
             IconButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -125,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    currentUserId == widget.uid
+                                    user.uid == widget.uid
                                         ? FollowButton(
                                             backgroundColor:
                                                 mobileBackgroundColor,
@@ -148,10 +152,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 textColor: Colors.black,
                                                 function: () async {
                                                   await FirestoreMethod()
-                                                      .followUser(currentUserId,
-                                                          userData['uid']);
+                                                      .followUser(
+                                                    user.uid,
+                                                    userData['uid'],
+                                                    ref,
+                                                  );
                                                   setState(() {
-                                                    getData();
+                                                    isFollowing = !isFollowing;
                                                   });
                                                 },
                                               )
@@ -162,10 +169,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 textColor: Colors.white,
                                                 function: () async {
                                                   await FirestoreMethod()
-                                                      .followUser(currentUserId,
-                                                          userData['uid']);
+                                                      .followUser(
+                                                    user.uid,
+                                                    userData['uid'],
+                                                    ref,
+                                                  );
                                                   setState(() {
-                                                    getData();
+                                                    isFollowing = !isFollowing;
                                                   });
                                                 },
                                               ),
@@ -234,7 +244,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     }
 
                     if (snapshot.data!.size == 0) {
-                      if (currentUserId == widget.uid) {
+                      if (user.uid == widget.uid) {
                         return Container(
                           padding: const EdgeInsets.only(top: 50),
                           child: const Column(

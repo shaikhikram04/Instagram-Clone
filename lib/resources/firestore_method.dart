@@ -181,7 +181,7 @@ class FirestoreMethod {
     }
   }
 
-  Future<void> followUser(String uid, String followId) async {
+  Future<void> followUser(String uid, String followId, WidgetRef ref) async {
     try {
       final snap = await _firestore.collection('users').doc(uid).get();
       List following = snap.data()!['following'];
@@ -193,6 +193,8 @@ class FirestoreMethod {
         await _firestore.collection('users').doc(uid).update({
           'following': FieldValue.arrayRemove([followId])
         });
+
+        following.remove(followId);
       } else {
         await _firestore.collection('users').doc(followId).update({
           'followers': FieldValue.arrayUnion([uid])
@@ -200,7 +202,11 @@ class FirestoreMethod {
         await _firestore.collection('users').doc(uid).update({
           'following': FieldValue.arrayUnion([followId])
         });
+
+        following.add(followId);
       }
+
+      ref.read(userProvider.notifier).updateField(following: following);
     } catch (e) {
       return;
     }

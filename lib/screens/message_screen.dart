@@ -16,7 +16,7 @@ class MessageScreen extends ConsumerStatefulWidget {
 class _MessageScreenState extends ConsumerState<MessageScreen> {
   @override
   Widget build(BuildContext context) {
-    final user = ref.read(userProvider);
+    final user = ref.watch(userProvider);
 
     return Scaffold(
       appBar: AppBar(
