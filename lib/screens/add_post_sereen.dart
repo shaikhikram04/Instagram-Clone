@@ -70,7 +70,7 @@ class _AddPostSereenState extends ConsumerState<AddPostSereen> {
       setState(() {
         _isloading = true;
       });
-      String res = await FirestoreMethod().uploadPost(
+      String res = await FirestoreMethod.uploadPost(
         _descriptionController.text,
         _file!,
         uid,

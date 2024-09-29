@@ -94,7 +94,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
             text: 'Log out',
             iconData: Icons.logout,
             onTap: () async {
-              await AuthMethod().signOutUser();
+              await AuthMethod.signOutUser();
 
               if (!context.mounted) return;
 

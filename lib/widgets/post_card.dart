@@ -184,7 +184,7 @@ class _PostCardState extends ConsumerState<PostCard> {
           //* Image section
           GestureDetector(
             onDoubleTap: () async {
-              await FirestoreMethod().likePost(
+              await FirestoreMethod.likePost(
                   widget.snap['postId'], user.uid, widget.snap['likes'], ref);
               setState(() {
                 isLikeAnimating = true;
@@ -231,7 +231,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                 smallLike: true,
                 child: IconButton(
                   onPressed: () async {
-                    await FirestoreMethod().likePost(widget.snap['postId'],
+                    await FirestoreMethod.likePost(widget.snap['postId'],
                         user.uid, widget.snap['likes'], ref);
                   },
                   icon: widget.snap['likes'].contains(user.uid)
@@ -268,7 +268,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                     smallLike: true,
                     child: IconButton(
                       onPressed: () {
-                        FirestoreMethod().savePost(user.uid,
+                        FirestoreMethod.savePost(user.uid,
                             widget.snap['postId'], user.savedPosts, ref);
                       },
                       icon: Icon(

@@ -46,7 +46,7 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
 
   void _comment(User user) async {
     try {
-      await FirestoreMethod().commentToPost(
+      await FirestoreMethod.commentToPost(
         widget.postId,
         controller.text,
         user.uid,

@@ -9,12 +9,12 @@ import 'package:instagram_clone/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
 class FirestoreMethod {
-  final _firestore = FirebaseFirestore.instance;
+  static final _firestore = FirebaseFirestore.instance;
 
-  final uuid = const Uuid();
+  static final uuid = const Uuid();
 
   //* upload post
-  Future<String> uploadPost(
+  static Future<String> uploadPost(
     String description,
     Uint8List file,
     String uid,
@@ -24,7 +24,7 @@ class FirestoreMethod {
     String res = 'some error occcurred';
     try {
       String imageUrl =
-          await StorageMethods().uploadImageToStorage('posts', file, true);
+          await StorageMethods.uploadImageToStorage('posts', file, true);
 
       final postId = uuid.v1();
       final post = Post(
@@ -48,7 +48,7 @@ class FirestoreMethod {
     return res;
   }
 
-  Future<void> likePost(
+  static Future<void> likePost(
       String postId, String uid, List likes, WidgetRef ref) async {
     try {
       //! if user already liked post
@@ -85,7 +85,8 @@ class FirestoreMethod {
     }
   }
 
-  void savePost(String uid, String postId, List savedPosts, WidgetRef ref) {
+  static void savePost(
+      String uid, String postId, List savedPosts, WidgetRef ref) {
     //* already saved -> unsave
     if (savedPosts.contains(postId)) {
       //! remove postId from savedPost of firebase
@@ -108,7 +109,7 @@ class FirestoreMethod {
     }
   }
 
-  Future<void> commentToPost(
+  static Future<void> commentToPost(
     String postId,
     String text,
     String uid,
@@ -216,9 +217,9 @@ class FirestoreMethod {
 
     try {
       if (newImage != null) {
-        StorageMethods().deleteImage('profilePics');
-        imageUrl = await StorageMethods()
-            .uploadImageToStorage('profilePics', newImage, false);
+        StorageMethods.deleteImage('profilePics');
+        imageUrl = await StorageMethods.uploadImageToStorage(
+            'profilePics', newImage, false);
       }
 
       _firestore.collection('users').doc(uid).update({

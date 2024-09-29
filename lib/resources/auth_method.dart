@@ -6,10 +6,10 @@ import 'package:instagram_clone/models/user.dart' as model;
 import 'package:instagram_clone/resources/storage_methods.dart';
 
 class AuthMethod {
-  final _auth = FirebaseAuth.instance;
-  final _fireStore = FirebaseFirestore.instance;
+  static final _auth = FirebaseAuth.instance;
+  static final _fireStore = FirebaseFirestore.instance;
 
-  Future<DocumentSnapshot<Map<String, dynamic>>> getUserSnap() async {
+  static Future<DocumentSnapshot<Map<String, dynamic>>> getUserSnap() async {
     final currentUser = _auth.currentUser!;
 
     final snap =
@@ -18,14 +18,14 @@ class AuthMethod {
     return snap;
   }
 
-  Future<model.User> getUserDetail() async {
+  static Future<model.User> getUserDetail() async {
     final snap = await getUserSnap();
 
     return model.User.fromSeed(snap);
   }
 
   //* signup user
-  Future<String> signupUser({
+  static Future<String> signupUser({
     required String email,
     required String password,
     required String username,
@@ -42,8 +42,8 @@ class AuthMethod {
         final userCred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
-        String photoUrl = await StorageMethods()
-            .uploadImageToStorage('profilePics', file, false);
+        String photoUrl = await StorageMethods.uploadImageToStorage(
+            'profilePics', file, false);
 
         final user = model.User(
           username: username,
@@ -74,7 +74,7 @@ class AuthMethod {
   }
 
   //* logging in user
-  Future<String> loginUser({
+  static Future<String> loginUser({
     required String email,
     required String password,
   }) async {
@@ -96,7 +96,7 @@ class AuthMethod {
     return res;
   }
 
-  Future<void> signOutUser() async {
+  static Future<void> signOutUser() async {
     try {
       await _auth.signOut();
     } catch (e) {

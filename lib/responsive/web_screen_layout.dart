@@ -7,7 +7,7 @@ import 'package:instagram_clone/utils/colors.dart';
 class WebScreenLayout extends StatelessWidget {
   const WebScreenLayout({super.key});
   Future<void> signOutUser() async {
-    AuthMethod().signOutUser();
+    AuthMethod.signOutUser();
   }
 
   @override

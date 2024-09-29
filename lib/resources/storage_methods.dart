@@ -5,10 +5,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 
 class StorageMethods {
-  final _storage = FirebaseStorage.instance;
-  final _auth = FirebaseAuth.instance;
+  static final _storage = FirebaseStorage.instance;
+  static final _auth = FirebaseAuth.instance;
 
-  Future<String> uploadImageToStorage(
+  static Future<String> uploadImageToStorage(
     String childName,
     Uint8List file,
     bool isPost,
@@ -29,7 +29,7 @@ class StorageMethods {
     return downloadURL;
   }
 
-  Future<void> deleteImage(String child) async {
+  static Future<void> deleteImage(String child) async {
     _storage.ref().child(child).child(_auth.currentUser!.uid).delete();
   }
 }

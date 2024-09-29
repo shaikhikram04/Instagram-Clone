@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final res = await AuthMethod().loginUser(
+    final res = await AuthMethod.loginUser(
       email: _emailController.text,
       password: _passwordController.text,
     );
@@ -100,7 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPass: true,
               ),
               const SizedBox(height: 24),
-              BlueButton(isLoading: _isLoading, onTap: loginUser, label: 'Login',),
+              BlueButton(
+                isLoading: _isLoading,
+                onTap: loginUser,
+                label: 'Login',
+              ),
               const SizedBox(height: 12),
               Flexible(
                 flex: 2,

@@ -30,7 +30,7 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
   }
 
   void addData() async {
-    final user = await AuthMethod().getUserDetail();
+    final user = await AuthMethod.getUserDetail();
     if (!mounted) return;
     ref.read(userProvider.notifier).setUser(user);
   }
