@@ -1,18 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/screens/new_message.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_card.dart';
 
-class MessageScreen extends StatefulWidget {
+class MessageScreen extends ConsumerStatefulWidget {
   const MessageScreen({super.key});
 
   @override
-  State<MessageScreen> createState() => _MessageScreenState();
+  ConsumerState<MessageScreen> createState() => _MessageScreenState();
 }
 
-class _MessageScreenState extends State<MessageScreen> {
+class _MessageScreenState extends ConsumerState<MessageScreen> {
   @override
   Widget build(BuildContext context) {
+    final user = ref.read(userProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -90,12 +95,42 @@ class _MessageScreenState extends State<MessageScreen> {
             ),
             const SizedBox(height: 3),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (BuildContext context, int index) {
-                  return const ChatCard(isActiveChat: true,);
-                },
-              ),
+              child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('conversations')
+                      .where('participants', arrayContains: {
+                    'uid': user.uid,
+                    'profileImageUrl': user.photoUrl,
+                  }).snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: blueColor,
+                        ),
+                      );
+                    }
+
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.size == 0) {
+                        return const Center(child: Text('No Chats Available'));
+                      }
+                      return ListView.builder(
+                        itemCount: snapshot.data!.size,
+                        itemBuilder: (BuildContext context, int index) {
+                          return const ChatCard(
+                            isActiveChat: true,
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text(snapshot.error.toString()),
+                      );
+                    }
+
+                    return const Center(child: Text('No Chats Available'));
+                  }),
             ),
           ],
         ),
