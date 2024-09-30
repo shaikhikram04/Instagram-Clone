@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_card.dart';
+import 'package:instagram_clone/widgets/follow_button.dart';
 
 class NewMessage extends ConsumerStatefulWidget {
   const NewMessage({super.key});
@@ -30,28 +31,29 @@ class _NewMessageState extends ConsumerState<NewMessage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
-              children: [
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  'To :',
-                  style: TextStyle(fontSize: 20),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    cursorColor: Colors.lightBlue,
-                    style: TextStyle(fontSize: 19, color: primaryColor),
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      border: InputBorder.none,
+            if (user.following.isNotEmpty)
+              const Row(
+                children: [
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    'To :',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      cursorColor: Colors.lightBlue,
+                      style: TextStyle(fontSize: 19, color: primaryColor),
+                      decoration: InputDecoration(
+                        hintText: 'Search',
+                        border: InputBorder.none,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             const SizedBox(height: 12),
             const Text(
               'Suggested',
@@ -92,7 +94,35 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                       },
                     )
                   : const Center(
-                      child: Text('Please Follow someone to communicate'),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "You're not following anyone yet!",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            'Start following to send messages.',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 10),
+                          FollowButton(
+                            backgroundColor: blueColor,
+                            borderColor: blueColor,
+                            text: 'Find People to follow',
+                            textColor: primaryColor,
+                          )
+                        ],
+                      ),
                     ),
             ),
           ],
