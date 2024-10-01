@@ -99,10 +99,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('conversations')
-                      .where('participants', arrayContains: {
-                    'uid': user.uid,
-                    'profileImageUrl': user.photoUrl,
-                  }).snapshots(),
+                      .where(
+                        'participants',
+                        arrayContains: user.uid,
+                      )
+                      .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -121,6 +122,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                         itemBuilder: (BuildContext context, int index) {
                           return const ChatCard(
                             isActiveChat: true,
+                            chatId: '',
+                            username: '',
+                            bio: '',
+                            imageUrl: '',
                           );
                         },
                       );

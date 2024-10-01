@@ -78,8 +78,11 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                           return ListView.builder(
                             itemCount: snapshot.data.size,
                             itemBuilder: (BuildContext context, int index) {
-                              return const ChatCard(
+                              return ChatCard(
                                 isActiveChat: false,
+                                username: snapshot.data.docs[index]['username'],
+                                bio: snapshot.data.docs[index]['bio'],
+                                imageUrl: snapshot.data.docs[index]['photoUrl'],
                               );
                             },
                           );

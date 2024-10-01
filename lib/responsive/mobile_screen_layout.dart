@@ -41,6 +41,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   }
 
   void navigateToSearchScreen() {
+    if (!context.mounted) return;
+
     setState(() {
       _page = 1;
       _pageController.jumpToPage(1);

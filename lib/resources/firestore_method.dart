@@ -245,8 +245,10 @@ class FirestoreMethod {
 
   static Future<String> establishConversation(
     String selfUid,
+    String selfUsername,
     String selfPhotoUrl,
     String otherUid,
+    String otherUsername,
     String otherPhotoUrl,
   ) async {
     String res = 'some error occurred';
@@ -260,10 +262,12 @@ class FirestoreMethod {
         participants: [
           {
             'uid': selfUid,
+            'username': selfUsername,
             'photoUrl': selfPhotoUrl,
           },
           {
             'uid': otherUid,
+            'username': otherUsername,
             'photoUrl': otherPhotoUrl,
           }
         ],

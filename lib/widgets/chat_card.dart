@@ -2,9 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/chat_screen.dart';
 
 class ChatCard extends StatelessWidget {
-  const ChatCard({super.key, required this.isActiveChat});
+  const ChatCard({
+    super.key,
+    required this.isActiveChat,
+    required this.username,
+    required this.bio,
+    required this.imageUrl,
+    this.chatId,
+  });
 
   final bool isActiveChat;
+  final String? chatId;
+  final String username;
+  final String bio;
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +34,9 @@ class ChatCard extends StatelessWidget {
           height: 80,
           child: Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1727262436067-6ac6dfc03e27?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxN3x8fGVufDB8fHx8fA%3D%3D',
+                  imageUrl,
                 ),
                 radius: 33,
               ),
@@ -36,9 +47,9 @@ class ChatCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'username',
-                        style: TextStyle(
+                      Text(
+                        username,
+                        style: const TextStyle(
                             fontSize: 17, fontWeight: FontWeight.w500),
                       ),
                       isActiveChat
@@ -55,8 +66,8 @@ class ChatCard extends StatelessWidget {
                                 Text('   25/9/24'),
                               ],
                             )
-                          : const Text(
-                              'User Bio : ajsdnciwenxoewihncwejbucniweoncwoieasd',
+                          : Text(
+                              bio,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
