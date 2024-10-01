@@ -19,8 +19,8 @@ class FollowButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 2),
-      child: TextButton(
-        onPressed: function,
+      child: InkWell(
+        onTap: function,
         child: Container(
           decoration: BoxDecoration(
             color: backgroundColor,

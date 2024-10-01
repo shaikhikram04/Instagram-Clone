@@ -93,11 +93,11 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                         ));
                       },
                     )
-                  : const Center(
+                  : Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
+                          const Text(
                             "You're not following anyone yet!",
                             style: TextStyle(
                               fontSize: 18,
@@ -106,7 +106,7 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          Text(
+                          const Text(
                             'Start following to send messages.',
                             style: TextStyle(
                               fontSize: 18,
@@ -114,12 +114,15 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          SizedBox(height: 10),
-                          FollowButton(
-                            backgroundColor: blueColor,
-                            borderColor: blueColor,
-                            text: 'Find People to follow',
-                            textColor: primaryColor,
+                          const SizedBox(height: 10),
+                          InkWell(
+                            child: FollowButton(
+                              backgroundColor: blueColor,
+                              borderColor: blueColor,
+                              text: 'Find People to follow',
+                              textColor: primaryColor,
+                              function: () {},
+                            ),
                           )
                         ],
                       ),

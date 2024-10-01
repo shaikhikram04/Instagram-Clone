@@ -50,7 +50,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
       postLen = postSnap.docs.length;
       userData = snap.data()!;
-      user = ref.watch(userProvider);
       isFollowing = userData['followers'].contains(user.uid);
       if (!mounted) return;
       setState(() {});
@@ -66,7 +65,54 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // user = ref.watch(userProvider);
+    user = ref.watch(userProvider);
+
+    Widget button = user.uid == widget.uid
+        ? FollowButton(
+            backgroundColor: mobileBackgroundColor,
+            borderColor: Colors.grey,
+            text: 'Edit Profile',
+            textColor: primaryColor,
+            function: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const EditProfileScreen(),
+              ));
+            },
+          )
+        : isFollowing
+            ? FollowButton(
+                backgroundColor: Colors.white,
+                borderColor: Colors.grey,
+                text: 'Unfollow',
+                textColor: Colors.black,
+                function: () async {
+                  await FirestoreMethod().followUser(
+                    user.uid,
+                    userData['uid'],
+                    ref,
+                  );
+                  setState(() {
+                    isFollowing = !isFollowing;
+                  });
+                },
+              )
+            : FollowButton(
+                backgroundColor: blueColor,
+                borderColor: Colors.blue,
+                text: 'Follow',
+                textColor: Colors.white,
+                function: () async {
+                  await FirestoreMethod().followUser(
+                    user.uid,
+                    userData['uid'],
+                    ref,
+                  );
+                  setState(() {
+                    isFollowing = !isFollowing;
+                  });
+                },
+              );
+
     return Scaffold(
       appBar: AppBar(
         title: isLoading
@@ -125,61 +171,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         'Following'),
                                   ],
                                 ),
+                                const SizedBox(height: 5),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    user.uid == widget.uid
-                                        ? FollowButton(
-                                            backgroundColor:
-                                                mobileBackgroundColor,
-                                            borderColor: Colors.grey,
-                                            text: 'Edit Profile',
-                                            textColor: primaryColor,
-                                            function: () {
-                                              Navigator.of(context)
-                                                  .push(MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const EditProfileScreen(),
-                                              ));
-                                            },
-                                          )
-                                        : isFollowing
-                                            ? FollowButton(
-                                                backgroundColor: Colors.white,
-                                                borderColor: Colors.grey,
-                                                text: 'Unfollow',
-                                                textColor: Colors.black,
-                                                function: () async {
-                                                  await FirestoreMethod()
-                                                      .followUser(
-                                                    user.uid,
-                                                    userData['uid'],
-                                                    ref,
-                                                  );
-                                                  setState(() {
-                                                    isFollowing = !isFollowing;
-                                                  });
-                                                },
-                                              )
-                                            : FollowButton(
-                                                backgroundColor: blueColor,
-                                                borderColor: Colors.blue,
-                                                text: 'Follow',
-                                                textColor: Colors.white,
-                                                function: () async {
-                                                  await FirestoreMethod()
-                                                      .followUser(
-                                                    user.uid,
-                                                    userData['uid'],
-                                                    ref,
-                                                  );
-                                                  setState(() {
-                                                    isFollowing = !isFollowing;
-                                                  });
-                                                },
-                                              ),
-                                  ],
+                                  children: [button],
                                 ),
                               ],
                             ),
