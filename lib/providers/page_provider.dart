@@ -8,6 +8,6 @@ class PageNotifier extends StateNotifier<int> {
   }
 }
 
-final pageProvider = StateNotifierProvider(
+final pageProvider = StateNotifierProvider<PageNotifier, int>(
   (ref) => PageNotifier(),
 );

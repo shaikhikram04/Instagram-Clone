@@ -1,21 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/providers/page_provider.dart';
 import 'package:instagram_clone/screens/add_post_sereen.dart';
 import 'package:instagram_clone/screens/feed_screen.dart';
 import 'package:instagram_clone/screens/profile_screen.dart';
 import 'package:instagram_clone/screens/search_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
-class MobileScreenLayout extends StatefulWidget {
+class MobileScreenLayout extends ConsumerStatefulWidget {
   const MobileScreenLayout({super.key});
 
   @override
-  State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
+  ConsumerState<MobileScreenLayout> createState() => _MobileScreenLayoutState();
 }
 
-class _MobileScreenLayoutState extends State<MobileScreenLayout> {
-  int _page = 0;
+class _MobileScreenLayoutState extends ConsumerState<MobileScreenLayout> {
   late PageController _pageController;
 
   @override
@@ -35,13 +36,13 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   }
 
   void onPageChanged(int page) {
-    setState(() {
-      _page = page;
-    });
+    ref.read(pageProvider.notifier).setPage(page);
   }
 
   @override
   Widget build(BuildContext context) {
+    int page = ref.watch(pageProvider);
+
     return Scaffold(
       body: PageView(
         onPageChanged: onPageChanged,
@@ -61,7 +62,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         backgroundColor: mobileBackgroundColor,
         activeColor: primaryColor,
         inactiveColor: secondaryColor,
-        currentIndex: _page,
+        currentIndex: page,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
