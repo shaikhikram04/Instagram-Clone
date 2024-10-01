@@ -7,7 +7,9 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/post_card.dart';
 
 class FeedScreen extends StatelessWidget {
-  const FeedScreen({super.key});
+  const FeedScreen({super.key, required this.navigateToSearchScreen});
+
+  final void Function() navigateToSearchScreen;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class FeedScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => const MessageScreen(),
+              builder: (ctx) => MessageScreen(navigateToSearchScreen),
             )),
             icon: const Icon(
               FontAwesomeIcons.facebookMessenger,

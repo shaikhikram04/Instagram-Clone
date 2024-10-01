@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PageNotifier extends StateNotifier<int> {
-  PageNotifier() : super(0);
+class PageControllerNotifier extends StateNotifier<int> {
+  PageControllerNotifier() : super(0);
 
-  void setPage(int page) {
+  void navigateTo(int page) {
     state = page;
   }
 }
 
-final pageProvider = StateNotifierProvider<PageNotifier, int>(
-  (ref) => PageNotifier(),
+final pageControllerProvider = StateNotifierProvider<PageControllerNotifier, int>(
+  (ref) => PageControllerNotifier(),
 );

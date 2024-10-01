@@ -7,7 +7,9 @@ import 'package:instagram_clone/widgets/chat_card.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
 
 class NewMessage extends ConsumerStatefulWidget {
-  const NewMessage({super.key});
+  const NewMessage(this.navigateToSearchScreen, {super.key});
+
+  final void Function() navigateToSearchScreen;
 
   @override
   ConsumerState<NewMessage> createState() => _NewMessageState();
@@ -114,13 +116,19 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 15),
                           FollowButton(
                             backgroundColor: blueColor,
                             borderColor: blueColor,
                             text: 'Find People to follow',
                             textColor: primaryColor,
-                            function: () {},
+                            function: () {
+                              widget.navigateToSearchScreen();
+                              Navigator.of(context).popUntil(
+                                (route) =>
+                                    (Navigator.of(context).canPop() == false),
+                              );
+                            },
                           )
                         ],
                       ),

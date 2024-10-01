@@ -7,7 +7,8 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_card.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
-  const MessageScreen({super.key});
+  const MessageScreen(this.navigateToSearchScreen, {super.key});
+  final void Function() navigateToSearchScreen;
 
   @override
   ConsumerState<MessageScreen> createState() => _MessageScreenState();
@@ -28,7 +29,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
           IconButton(
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const NewMessage(),
+                builder: (context) => NewMessage(widget.navigateToSearchScreen),
               ));
             },
             icon: const Icon(

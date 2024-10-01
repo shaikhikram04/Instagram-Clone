@@ -1,22 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:instagram_clone/providers/page_provider.dart';
 import 'package:instagram_clone/screens/add_post_sereen.dart';
 import 'package:instagram_clone/screens/feed_screen.dart';
 import 'package:instagram_clone/screens/profile_screen.dart';
 import 'package:instagram_clone/screens/search_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
-class MobileScreenLayout extends ConsumerStatefulWidget {
+class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
 
   @override
-  ConsumerState<MobileScreenLayout> createState() => _MobileScreenLayoutState();
+  State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
 }
 
-class _MobileScreenLayoutState extends ConsumerState<MobileScreenLayout> {
+class _MobileScreenLayoutState extends State<MobileScreenLayout> {
+  int _page = 0;
   late PageController _pageController;
 
   @override
@@ -36,20 +35,27 @@ class _MobileScreenLayoutState extends ConsumerState<MobileScreenLayout> {
   }
 
   void onPageChanged(int page) {
-    ref.read(pageProvider.notifier).setPage(page);
+    setState(() {
+      _page = page;
+    });
+  }
+
+  void navigateToSearchScreen() {
+    setState(() {
+      _page = 1;
+      _pageController.jumpToPage(1);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    int page = ref.watch(pageProvider);
-
     return Scaffold(
       body: PageView(
         onPageChanged: onPageChanged,
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          const FeedScreen(),
+          FeedScreen(navigateToSearchScreen: navigateToSearchScreen),
           const SearchScreen(),
           const AddPostSereen(),
           const Center(child: Text('Notification')),
@@ -62,7 +68,7 @@ class _MobileScreenLayoutState extends ConsumerState<MobileScreenLayout> {
         backgroundColor: mobileBackgroundColor,
         activeColor: primaryColor,
         inactiveColor: secondaryColor,
-        currentIndex: page,
+        currentIndex: _page,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
