@@ -115,14 +115,12 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 10),
-                          InkWell(
-                            child: FollowButton(
-                              backgroundColor: blueColor,
-                              borderColor: blueColor,
-                              text: 'Find People to follow',
-                              textColor: primaryColor,
-                              function: () {},
-                            ),
+                          FollowButton(
+                            backgroundColor: blueColor,
+                            borderColor: blueColor,
+                            text: 'Find People to follow',
+                            textColor: primaryColor,
+                            function: () {},
                           )
                         ],
                       ),
