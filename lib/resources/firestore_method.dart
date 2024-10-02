@@ -303,19 +303,23 @@ class FirestoreMethod {
         timeStamp: DateTime.now(),
       );
 
-      await _firestore
-          .collection('conversations')
-          .doc(conversationId)
-          .collection('chats')
-          .doc(chatId)
-          .set(chat.toJson);
+      final conversationdocRef =
+          _firestore.collection('conversations').doc(conversationId);
+
+      //* update conversation data
+      conversationdocRef.update({
+        'lastMessage':
+            (messageType == MessageType.text) ? message : 'Sent post',
+        'timeStamp': DateTime.now(),
+      });
+
+      //* making docs for message
+      await conversationdocRef.collection('chats').doc(chatId).set(chat.toJson);
 
       res = 'success';
     } catch (e) {
       res = e.toString();
     }
-
-    print(res);
 
     return res;
   }
