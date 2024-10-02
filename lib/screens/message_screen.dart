@@ -126,6 +126,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                             username: '',
                             bio: '',
                             imageUrl: '',
+                            uid: '',
                           );
                         },
                       );

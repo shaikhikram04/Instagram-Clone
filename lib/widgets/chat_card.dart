@@ -9,6 +9,7 @@ class ChatCard extends StatelessWidget {
     required this.bio,
     required this.imageUrl,
     this.chatId,
+    required this.uid,
   });
 
   final bool isActiveChat;
@@ -16,6 +17,7 @@ class ChatCard extends StatelessWidget {
   final String username;
   final String bio;
   final String imageUrl;
+  final String uid;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,12 @@ class ChatCard extends StatelessWidget {
           Navigator.of(context).pop();
         }
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const ChatScreen(),
+          builder: (context) => ChatScreen(
+            username: username,
+            photoUrl: imageUrl,
+            isNewChat: !isActiveChat,
+            uid: uid,
+          ),
         ));
       },
       child: Padding(

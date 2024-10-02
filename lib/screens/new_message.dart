@@ -72,17 +72,19 @@ class _NewMessageState extends ConsumerState<NewMessage> {
                           .collection('users')
                           .where('uid', whereIn: user.following)
                           .get(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
+                      builder: (BuildContext context, snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
-                            itemCount: snapshot.data.size,
+                            itemCount: snapshot.data!.size,
                             itemBuilder: (BuildContext context, int index) {
                               return ChatCard(
                                 isActiveChat: false,
-                                username: snapshot.data.docs[index]['username'],
-                                bio: snapshot.data.docs[index]['bio'],
-                                imageUrl: snapshot.data.docs[index]['photoUrl'],
+                                username: snapshot.data!.docs[index]
+                                    ['username'],
+                                bio: snapshot.data!.docs[index]['bio'],
+                                imageUrl: snapshot.data!.docs[index]
+                                    ['photoUrl'],
+                                uid: snapshot.data!.docs[index]['uid'],
                               );
                             },
                           );

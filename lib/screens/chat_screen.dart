@@ -3,7 +3,17 @@ import 'package:instagram_clone/screens/chat_profile_screen.dart';
 import 'package:instagram_clone/widgets/type_new_message.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({
+    super.key,
+    this.isNewChat = false,
+    required this.username,
+    required this.photoUrl, required this.uid,
+  });
+
+  final bool isNewChat;
+  final String uid;
+  final String username;
+  final String photoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -13,22 +23,29 @@ class ChatScreen extends StatelessWidget {
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => const ChatProfileScreen(),
           )),
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             backgroundImage: NetworkImage(
-              'https://images.unsplash.com/photo-1720631442759-6a6a95395f62?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxOHx8fGVufDB8fHx8fA%3D%3D',
+              photoUrl,
             ),
           ),
-          title: const Text(
-            'username',
-            style: TextStyle(fontWeight: FontWeight.w800),
+          title: Text(
+            username,
+            style: const TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 20,
+            ),
           ),
-          subtitle: const Text('Active 39m ago'),
         ),
       ),
       body: Column(
         children: [
           Expanded(child: Container()),
-          const TypeNewMessage(),
+          TypeNewMessage(
+            isNewChat: isNewChat,
+            username: username,
+            uid: uid,
+            photoUrl: photoUrl,
+          ),
         ],
       ),
     );

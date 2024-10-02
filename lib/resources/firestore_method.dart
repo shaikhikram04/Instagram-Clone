@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/models/chat.dart';
 import 'package:instagram_clone/models/comment.dart';
 import 'package:instagram_clone/models/conversation.dart';
 import 'package:instagram_clone/models/post.dart';
@@ -251,11 +252,10 @@ class FirestoreMethod {
     String otherUsername,
     String otherPhotoUrl,
   ) async {
-    String res = 'some error occurred';
+    String? err;
+    final String id = uuid.v4();
 
     try {
-      final String id = uuid.v4();
-
       final conversation = Conversation(
         id: id,
         lastMessage: '',
@@ -278,11 +278,44 @@ class FirestoreMethod {
           .collection('conversations')
           .doc(conversation.id)
           .set(conversation.toJson);
+    } catch (e) {
+      err = 'error occurred';
+    }
+
+    return err ?? id;
+  }
+
+  static Future<String> pushMessage(
+    String conversationId,
+    String uid,
+    String message,
+    MessageType messageType,
+  ) async {
+    String res = 'some error occurred';
+
+    try {
+      final chatId = uuid.v4();
+      final chat = Chat(
+        chatId: chatId,
+        from: uid,
+        type: messageType,
+        message: message,
+        timeStamp: DateTime.now(),
+      );
+
+      await _firestore
+          .collection('conversations')
+          .doc(conversationId)
+          .collection('chats')
+          .doc(chatId)
+          .set(chat.toJson);
 
       res = 'success';
     } catch (e) {
       res = e.toString();
     }
+
+    print(res);
 
     return res;
   }
