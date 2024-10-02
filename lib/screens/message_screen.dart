@@ -15,6 +15,31 @@ class MessageScreen extends ConsumerStatefulWidget {
 }
 
 class _MessageScreenState extends ConsumerState<MessageScreen> {
+  String timeAgo(DateTime dateTime) {
+    final Duration difference = DateTime.now().difference(dateTime);
+
+    if (difference.inDays >= 356) {
+      final int year = (difference.inDays / 365).floor();
+      return '${year}y ago';
+    } else if (difference.inDays >= 30) {
+      final int month = (difference.inDays / 30).floor();
+      return '${month}month ago';
+    } else if (difference.inDays >= 7) {
+      final int week = (difference.inDays / 7).floor();
+      return '${week}w ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}min ago';
+    } else if (difference.inSeconds > 0) {
+      return '${difference.inSeconds}s ago';
+    }
+
+    return 'just now';
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -100,10 +125,13 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                   stream: FirebaseFirestore.instance
                       .collection('conversations')
                       .where(
-                        'participants',
-                        arrayContains: user.uid,
-                      )
-                      .snapshots(),
+                    'participants',
+                    arrayContains: {
+                      'uid': user.uid,
+                      'username': user.username,
+                      'photoUrl': user.photoUrl,
+                    },
+                  ).snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -113,30 +141,38 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                       );
                     }
 
-                    if (snapshot.hasData) {
-                      if (snapshot.data!.size == 0) {
-                        return const Center(child: Text('No Chats Available'));
-                      }
-                      return ListView.builder(
-                        itemCount: snapshot.data!.size,
-                        itemBuilder: (BuildContext context, int index) {
-                          return const ChatCard(
-                            isActiveChat: true,
-                            chatId: '',
-                            username: '',
-                            bio: '',
-                            imageUrl: '',
-                            uid: '',
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(child: Text('No Chats Available'));
+                    }
+
+                    if (snapshot.hasError) {
                       return Center(
                         child: Text(snapshot.error.toString()),
                       );
                     }
 
-                    return const Center(child: Text('No Chats Available'));
+                    final conversationList = snapshot.data!.docs;
+
+                    return ListView.builder(
+                      itemCount: conversationList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final conversation = conversationList[index].data();
+                        Map<String, dynamic> participant =
+                            conversation['participants'][1];
+
+                        final pastTime =
+                            timeAgo(conversation['timeStamp'].toDate());
+
+                        return ChatCard(
+                          isActiveChat: true,
+                          username: participant['username'],
+                          imageUrl: participant['photoUrl'],
+                          uid: participant['uid'],
+                          lastMessage: conversation['lastMessage'],
+                          time: pastTime,
+                        );
+                      },
+                    );
                   }),
             ),
           ],

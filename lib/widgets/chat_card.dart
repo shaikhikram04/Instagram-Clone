@@ -6,18 +6,20 @@ class ChatCard extends StatelessWidget {
     super.key,
     required this.isActiveChat,
     required this.username,
-    required this.bio,
     required this.imageUrl,
-    this.chatId,
     required this.uid,
+    this.bio,
+    this.lastMessage,
+    this.time,
   });
 
   final bool isActiveChat;
-  final String? chatId;
   final String username;
-  final String bio;
+  final String? bio;
   final String imageUrl;
   final String uid;
+  final String? lastMessage;
+  final String? time;
 
   @override
   Widget build(BuildContext context) {
@@ -57,24 +59,26 @@ class ChatCard extends StatelessWidget {
                       Text(
                         username,
                         style: const TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w500),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       isActiveChat
-                          ? const Row(
+                          ? Row(
                               children: [
                                 Expanded(
                                   child: Text(
-                                    'Hii! ',
+                                    lastMessage!,
                                     style: TextStyle(fontSize: 16),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                Text('   25/9/24'),
+                                Text(time!),
                               ],
                             )
                           : Text(
-                              bio,
+                              bio!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

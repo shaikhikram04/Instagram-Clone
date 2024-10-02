@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/chat_profile_screen.dart';
+import 'package:instagram_clone/widgets/chat_messages.dart';
 import 'package:instagram_clone/widgets/type_new_message.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -7,13 +8,16 @@ class ChatScreen extends StatelessWidget {
     super.key,
     this.isNewChat = false,
     required this.username,
-    required this.photoUrl, required this.uid,
+    required this.photoUrl,
+    required this.uid,
+    this.conversationId,
   });
 
   final bool isNewChat;
   final String uid;
   final String username;
   final String photoUrl;
+  final String? conversationId;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,9 @@ class ChatScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Expanded(child: Container()),
+          Expanded(
+            child: ChatMessages(conversationId: conversationId!),
+          ),
           TypeNewMessage(
             isNewChat: isNewChat,
             username: username,
