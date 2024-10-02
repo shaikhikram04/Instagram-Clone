@@ -164,12 +164,12 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                             timeAgo(conversation['timeStamp'].toDate());
 
                         return ChatCard(
-                          isActiveChat: true,
                           username: participant['username'],
                           imageUrl: participant['photoUrl'],
                           uid: participant['uid'],
                           lastMessage: conversation['lastMessage'],
                           time: pastTime,
+                          conversationId: conversation['id'],
                         );
                       },
                     );

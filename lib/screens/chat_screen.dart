@@ -6,12 +6,19 @@ import 'package:instagram_clone/widgets/type_new_message.dart';
 class ChatScreen extends StatelessWidget {
   const ChatScreen({
     super.key,
-    this.isNewChat = false,
     required this.username,
     required this.photoUrl,
     required this.uid,
-    this.conversationId,
-  });
+    required this.conversationId,
+  }) : isNewChat = false;
+
+  const ChatScreen.newChat({
+    super.key,
+    required this.username,
+    required this.photoUrl,
+    required this.uid,
+  })  : isNewChat = true,
+        conversationId = null;
 
   final bool isNewChat;
   final String uid;

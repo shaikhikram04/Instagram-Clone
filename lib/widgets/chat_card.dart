@@ -4,14 +4,25 @@ import 'package:instagram_clone/screens/chat_screen.dart';
 class ChatCard extends StatelessWidget {
   const ChatCard({
     super.key,
-    required this.isActiveChat,
     required this.username,
     required this.imageUrl,
     required this.uid,
-    this.bio,
-    this.lastMessage,
-    this.time,
-  });
+    required this.lastMessage,
+    required this.time,
+    required this.conversationId,
+  })  : isActiveChat = true,
+        bio = null;
+
+  const ChatCard.newChat({
+    super.key,
+    required this.username,
+    required this.bio,
+    required this.imageUrl,
+    required this.uid,
+  })  : isActiveChat = false,
+        time = null,
+        conversationId = null,
+        lastMessage = null;
 
   final bool isActiveChat;
   final String username;
@@ -20,6 +31,7 @@ class ChatCard extends StatelessWidget {
   final String uid;
   final String? lastMessage;
   final String? time;
+  final String? conversationId;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +41,15 @@ class ChatCard extends StatelessWidget {
           Navigator.of(context).pop();
         }
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ChatScreen(
-            username: username,
-            photoUrl: imageUrl,
-            isNewChat: !isActiveChat,
-            uid: uid,
-          ),
+          builder: (context) => isActiveChat
+              ? ChatScreen(
+                  username: username,
+                  photoUrl: imageUrl,
+                  uid: uid,
+                  conversationId: conversationId,
+                )
+              : ChatScreen.newChat(
+                  username: username, photoUrl: imageUrl, uid: uid),
         ));
       },
       child: Padding(
@@ -69,7 +84,7 @@ class ChatCard extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     lastMessage!,
-                                    style: TextStyle(fontSize: 16),
+                                    style: const TextStyle(fontSize: 16),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
