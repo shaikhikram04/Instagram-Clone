@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/screens/chat_screen.dart';
 
 class ChatCard extends StatelessWidget {
@@ -75,7 +76,7 @@ class ChatCard extends StatelessWidget {
                         username,
                         style: const TextStyle(
                           fontSize: 17,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       isActiveChat
@@ -84,12 +85,16 @@ class ChatCard extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     lastMessage!,
-                                    style: const TextStyle(fontSize: 16),
+                                    style: GoogleFonts.openSans(fontSize: 16),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                Text(time!),
+                                const SizedBox(width: 8),
+                                Text(
+                                  time!,
+                                  style: GoogleFonts.exo2(),
+                                ),
                               ],
                             )
                           : Text(

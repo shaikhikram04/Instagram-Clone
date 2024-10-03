@@ -148,6 +148,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               },
             ),
           ),
+          const SizedBox(width: 15),
           if (!isMessaging)
             IconButton(
               onPressed: () {},

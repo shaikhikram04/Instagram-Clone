@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -84,12 +85,12 @@ class MessageBubble extends StatelessWidget {
                       horizontal: 14,
                     ),
                     margin: const EdgeInsets.symmetric(
-                      vertical: 4,
+                      vertical: 2,
                       horizontal: 12,
                     ),
                     child: Text(
                       message,
-                      style: const TextStyle(
+                      style: GoogleFonts.openSans(
                         height: 1.5,
                         fontSize: 18,
                         color: primaryColor,
