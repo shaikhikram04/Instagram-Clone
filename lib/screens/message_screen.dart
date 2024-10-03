@@ -32,7 +32,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     } else if (difference.inHours > 0) {
       return '${difference.inHours}h ago';
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes}min ago';
+      return '${difference.inMinutes} min ago';
     } else if (difference.inSeconds > 0) {
       return '${difference.inSeconds}s ago';
     }
@@ -158,7 +158,9 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                       itemBuilder: (BuildContext context, int index) {
                         final conversation = conversationList[index].data();
                         Map<String, dynamic> participant =
-                            conversation['participants'][1];
+                            conversation['participants'][0]['uid'] == user.uid
+                                ? conversation['participants'][1]
+                                : conversation['participants'][0];
 
                         final pastTime =
                             timeAgo(conversation['timeStamp'].toDate());
