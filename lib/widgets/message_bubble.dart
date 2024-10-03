@@ -33,7 +33,7 @@ class MessageBubble extends StatelessWidget {
       children: [
         if (profileImageUrl != null)
           Positioned(
-            top: 0,
+            top: 15,
             right: isMe ? 0 : null,
             child: CircleAvatar(
               radius: 25,
@@ -54,33 +54,33 @@ class MessageBubble extends StatelessWidget {
                     isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
                   if (isFirstInSequence) const SizedBox(height: 18),
-                  if (username != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 13),
-                      child: Text(
-                        username!,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                  // if (username != null)
+                  //   Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 13),
+                  //     child: Text(
+                  //       username!,
+                  //       style: const TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //     ),
+                  //   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: isMe ? Colors.deepPurple[600] : Colors.grey[800],
+                      color: isMe ? Colors.deepPurple[700] : Colors.grey[850],
                       borderRadius: BorderRadius.only(
                         topLeft: !isMe && isFirstInSequence
                             ? Radius.zero
-                            : const Radius.circular(12),
+                            : const Radius.circular(20),
                         topRight: isMe && isFirstInSequence
                             ? Radius.zero
-                            : const Radius.circular(12),
-                        bottomLeft: const Radius.circular(12),
-                        bottomRight: const Radius.circular(12),
+                            : const Radius.circular(20),
+                        bottomLeft: const Radius.circular(20),
+                        bottomRight: const Radius.circular(20),
                       ),
                     ),
-                    constraints: const BoxConstraints(maxWidth: 200),
+                    constraints: const BoxConstraints(maxWidth: 250),
                     padding: const EdgeInsets.symmetric(
-                      vertical: 10,
+                      vertical: 12,
                       horizontal: 14,
                     ),
                     margin: const EdgeInsets.symmetric(
@@ -90,7 +90,8 @@ class MessageBubble extends StatelessWidget {
                     child: Text(
                       message,
                       style: const TextStyle(
-                        height: 1.3,
+                        height: 1.5,
+                        fontSize: 18,
                         color: primaryColor,
                       ),
                       softWrap: true,
