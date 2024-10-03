@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/chat_profile_screen.dart';
+import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_messages.dart';
 import 'package:instagram_clone/widgets/type_new_message.dart';
 
@@ -31,9 +32,17 @@ class ChatScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const ChatProfileScreen(),
-          )),
+          onTap: () => conversationId != null
+              ? Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ChatProfileScreen(
+                    uid: uid,
+                    imageUrl: photoUrl,
+                    username: username,
+                    conversationId: conversationId!,
+                  ),
+                ))
+              : null,
+          enabled: conversationId != null,
           leading: CircleAvatar(
             backgroundImage: NetworkImage(
               photoUrl,
@@ -44,6 +53,7 @@ class ChatScreen extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 20,
+              color: primaryColor,
             ),
           ),
         ),

@@ -2,7 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class ChatProfileScreen extends StatefulWidget {
-  const ChatProfileScreen({super.key});
+  const ChatProfileScreen({
+    super.key,
+    required this.conversationId,
+    required this.uid,
+    required this.username,
+    required this.imageUrl,
+  });
+
+  final String conversationId;
+  final String uid;
+  final String username;
+  final String imageUrl;
 
   @override
   State<ChatProfileScreen> createState() => _ChatProfileScreenState();
