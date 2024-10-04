@@ -67,8 +67,11 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
       return;
     }
 
-    FocusScope.of(context).unfocus();
+    // FocusScope.of(context).unfocus();
     _messageController.clear();
+    setState(() {
+      isMessaging = false;
+    });
 
     if (isNewChat) {
       id = await FirestoreMethod.establishConversation(

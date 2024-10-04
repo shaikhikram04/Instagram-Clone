@@ -85,7 +85,7 @@ class MessageBubble extends StatelessWidget {
                       horizontal: 14,
                     ),
                     margin: const EdgeInsets.symmetric(
-                      vertical: 2,
+                      vertical: 1.5,
                       horizontal: 12,
                     ),
                     child: Text(
