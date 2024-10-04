@@ -30,30 +30,22 @@ class TypeNewMessage extends ConsumerStatefulWidget {
 }
 
 class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
-  late TextEditingController messageController;
+  late TextEditingController _messageController;
   late String textMessage;
   Uint8List? image;
-  late bool isMessaging;
+  bool isMessaging = false;
   late User user;
   late bool isNewChat;
   late String id;
-
-  Widget emojiButton = IconButton(
-    onPressed: () {},
-    icon: const Icon(
-      Icons.emoji_emotions,
-      color: Colors.amber,
-      size: 33,
-    ),
-  );
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
 
-    messageController = TextEditingController();
+    _messageController = TextEditingController();
+    _focusNode = FocusNode();
     textMessage = '';
-    isMessaging = false;
     user = ref.read(userProvider);
     isNewChat = widget.isNewChat;
     id = widget.conversationId ?? '';
@@ -62,44 +54,52 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
   @override
   void dispose() {
     super.dispose();
-    messageController.dispose();
+    _messageController.dispose();
+    _focusNode.dispose();
   }
 
   Future<void> sendMessage() async {
-    textMessage = messageController.text.trim();
+    textMessage = _messageController.text;
     //* will be change
     const messageType = MessageType.text;
 
-    if (textMessage.isNotEmpty) {
-      if (isNewChat) {
-        id = await FirestoreMethod.establishConversation(
-          user.uid,
-          user.username,
-          user.photoUrl,
-          widget.uid,
-          widget.username,
-          widget.photoUrl,
-        );
-        isNewChat = false;
-      }
+    if (textMessage.trim().isEmpty) {
+      return;
+    }
 
-      if (id == 'errror occurred') {
+    FocusScope.of(context).unfocus();
+    _messageController.clear();
+
+    if (isNewChat) {
+      id = await FirestoreMethod.establishConversation(
+        user.uid,
+        user.username,
+        user.photoUrl,
+        widget.uid,
+        widget.username,
+        widget.photoUrl,
+      );
+      setState(() {
+        isNewChat = false;
+      });
+    }
+
+    if (id == 'errror occurred') {
+      if (!mounted) return;
+
+      showSnackBar('Some error occurred! please try again.', context);
+    } else {
+      final res = await FirestoreMethod.pushMessage(
+        id,
+        user.uid,
+        textMessage,
+        messageType,
+      );
+
+      if (res != 'success') {
         if (!mounted) return;
 
-        showSnackBar('Some error occurred! please try again.', context);
-      } else {
-        final res = await FirestoreMethod.pushMessage(
-          id,
-          user.uid,
-          textMessage,
-          messageType,
-        );
-
-        if (res != 'success') {
-          if (!mounted) return;
-
-          showSnackBar('Some error occurred! please try again.', context);
-        }
+        showSnackBar(res, context);
       }
     }
   }
@@ -113,64 +113,93 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
         color: Color.fromARGB(76, 21, 142, 242),
         borderRadius: BorderRadius.all(Radius.circular(33)),
       ),
-      child: Row(
+      child: Stack(
         children: [
-          const SizedBox(width: 8),
-          isMessaging
-              ? emojiButton
-              : CircleAvatar(
-                  radius: 25,
-                  backgroundColor: const Color(0xFF088DE5),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.camera_alt,
-                      color: primaryColor,
-                      size: 33,
-                    ),
-                  ),
-                ),
-          const SizedBox(width: 10),
           Expanded(
-            child: TextField(
-              controller: messageController,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Message...',
+            child: Center(
+              child: TextField(
+                controller: _messageController,
+                focusNode: _focusNode,
+                style: const TextStyle(color: primaryColor, fontSize: 19),
+                decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Message...',
+                    contentPadding: EdgeInsets.only(
+                      left: 63,
+                      right: 90,
+                    )),
+                onChanged: (value) {
+                  if ((value.isNotEmpty && !isMessaging) ||
+                      (value.isEmpty && isMessaging)) {
+                    setState(() {
+                      isMessaging = value.isNotEmpty;
+                    });
+                  }
+                },
               ),
-              onChanged: (value) {
-                if ((value.isNotEmpty && !isMessaging) ||
-                    (value.isEmpty && isMessaging)) {
-                  setState(() {
-                    isMessaging = !isMessaging;
-                  });
-                }
-              },
             ),
           ),
-          const SizedBox(width: 15),
-          if (!isMessaging)
-            IconButton(
+          Positioned(
+            left: isMessaging ? 5 : null,
+            right: isMessaging ? null : 5,
+            top: 5,
+            bottom: 5,
+            child: IconButton(
               onPressed: () {},
               icon: const Icon(
-                Icons.insert_photo,
-                color: primaryColor,
-                size: 33,
+                Icons.emoji_emotions,
+                color: Colors.amber,
+                size: 35,
               ),
             ),
-          isMessaging
-              ? ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: blueColor,
-                      fixedSize: const Size(20, 10)),
-                  onPressed: sendMessage,
-                  child: const Icon(
-                    Icons.send,
+          ),
+          if (isMessaging)
+            Positioned(
+              top: 11,
+              bottom: 11,
+              right: 11,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: blueColor, fixedSize: const Size(60, 40)),
+                onPressed: sendMessage,
+                child: const Icon(
+                  Icons.send,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+          if (!isMessaging)
+            Positioned(
+              top: 5,
+              bottom: 5,
+              left: 10,
+              child: CircleAvatar(
+                radius: 23,
+                backgroundColor: const Color(0xFF088DE5),
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.camera_alt,
                     color: primaryColor,
+                    size: 31,
                   ),
-                )
-              : emojiButton,
-          const SizedBox(width: 7),
+                ),
+              ),
+            ),
+          if (!isMessaging)
+            Positioned(
+              right: 55,
+              top: 5,
+              bottom: 5,
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.insert_photo,
+                  color: primaryColor,
+                  size: 35,
+                ),
+              ),
+            ),
         ],
       ),
     );
