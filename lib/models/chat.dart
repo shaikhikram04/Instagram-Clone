@@ -1,6 +1,7 @@
 enum MessageType {
   text,
   image,
+  post,
 }
 
 class Chat {
