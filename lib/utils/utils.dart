@@ -15,5 +15,6 @@ Future<Uint8List?> pickImage(ImageSource source) async {
 }
 
 showSnackBar(String content, BuildContext context) {
+  ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(content)));
 }
