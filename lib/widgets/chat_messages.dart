@@ -69,7 +69,7 @@ class _ChatMessagesState extends State<ChatMessages> {
         return ListView.builder(
           itemCount: loadedMessage.length,
           reverse: true,
-          padding: const EdgeInsets.only(bottom: 40, left: 13, right: 13),
+          padding: const EdgeInsets.only(bottom: 40),
           itemBuilder: (BuildContext context, int index) {
             final messageData = loadedMessage[index].data();
 

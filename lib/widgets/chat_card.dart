@@ -11,6 +11,7 @@ class ChatCard extends StatelessWidget {
     required this.lastMessage,
     required this.time,
     required this.conversationId,
+    required this.lastMessageBy,
   })  : isActiveChat = true,
         bio = null;
 
@@ -23,7 +24,8 @@ class ChatCard extends StatelessWidget {
   })  : isActiveChat = false,
         time = null,
         conversationId = null,
-        lastMessage = null;
+        lastMessage = null,
+        lastMessageBy = null;
 
   final bool isActiveChat;
   final String username;
@@ -33,6 +35,7 @@ class ChatCard extends StatelessWidget {
   final String? lastMessage;
   final String? time;
   final String? conversationId;
+  final String? lastMessageBy;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +87,7 @@ class ChatCard extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    lastMessage!,
+                                    '$lastMessageBy : $lastMessage',
                                     style: GoogleFonts.openSans(fontSize: 16),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,

@@ -82,8 +82,8 @@ class MessageBubble extends StatelessWidget {
                     ),
                     constraints: const BoxConstraints(maxWidth: 250),
                     padding: EdgeInsets.symmetric(
-                      vertical: messageType == 'text' ? 12 : 3,
-                      horizontal: messageType == 'text' ? 14 : 3,
+                      vertical: messageType == 'text' ? 12 : 2,
+                      horizontal: messageType == 'text' ? 14 : 2,
                     ),
                     margin: const EdgeInsets.symmetric(
                       vertical: 1.5,

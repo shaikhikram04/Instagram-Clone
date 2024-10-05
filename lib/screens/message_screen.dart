@@ -165,6 +165,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                         final pastTime =
                             timeAgo(conversation['timeStamp'].toDate());
 
+                        final lastMessageSendBy =
+                            conversation['sendBy'] == user.uid
+                                ? 'You'
+                                : participant['username'];
                         return ChatCard(
                           username: participant['username'],
                           imageUrl: participant['photoUrl'],
@@ -172,6 +176,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                           lastMessage: conversation['lastMessage'],
                           time: pastTime,
                           conversationId: conversation['id'],
+                          lastMessageBy: lastMessageSendBy,
                         );
                       },
                     );
