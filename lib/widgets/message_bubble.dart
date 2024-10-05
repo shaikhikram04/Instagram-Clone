@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:instagram_clone/screens/imageScreen.dart';
+import 'package:instagram_clone/screens/image_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class MessageBubble extends StatelessWidget {
