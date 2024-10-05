@@ -76,6 +76,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> editImage() async {
     newImage = await pickImage(ImageSource.gallery);
+
+    if (newImage == null) return;
+
     setState(() {
       image = MemoryImage(newImage!);
     });

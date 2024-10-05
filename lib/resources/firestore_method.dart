@@ -272,6 +272,7 @@ class FirestoreMethod {
           }
         ],
         timeStamp: DateTime.now(),
+        sendBy: '',
       );
 
       await _firestore
@@ -306,11 +307,17 @@ class FirestoreMethod {
       final conversationdocRef =
           _firestore.collection('conversations').doc(conversationId);
 
+      final lastMessage = messageType == MessageType.text
+          ? message
+          : messageType == MessageType.image
+              ? 'Sent Image'
+              : 'Sent post';
+
       //* update conversation data
       conversationdocRef.update({
-        'lastMessage':
-            (messageType == MessageType.text) ? message : 'Sent post',
+        'lastMessage': lastMessage,
         'timeStamp': DateTime.now(),
+        'sendBy': uid,
       });
 
       //* making docs for message

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/models/chat.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
@@ -32,7 +33,7 @@ class TypeNewMessage extends ConsumerStatefulWidget {
 class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
   late TextEditingController _messageController;
   late String textMessage;
-  Uint8List? image;
+  Uint8List? _image;
   bool isMessaging = false;
   late User user;
   late bool isNewChat;
@@ -58,20 +59,35 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
     _focusNode.dispose();
   }
 
+  Future<void> clickImage() async {
+    final im = await pickImage(ImageSource.camera);
+
+    if (im == null) return;
+
+    setState(() {
+      _image = im;
+    });
+  }
+
   Future<void> sendMessage() async {
     textMessage = _messageController.text;
     //* will be change
-    const messageType = MessageType.text;
+    var messageType = MessageType.text;
 
-    if (textMessage.trim().isEmpty) {
+    if (textMessage.trim().isNotEmpty) {
+      //* Sending TextMessage
+      // FocusScope.of(context).unfocus();
+      _messageController.clear();
+      setState(() {
+        isMessaging = false;
+      });
+    } else if (_image != null) {
+      //* sending Image
+      messageType = MessageType.image;
+    } else {
+      //* Empty textMessage
       return;
     }
-
-    // FocusScope.of(context).unfocus();
-    _messageController.clear();
-    setState(() {
-      isMessaging = false;
-    });
 
     if (isNewChat) {
       id = await FirestoreMethod.establishConversation(
@@ -118,6 +134,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
       ),
       child: Stack(
         children: [
+          //* TextField
           Expanded(
             child: Center(
               child: TextField(
@@ -142,6 +159,8 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               ),
             ),
           ),
+
+          //* Emoji Button
           Positioned(
             left: isMessaging ? 5 : null,
             right: isMessaging ? null : 5,
@@ -156,6 +175,8 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               ),
             ),
           ),
+
+          //* Send Button
           if (isMessaging)
             Positioned(
               top: 11,
@@ -171,6 +192,8 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                 ),
               ),
             ),
+
+          //* Camera Button
           if (!isMessaging)
             Positioned(
               top: 5,
@@ -180,7 +203,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                 radius: 23,
                 backgroundColor: const Color(0xFF088DE5),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: clickImage,
                   icon: const Icon(
                     Icons.camera_alt,
                     color: primaryColor,
@@ -189,6 +212,8 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                 ),
               ),
             ),
+
+          //* gellery image button
           if (!isMessaging)
             Positioned(
               right: 55,
