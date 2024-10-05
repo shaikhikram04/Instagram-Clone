@@ -11,12 +11,12 @@ class StorageMethods {
   static Future<String> uploadImageToStorage(
     String childName,
     Uint8List file,
-    bool isPost,
+    bool hasMultipleImage,
   ) async {
     Reference ref =
         _storage.ref().child(childName).child(_auth.currentUser!.uid);
 
-    if (isPost) {
+    if (hasMultipleImage) {
       final id = const Uuid().v1();
       ref = ref.child(id);
     }

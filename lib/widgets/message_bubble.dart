@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:instagram_clone/screens/imageScreen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -80,23 +81,41 @@ class MessageBubble extends StatelessWidget {
                       ),
                     ),
                     constraints: const BoxConstraints(maxWidth: 250),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 14,
+                    padding: EdgeInsets.symmetric(
+                      vertical: messageType == 'text' ? 12 : 3,
+                      horizontal: messageType == 'text' ? 14 : 3,
                     ),
                     margin: const EdgeInsets.symmetric(
                       vertical: 1.5,
                       horizontal: 12,
                     ),
-                    child: Text(
-                      message,
-                      style: GoogleFonts.openSans(
-                        height: 1.5,
-                        fontSize: 18,
-                        color: primaryColor,
-                      ),
-                      softWrap: true,
-                    ),
+                    child: messageType == 'text'
+                        ? Text(
+                            message,
+                            style: GoogleFonts.openSans(
+                              height: 1.5,
+                              fontSize: 18,
+                              color: primaryColor,
+                            ),
+                            softWrap: true,
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      Imagescreen(imageUrl: message),
+                                ));
+                              },
+                              child: Image.network(
+                                message,
+                                height: 270,
+                                width: 250,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                   ),
                 ],
               )

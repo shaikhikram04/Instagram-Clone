@@ -7,6 +7,7 @@ import 'package:instagram_clone/models/chat.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/resources/storage_methods.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 
@@ -32,7 +33,7 @@ class TypeNewMessage extends ConsumerStatefulWidget {
 
 class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
   late TextEditingController _messageController;
-  late String textMessage;
+  late String message;
   Uint8List? _image;
   bool isMessaging = false;
   late User user;
@@ -46,7 +47,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
 
     _messageController = TextEditingController();
     _focusNode = FocusNode();
-    textMessage = '';
+    message = '';
     user = ref.read(userProvider);
     isNewChat = widget.isNewChat;
     id = widget.conversationId ?? '';
@@ -67,25 +68,34 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
     setState(() {
       _image = im;
     });
+
+    await sendMessage();
   }
 
   Future<void> sendMessage() async {
-    textMessage = _messageController.text;
+    message = _messageController.text;
     //* will be change
     var messageType = MessageType.text;
 
-    if (textMessage.trim().isNotEmpty) {
+    if (message.trim().isNotEmpty) {
       //* Sending TextMessage
+
       // FocusScope.of(context).unfocus();
+
       _messageController.clear();
       setState(() {
         isMessaging = false;
       });
     } else if (_image != null) {
       //* sending Image
+
       messageType = MessageType.image;
+
+      message = await StorageMethods.uploadImageToStorage(
+          'sharedImages', _image!, true);
     } else {
-      //* Empty textMessage
+      //* do nothing on Empty textMessage
+
       return;
     }
 
@@ -111,7 +121,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
       final res = await FirestoreMethod.pushMessage(
         id,
         user.uid,
-        textMessage,
+        message,
         messageType,
       );
 
