@@ -1,8 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/models/chat.dart';
@@ -197,14 +196,17 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                 child: TextField(
                   controller: _messageController,
                   focusNode: _focusNode,
+                  readOnly: isShowingEmojiPicker,
                   style: const TextStyle(color: primaryColor, fontSize: 19),
                   decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Message...',
-                      contentPadding: EdgeInsets.only(
-                        left: 63,
-                        right: 90,
-                      )),
+                    border: InputBorder.none,
+                    hintText: 'Message...',
+                    contentPadding: EdgeInsets.only(
+                      left: 63,
+                      right: 90,
+                    ),
+                  ),
+                  onTapAlwaysCalled: false,
                   onChanged: (value) {
                     if ((value.isNotEmpty && !isMessaging) ||
                         (value.isEmpty && isMessaging)) {
@@ -225,10 +227,12 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                 child: IconButton(
                   onPressed: () async {
                     if (isShowingEmojiPicker) {
-                      FocusScope.of(context).requestFocus();
+                      FocusScope.of(context).requestFocus(_focusNode);
                     } else {
-                      FocusScope.of(context).unfocus();
-                      await Future.delayed(const Duration(milliseconds: 400));
+                      if (_focusNode.hasFocus) {
+                        FocusScope.of(context).unfocus();
+                        await Future.delayed(const Duration(milliseconds: 350));
+                      }
                     }
                     setState(() {
                       isShowingEmojiPicker = !isShowingEmojiPicker;
