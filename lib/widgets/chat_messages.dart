@@ -22,17 +22,21 @@ class _ChatMessagesState extends State<ChatMessages> {
   }
 
   Future<void> _loadParticipantsData() async {
-    final snap = await FirebaseFirestore.instance
-        .collection('conversations')
-        .doc(widget.conversationId)
-        .get();
+    try {
+      final snap = await FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(widget.conversationId)
+          .get();
 
-    List participants = snap.data()!['participants'];
+      List participants = snap.data()!['participants'];
 
-    for (final data in participants) {
-      participantsData.addAll({
-        data['uid']: [data['username'], data['photoUrl']]
-      });
+      for (final data in participants) {
+        participantsData.addAll({
+          data['uid']: [data['username'], data['photoUrl']]
+        });
+      }
+    } catch (e) {
+      return;
     }
   }
 

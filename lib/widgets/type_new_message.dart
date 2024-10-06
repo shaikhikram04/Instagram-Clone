@@ -159,17 +159,21 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
   }
 
   Future<void> selectMultipleImagesFromgallary() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.media,
-      allowMultiple: true,
-      withData: true,
-    );
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+        allowMultiple: true,
+        withData: true,
+      );
 
-    if (result != null) {
-      final images = result.files.map((file) => file.bytes!).toList();
-      _selectedImages.addAll(images);
+      if (result != null) {
+        final images = result.files.map((file) => file.bytes!).toList();
+        _selectedImages.addAll(images);
 
-      sendMessage();
+        sendMessage();
+      }
+    } catch (e) {
+      return;
     }
   }
 

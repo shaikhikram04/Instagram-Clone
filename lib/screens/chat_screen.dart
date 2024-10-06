@@ -44,9 +44,7 @@ class ChatScreen extends StatelessWidget {
               : null,
           enabled: conversationId != null,
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-              photoUrl,
-            ),
+            backgroundImage: NetworkImage(photoUrl),
           ),
           title: Text(
             username,

@@ -23,6 +23,7 @@ class ChatProfileScreen extends StatefulWidget {
 class _ChatProfileScreenState extends State<ChatProfileScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +52,10 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
             const SizedBox(height: 18),
             Text(
               widget.username,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
@@ -68,7 +72,9 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
                     Text(
                       'Profile',
                       style: TextStyle(
-                          color: primaryColor, fontWeight: FontWeight.w500),
+                        color: primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),

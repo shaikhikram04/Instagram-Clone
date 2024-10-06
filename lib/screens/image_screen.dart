@@ -13,16 +13,25 @@ class Imagescreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: InteractiveViewer(
-          panEnabled: true,
-          minScale: 1.0,
-          maxScale: 5.0,
-          child: SizedBox(
-            width: double.infinity,
-            height: double.infinity,
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: InteractiveViewer(
+            panEnabled: true,
+            minScale: 1.0,
+            maxScale: 5.0,
             child: Image.network(
               imageUrl,
               fit: BoxFit.contain,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress != null) {
+                  return child;
+                }
+
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
             ),
           ),
         ),
