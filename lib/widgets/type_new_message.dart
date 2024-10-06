@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,12 +35,12 @@ class TypeNewMessage extends ConsumerStatefulWidget {
 class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
   late TextEditingController _messageController;
   late String message;
-  Uint8List? _image;
   bool isMessaging = false;
   late User user;
   late bool isNewChat;
   late String id;
   late FocusNode _focusNode;
+  final List<Uint8List> _selectedImages = [];
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
     if (im == null) return;
 
     setState(() {
-      _image = im;
+      _selectedImages.add(im);
     });
 
     await sendMessage();
@@ -77,59 +78,98 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
     //* will be change
     var messageType = MessageType.text;
 
-    if (message.trim().isNotEmpty) {
-      //* Sending TextMessage
+    final List<String> photoUrlList = [];
 
-      // FocusScope.of(context).unfocus();
+    try {
+      if (message.trim().isNotEmpty) {
+        //* Sending TextMessage
 
-      _messageController.clear();
-      setState(() {
-        isMessaging = false;
-      });
-    } else if (_image != null) {
-      //* sending Image
+        // FocusScope.of(context).unfocus();
 
-      messageType = MessageType.image;
+        _messageController.clear();
+        setState(() {
+          isMessaging = false;
+        });
+      } else if (_selectedImages.isNotEmpty) {
+        //* sending Image
 
-      message = await StorageMethods.uploadImageToStorage(
-          'sharedImages', _image!, true);
-    } else {
-      //* do nothing on Empty textMessage
+        messageType = MessageType.image;
 
-      return;
-    }
+        for (final image in _selectedImages) {
+          message = await StorageMethods.uploadImageToStorage(
+              'sharedImages', image, true);
 
-    if (isNewChat) {
-      id = await FirestoreMethod.establishConversation(
-        user.uid,
-        user.username,
-        user.photoUrl,
-        widget.uid,
-        widget.username,
-        widget.photoUrl,
-      );
-      setState(() {
-        isNewChat = false;
-      });
-    }
+          photoUrlList.add(message);
+        }
 
-    if (id == 'errror occurred') {
-      if (!mounted) return;
+        _selectedImages.clear();
+      } else {
+        //* do nothing on Empty textMessage
 
-      showSnackBar('Some error occurred! please try again.', context);
-    } else {
-      final res = await FirestoreMethod.pushMessage(
-        id,
-        user.uid,
-        message,
-        messageType,
-      );
+        return;
+      }
 
-      if (res != 'success') {
+      if (isNewChat) {
+        id = await FirestoreMethod.establishConversation(
+          user.uid,
+          user.username,
+          user.photoUrl,
+          widget.uid,
+          widget.username,
+          widget.photoUrl,
+        );
+        setState(() {
+          isNewChat = false;
+        });
+      }
+
+      if (id == 'errror occurred') {
         if (!mounted) return;
 
-        showSnackBar(res, context);
+        showSnackBar('Some error occurred! please try again.', context);
+      } else {
+        String res = '';
+        if (photoUrlList.isEmpty) {
+          res = await FirestoreMethod.pushMessage(
+            id,
+            user.uid,
+            message,
+            messageType,
+          );
+        } else {
+          for (final photoUrl in photoUrlList) {
+            res = await FirestoreMethod.pushMessage(
+              id,
+              user.uid,
+              photoUrl,
+              messageType,
+            );
+          }
+        }
+
+        if (res != 'success') {
+          if (!mounted) return;
+
+          showSnackBar(res, context);
+        }
       }
+    } catch (e) {
+      return;
+    }
+  }
+
+  Future<void> selectMultipleImagesFromgallary() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.media,
+      allowMultiple: true,
+      withData: true,
+    );
+
+    if (result != null) {
+      final images = result.files.map((file) => file.bytes!).toList();
+      _selectedImages.addAll(images);
+
+      sendMessage();
     }
   }
 
@@ -230,7 +270,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               top: 5,
               bottom: 5,
               child: IconButton(
-                onPressed: () {},
+                onPressed: selectMultipleImagesFromgallary,
                 icon: const Icon(
                   Icons.insert_photo,
                   color: primaryColor,

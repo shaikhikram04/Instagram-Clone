@@ -17,7 +17,14 @@ class Imagescreen extends StatelessWidget {
           panEnabled: true,
           minScale: 1.0,
           maxScale: 5.0,
-          child: Image.network(imageUrl),
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
       ),
     );
