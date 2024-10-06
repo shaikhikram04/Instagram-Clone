@@ -59,16 +59,20 @@ class ChatScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
+            flex: 11,
             child: isNewChat
                 ? const SizedBox()
                 : ChatMessages(conversationId: conversationId!),
           ),
-          TypeNewMessage(
-            isNewChat: isNewChat,
-            username: username,
-            uid: uid,
-            photoUrl: photoUrl,
-            conversationId: isNewChat ? null : conversationId!,
+          Expanded(
+            flex: 1,
+            child: TypeNewMessage(
+              isNewChat: isNewChat,
+              username: username,
+              uid: uid,
+              photoUrl: photoUrl,
+              conversationId: isNewChat ? null : conversationId!,
+            ),
           ),
         ],
       ),
