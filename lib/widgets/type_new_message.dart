@@ -179,110 +179,109 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          height: 65,
-          margin: const EdgeInsets.symmetric(horizontal: 1, vertical: 5),
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(76, 21, 142, 242),
-            borderRadius: BorderRadius.all(Radius.circular(33)),
-          ),
-        ),
-
-        //* TextField
-        Center(
-          child: TextField(
-            controller: _messageController,
-            focusNode: _focusNode,
-            style: const TextStyle(color: primaryColor, fontSize: 19),
-            decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Message...',
-                contentPadding: EdgeInsets.only(
-                  left: 63,
-                  right: 90,
-                )),
-            onChanged: (value) {
-              if ((value.isNotEmpty && !isMessaging) ||
-                  (value.isEmpty && isMessaging)) {
-                setState(() {
-                  isMessaging = value.isNotEmpty;
-                });
-              }
-            },
-          ),
-        ),
-
-        //* Emoji Button
-        Positioned(
-          left: isMessaging ? 5 : null,
-          right: isMessaging ? null : 5,
-          top: 5,
-          bottom: 5,
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.emoji_emotions,
-              color: Colors.amber,
-              size: 35,
-            ),
-          ),
-        ),
-
-        //* Send Button
-        if (isMessaging)
-          Positioned(
-            top: 11,
-            bottom: 11,
-            right: 11,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: blueColor, fixedSize: const Size(60, 40)),
-              onPressed: sendMessage,
-              child: const Icon(
-                Icons.send,
-                color: primaryColor,
-              ),
+    return Container(
+      height: 65,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: const BoxDecoration(
+        color: Color.fromARGB(76, 21, 142, 242),
+        borderRadius: BorderRadius.all(Radius.circular(33)),
+      ),
+      child: Stack(
+        children: [
+          //* TextField
+          Center(
+            child: TextField(
+              controller: _messageController,
+              focusNode: _focusNode,
+              style: const TextStyle(color: primaryColor, fontSize: 19),
+              decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Message...',
+                  contentPadding: EdgeInsets.only(
+                    left: 63,
+                    right: 90,
+                  )),
+              onChanged: (value) {
+                if ((value.isNotEmpty && !isMessaging) ||
+                    (value.isEmpty && isMessaging)) {
+                  setState(() {
+                    isMessaging = value.isNotEmpty;
+                  });
+                }
+              },
             ),
           ),
 
-        //* Camera Button
-        if (!isMessaging)
+          //* Emoji Button
           Positioned(
-            top: 5,
-            bottom: 5,
-            left: 10,
-            child: CircleAvatar(
-              radius: 23,
-              backgroundColor: const Color(0xFF088DE5),
-              child: IconButton(
-                onPressed: clickImage,
-                icon: const Icon(
-                  Icons.camera_alt,
-                  color: primaryColor,
-                  size: 31,
-                ),
-              ),
-            ),
-          ),
-
-        //* gellery image button
-        if (!isMessaging)
-          Positioned(
-            right: 55,
+            left: isMessaging ? 5 : null,
+            right: isMessaging ? null : 5,
             top: 5,
             bottom: 5,
             child: IconButton(
-              onPressed: selectMultipleImagesFromgallary,
+              onPressed: () {},
               icon: const Icon(
-                Icons.insert_photo,
-                color: primaryColor,
+                Icons.emoji_emotions,
+                color: Colors.amber,
                 size: 35,
               ),
             ),
           ),
-      ],
+
+          //* Send Button
+          if (isMessaging)
+            Positioned(
+              top: 11,
+              bottom: 11,
+              right: 11,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: blueColor, fixedSize: const Size(60, 40)),
+                onPressed: sendMessage,
+                child: const Icon(
+                  Icons.send,
+                  color: primaryColor,
+                ),
+              ),
+            ),
+
+          //* Camera Button
+          if (!isMessaging)
+            Positioned(
+              top: 5,
+              bottom: 5,
+              left: 10,
+              child: CircleAvatar(
+                radius: 23,
+                backgroundColor: const Color(0xFF088DE5),
+                child: IconButton(
+                  onPressed: clickImage,
+                  icon: const Icon(
+                    Icons.camera_alt,
+                    color: primaryColor,
+                    size: 31,
+                  ),
+                ),
+              ),
+            ),
+
+          //* gellery image button
+          if (!isMessaging)
+            Positioned(
+              right: 55,
+              top: 5,
+              bottom: 5,
+              child: IconButton(
+                onPressed: selectMultipleImagesFromgallary,
+                icon: const Icon(
+                  Icons.insert_photo,
+                  color: primaryColor,
+                  size: 35,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

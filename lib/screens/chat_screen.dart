@@ -64,15 +64,12 @@ class ChatScreen extends StatelessWidget {
                 ? const SizedBox()
                 : ChatMessages(conversationId: conversationId!),
           ),
-          Expanded(
-            flex: 1,
-            child: TypeNewMessage(
-              isNewChat: isNewChat,
-              username: username,
-              uid: uid,
-              photoUrl: photoUrl,
-              conversationId: isNewChat ? null : conversationId!,
-            ),
+          TypeNewMessage(
+            isNewChat: isNewChat,
+            username: username,
+            uid: uid,
+            photoUrl: photoUrl,
+            conversationId: isNewChat ? null : conversationId!,
           ),
         ],
       ),
