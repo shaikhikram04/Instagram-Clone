@@ -38,7 +38,7 @@ class Chat {
   final String from;
   final MessageType type;
   final String? message;
-  final DateTime timeStamp;
+  final Timestamp timeStamp;
   final String? postId;
   final String? imageUrl;
 

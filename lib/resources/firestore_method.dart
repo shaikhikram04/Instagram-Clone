@@ -34,7 +34,7 @@ class FirestoreMethod {
         uid: uid,
         username: username,
         postId: postId,
-        datePublished: DateTime.now(),
+        datePublished: Timestamp.now(),
         postUrl: imageUrl,
         profImage: profImage,
         likes: [],
@@ -122,7 +122,7 @@ class FirestoreMethod {
       if (text.isNotEmpty) {
         final commentId = uuid.v1();
         final comment = Comment(
-          date: DateTime.now(),
+          date: Timestamp.now(),
           id: commentId,
           likes: [],
           text: text,
@@ -269,7 +269,7 @@ class FirestoreMethod {
             otherPhotoUrl,
           ]
         },
-        timeStamp: DateTime.now(),
+        timeStamp: Timestamp.now(),
         sendBy: '',
       );
 
@@ -302,23 +302,22 @@ class FirestoreMethod {
           chatId: chatId,
           from: uid,
           message: message,
-          timeStamp: DateTime.now(),
+          timeStamp: Timestamp.now(),
         );
       } else if (messageType == MessageType.image) {
         chat = Chat.image(
           chatId: chatId,
           from: uid,
-          timeStamp: DateTime.now(),
+          timeStamp: Timestamp.now(),
           imageUrl: imageUrl,
         );
       } else {
         chat = Chat.post(
-          chatId: chatId,
-          from: uid,
-          timeStamp: DateTime.now(),
-          postId: postId,
-          message: message,
-        );
+            chatId: chatId,
+            from: uid,
+            timeStamp: Timestamp.now(),
+            postId: postId,
+            message: message);
       }
 
       final conversationDocRef =
