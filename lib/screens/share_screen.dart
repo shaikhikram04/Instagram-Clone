@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/blue_button.dart';
 
@@ -15,7 +16,7 @@ class ShareScreen extends ConsumerStatefulWidget {
 }
 
 class _ShareScreenState extends ConsumerState<ShareScreen> {
-  Set<String> _selectedUsers = {};
+  final Set<List> _selectedUsers = {};
 
   final _collectionRef = FirebaseFirestore.instance.collection('users');
   late TextEditingController _messageController;
@@ -35,12 +36,41 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
     _focusNode.dispose();
   }
 
-  void sendPost() {}
-
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     List<String> followingList = user.following.cast<String>();
+
+    Future<void> sendPost() async {
+      //* Start the Firestore query
+      CollectionReference conversationsRef =
+          FirebaseFirestore.instance.collection('conversations');
+
+      //* Create a base query and check for all participants using multiple 'where' clauses
+      Query query = conversationsRef;
+
+      for (List participantId in _selectedUsers) {
+        query = query.where('participantsId', arrayContains: participantId[0]);
+      }
+
+      //* Fetch the documents that match the query
+      QuerySnapshot querySnapshot = await query.get();
+
+      List<DocumentSnapshot> docs = querySnapshot.docs;
+
+      for (final userData in _selectedUsers) {
+        if (docs.isEmpty) {
+          FirestoreMethod.establishConversation(
+            user.uid,
+            user.username,
+            user.photoUrl,
+            userData[0],
+            userData[1],
+            userData[2],
+          );
+        }
+      }
+    }
 
     return Stack(
       children: [
@@ -109,11 +139,12 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                       ),
                       itemCount: followingList.length,
                       itemBuilder: (context, index) {
-                        bool isSelected =
-                            _selectedUsers.contains(followingList[index]);
+                        String uid = followingList[index];
+                        bool isSelected = _selectedUsers.any(
+                          (element) => element[0] == uid,
+                        );
                         return FutureBuilder(
-                          future:
-                              _collectionRef.doc(followingList[index]).get(),
+                          future: _collectionRef.doc(uid).get(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -136,9 +167,12 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                               onTap: () {
                                 setState(() {
                                   if (isSelected) {
-                                    _selectedUsers.remove(followingList[index]);
+                                    _selectedUsers.removeWhere(
+                                      (element) => element[0] == uid,
+                                    );
                                   } else {
-                                    _selectedUsers.add(followingList[index]);
+                                    _selectedUsers
+                                        .add([uid, username, imageUrl]);
                                   }
                                 });
                               },
@@ -204,28 +238,27 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                               horizontal: 16, vertical: 6),
                           child: TextField(
                             focusNode: _focusNode,
+                            controller: _messageController,
                             style: const TextStyle(fontSize: 18.5),
                             decoration: const InputDecoration(
                               hintText: 'Write a message...',
                               border: InputBorder.none,
                             ),
-                            onTap: () {
-                              setState(() {});
-                            },
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: BlueButton(
-                            onTap: () {},
+                            onTap: sendPost,
                             label: 'Send',
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: MediaQuery.of(context).viewInsets.bottom + 15,
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
                 ],
               ),
             );
