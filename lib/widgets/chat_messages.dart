@@ -13,7 +13,7 @@ class ChatMessages extends StatefulWidget {
 }
 
 class _ChatMessagesState extends State<ChatMessages> {
-  Map<String, List> participantsData = {};
+  final Map<String, List> participantsData = {};
 
   @override
   void initState() {
@@ -28,13 +28,9 @@ class _ChatMessagesState extends State<ChatMessages> {
           .doc(widget.conversationId)
           .get();
 
-      List participants = snap.data()!['participants'];
+      Map<String, List> temp = snap.data()!['participants'];
 
-      for (final data in participants) {
-        participantsData.addAll({
-          data['uid']: [data['username'], data['photoUrl']]
-        });
-      }
+      participantsData.addAll(temp);
     } catch (e) {
       return;
     }
