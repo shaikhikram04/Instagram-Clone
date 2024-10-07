@@ -83,7 +83,7 @@ class _PostCardState extends ConsumerState<PostCard> {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => const ShareScreen(),
+      builder: (ctx) => ShareScreen(postId: widget.snap['postId']),
     );
   }
 

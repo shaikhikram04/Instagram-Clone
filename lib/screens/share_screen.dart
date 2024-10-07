@@ -1,19 +1,33 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/blue_button.dart';
 
-class ShareScreen extends StatefulWidget {
-  const ShareScreen({super.key});
+class ShareScreen extends ConsumerStatefulWidget {
+  const ShareScreen({super.key, required this.postId});
+
+  final String postId;
 
   @override
-  State<ShareScreen> createState() => _ShareScreenState();
+  ConsumerState<ShareScreen> createState() => _ShareScreenState();
 }
 
-class _ShareScreenState extends State<ShareScreen> {
-  List<String> items = List.generate(20, (index) => 'Item $index');
-  Set<int> selectedItems = {};
+class _ShareScreenState extends ConsumerState<ShareScreen> {
+  Set<String> selectedUsers = {};
+
+  final collectionRef = FirebaseFirestore.instance.collection('users');
+
+  void sendPost() {
+
+  }
+  
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+    List<String> followingList = user.following.cast<String>();
+
     return Stack(
       children: [
         GestureDetector(
@@ -60,9 +74,7 @@ class _ShareScreenState extends State<ShareScreen> {
                                           Radius.circular(10)))),
                             ),
                         suggestionsBuilder: (context, controller) {
-                          return [
-                            
-                          ];
+                          return [];
                         }),
                   ),
                   Expanded(
@@ -74,61 +86,85 @@ class _ShareScreenState extends State<ShareScreen> {
                         crossAxisSpacing: 5,
                         mainAxisSpacing: 20,
                       ),
-                      itemCount: items.length,
+                      itemCount: followingList.length,
                       itemBuilder: (context, index) {
-                        bool isSelected = selectedItems.contains(index);
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (isSelected) {
-                                selectedItems.remove(index);
-                              } else {
-                                selectedItems.add(index);
-                              }
-                            });
-                          },
-                          child: Stack(
-                            children: [
-                              const Positioned(
-                                top: 10,
-                                left: 20,
-                                right: 20,
-                                child: CircleAvatar(
-                                  radius: 45,
-                                  backgroundImage: NetworkImage(
-                                    'https://plus.unsplash.com/premium_photo-1695868739139-167c2213f00f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyNHx8fGVufDB8fHx8fA%3D%3D',
-                                  ),
-                                ),
-                              ),
-                              if (isSelected)
-                                Positioned(
-                                  left: 95,
-                                  top: 70,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.grey[900],
-                                    radius: 15,
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(0.5),
-                                      child: Icon(
-                                        Icons.check_circle_rounded,
-                                        color: blueColor,
-                                        size: 30,
+                        bool isSelected =
+                            selectedUsers.contains(followingList[index]);
+                        return FutureBuilder(
+                          future: collectionRef.doc(followingList[index]).get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            if (!snapshot.hasData || snapshot.hasError) {
+                              return const Center(
+                                child: Text('Getting Error'),
+                              );
+                            }
+
+                            final String username =
+                                snapshot.data!.data()!['username'];
+                            final String imageUrl =
+                                snapshot.data!.data()!['photoUrl'];
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    selectedUsers.remove(followingList[index]);
+                                  } else {
+                                    selectedUsers.add(followingList[index]);
+                                  }
+                                });
+                              },
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    top: 10,
+                                    left: 20,
+                                    right: 20,
+                                    child: CircleAvatar(
+                                      radius: 45,
+                                      backgroundColor: Colors.grey[800],
+                                      backgroundImage: NetworkImage(
+                                        imageUrl,
                                       ),
                                     ),
                                   ),
-                                ),
-                              const Positioned(
-                                top: 110,
-                                left: 20,
-                                right: 20,
-                                child: Text(
-                                  'cnewnc ewoewbciewu',
-                                  maxLines: 2,
-                                  textAlign: TextAlign.center,
-                                ),
+                                  if (isSelected)
+                                    Positioned(
+                                      left: 95,
+                                      top: 70,
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.grey[900],
+                                        radius: 15,
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(0.5),
+                                          child: Icon(
+                                            Icons.check_circle_rounded,
+                                            color: blueColor,
+                                            size: 30,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  Positioned(
+                                    top: 110,
+                                    left: 20,
+                                    right: 20,
+                                    child: Text(
+                                      username,
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         );
                       },
                     ),
