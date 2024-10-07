@@ -34,7 +34,7 @@ class FirestoreMethod {
         uid: uid,
         username: username,
         postId: postId,
-        datePublished: DateTime.now(),
+        datePublished: Timestamp.now(),
         postUrl: imageUrl,
         profImage: profImage,
         likes: [],
@@ -122,7 +122,7 @@ class FirestoreMethod {
       if (text.isNotEmpty) {
         final commentId = uuid.v1();
         final comment = Comment(
-          date: DateTime.now(),
+          date: Timestamp.now(),
           id: commentId,
           likes: [],
           text: text,
@@ -269,7 +269,7 @@ class FirestoreMethod {
             otherPhotoUrl,
           ]
         },
-        timeStamp: DateTime.now(),
+        timeStamp: Timestamp.now(),
         sendBy: '',
       );
 
@@ -284,25 +284,44 @@ class FirestoreMethod {
     return err ?? id;
   }
 
-  static Future<String> pushMessage(
-    String conversationId,
-    String uid,
-    String message,
-    MessageType messageType,
-  ) async {
+  static Future<String> pushMessage({
+    required String conversationId,
+    required String uid,
+    required MessageType messageType,
+    String? message,
+    String? postId,
+    String? imageUrl,
+  }) async {
     String res = 'some error occurred';
 
     try {
       final chatId = uuid.v4();
-      final chat = Chat(
-        chatId: chatId,
-        from: uid,
-        type: messageType,
-        message: message,
-        timeStamp: DateTime.now(),
-      );
+      late Chat chat;
+      if (messageType == MessageType.text) {
+        chat = Chat.text(
+          chatId: chatId,
+          from: uid,
+          message: message,
+          timeStamp: Timestamp.now(),
+        );
+      } else if (messageType == MessageType.image) {
+        chat = Chat.image(
+          chatId: chatId,
+          from: uid,
+          timeStamp: Timestamp.now(),
+          imageUrl: imageUrl,
+        );
+      } else {
+        chat = Chat.post(
+          chatId: chatId,
+          from: uid,
+          timeStamp: Timestamp.now(),
+          postId: postId,
+          message: message,
+        );
+      }
 
-      final conversationdocRef =
+      final conversationDocRef =
           _firestore.collection('conversations').doc(conversationId);
 
       final lastMessage = messageType == MessageType.text
@@ -312,14 +331,14 @@ class FirestoreMethod {
               : 'Sent post';
 
       //* update conversation data
-      conversationdocRef.update({
+      conversationDocRef.update({
         'lastMessage': lastMessage,
         'timeStamp': DateTime.now(),
         'sendBy': uid,
       });
 
       //* making docs for message
-      await conversationdocRef.collection('chats').doc(chatId).set(chat.toJson);
+      await conversationDocRef.collection('chats').doc(chatId).set(chat.toJson);
 
       res = 'success';
     } catch (e) {

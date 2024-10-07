@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Conversation {
   Conversation({
     required this.id,
@@ -10,7 +12,7 @@ class Conversation {
   final String id;
   final String lastMessage;
   Map participants;
-  final DateTime timeStamp;
+  final Timestamp timeStamp;
   final String sendBy;
 
   Map<String, dynamic> get toJson {

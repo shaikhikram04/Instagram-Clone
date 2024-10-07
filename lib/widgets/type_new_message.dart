@@ -132,18 +132,18 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
         String res = '';
         if (photoUrlList.isEmpty) {
           res = await FirestoreMethod.pushMessage(
-            id,
-            user.uid,
-            message,
-            messageType,
+            conversationId: id,
+            uid: user.uid,
+            messageType: messageType,
+            message: message,
           );
         } else {
           for (final photoUrl in photoUrlList) {
             res = await FirestoreMethod.pushMessage(
-              id,
-              user.uid,
-              photoUrl,
-              messageType,
+              conversationId: id,
+              uid: user.uid,
+              messageType: messageType,
+              imageUrl: photoUrl,
             );
           }
         }
