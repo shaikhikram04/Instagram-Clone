@@ -15,13 +15,27 @@ class ShareScreen extends ConsumerStatefulWidget {
 }
 
 class _ShareScreenState extends ConsumerState<ShareScreen> {
-  Set<String> selectedUsers = {};
+  Set<String> _selectedUsers = {};
 
-  final collectionRef = FirebaseFirestore.instance.collection('users');
+  final _collectionRef = FirebaseFirestore.instance.collection('users');
+  late TextEditingController _messageController;
+  late FocusNode _focusNode;
 
-  void sendPost() {
-
+  @override
+  void initState() {
+    super.initState();
+    _messageController = TextEditingController();
+    _focusNode = FocusNode();
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _messageController.dispose();
+    _focusNode.dispose();
+  }
+
+  void sendPost() {}
 
   @override
   Widget build(BuildContext context) {
@@ -50,32 +64,39 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
               ),
               child: Column(
                 children: [
-                  Container(
-                    width: 50,
-                    height: 5,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.circular(10),
+                  SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 5,
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 18),
+                          child: SearchAnchor(
+                              builder: (context, controller) => SearchBar(
+                                    hintText: 'Search',
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        Colors.grey[830]),
+                                    leading: const Icon(Icons.search),
+                                    shape: const WidgetStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)))),
+                                  ),
+                              suggestionsBuilder: (context, controller) {
+                                return [];
+                              }),
+                        ),
+                      ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 18),
-                    child: SearchAnchor(
-                        builder: (context, controller) => SearchBar(
-                              hintText: 'Search',
-                              backgroundColor:
-                                  WidgetStatePropertyAll(Colors.grey[830]),
-                              leading: const Icon(Icons.search),
-                              shape: const WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(10)))),
-                            ),
-                        suggestionsBuilder: (context, controller) {
-                          return [];
-                        }),
                   ),
                   Expanded(
                     child: GridView.builder(
@@ -89,9 +110,10 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                       itemCount: followingList.length,
                       itemBuilder: (context, index) {
                         bool isSelected =
-                            selectedUsers.contains(followingList[index]);
+                            _selectedUsers.contains(followingList[index]);
                         return FutureBuilder(
-                          future: collectionRef.doc(followingList[index]).get(),
+                          future:
+                              _collectionRef.doc(followingList[index]).get(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -103,7 +125,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                             if (!snapshot.hasData || snapshot.hasError) {
                               return const Center(
                                 child: Text('Getting Error'),
-                              );  
+                              );
                             }
 
                             final String username =
@@ -114,9 +136,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                               onTap: () {
                                 setState(() {
                                   if (isSelected) {
-                                    selectedUsers.remove(followingList[index]);
+                                    _selectedUsers.remove(followingList[index]);
                                   } else {
-                                    selectedUsers.add(followingList[index]);
+                                    _selectedUsers.add(followingList[index]);
                                   }
                                 });
                               },
@@ -174,24 +196,36 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                     thickness: 1,
                     color: Colors.grey[700],
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                    child: TextField(
-                      style: TextStyle(fontSize: 18.5),
-                      decoration: InputDecoration(
-                        hintText: 'Write a message...',
-                        border: InputBorder.none,
-                      ),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 6),
+                          child: TextField(
+                            focusNode: _focusNode,
+                            style: const TextStyle(fontSize: 18.5),
+                            decoration: const InputDecoration(
+                              hintText: 'Write a message...',
+                              border: InputBorder.none,
+                            ),
+                            onTap: () {
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: BlueButton(
+                            onTap: () {},
+                            label: 'Send',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: BlueButton(
-                      onTap: () {},
-                      label: 'Send',
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
                 ],
               ),
             );
