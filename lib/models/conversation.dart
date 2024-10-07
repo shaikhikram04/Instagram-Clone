@@ -5,6 +5,7 @@ class Conversation {
     required this.id,
     required this.lastMessage,
     required this.participants,
+    required this.participantsId,
     required this.timeStamp,
     required this.sendBy,
   });
@@ -14,13 +15,16 @@ class Conversation {
   Map participants;
   final Timestamp timeStamp;
   final String sendBy;
+  List participantsId;
 
   Map<String, dynamic> get toJson {
     return {
       'id': id,
       'lastMessage': lastMessage,
       'participants': participants,
+      'participantsId': participantsId,
       'timeStamp': timeStamp,
+      'sendBy': sendBy,
     };
   }
 }

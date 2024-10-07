@@ -46,9 +46,9 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'username',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 27),
+        title: Text(
+          user.username,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 27),
         ),
         actions: [
           IconButton(
@@ -79,28 +79,12 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                     controller: controller,
                     padding: const WidgetStatePropertyAll<EdgeInsets>(
                         EdgeInsets.symmetric(horizontal: 16.0)),
-                    onTap: () {
-                      controller.openView();
-                    },
-                    onChanged: (_) {
-                      controller.openView();
-                    },
                     leading: const Icon(Icons.search),
                   );
                 },
                 suggestionsBuilder:
                     (BuildContext context, SearchController controller) {
-                  return List<ListTile>.generate(5, (int index) {
-                    final String item = 'item $index';
-                    return ListTile(
-                      title: Text(item),
-                      onTap: () {
-                        setState(() {
-                          controller.closeView(item);
-                        });
-                      },
-                    );
-                  });
+                  return [];
                 }),
             const SizedBox(height: 15),
             Row(
@@ -124,14 +108,8 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               child: StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('conversations')
-                      .where(
-                    'participants',
-                    arrayContains: {
-                      'uid': user.uid,
-                      'username': user.username,
-                      'photoUrl': user.photoUrl,
-                    },
-                  ).snapshots(),
+                      .where('participantsId', arrayContains: user.uid)
+                      .snapshots(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
@@ -157,10 +135,19 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                       itemCount: conversationList.length,
                       itemBuilder: (BuildContext context, int index) {
                         final conversation = conversationList[index].data();
-                        Map<String, dynamic> participant =
-                            conversation['participants'][0]['uid'] == user.uid
-                                ? conversation['participants'][1]
-                                : conversation['participants'][0];
+                        String participantUid = '';
+                        String participantUsername = '';
+                        String participantImageUrl = '';
+
+                        final Map participants = conversation['participants'];
+
+                        for (final ptp in participants.entries) {
+                          if (ptp.key != user.uid) {
+                            participantUid = ptp.key;
+                            participantUsername = ptp.value[0];
+                            participantImageUrl = ptp.value[1];
+                          }
+                        }
 
                         final pastTime =
                             timeAgo(conversation['timeStamp'].toDate());
@@ -168,11 +155,11 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                         final lastMessageSendBy =
                             conversation['sendBy'] == user.uid
                                 ? 'You'
-                                : participant['username'];
+                                : participantUsername;
                         return ChatCard(
-                          username: participant['username'],
-                          imageUrl: participant['photoUrl'],
-                          uid: participant['uid'],
+                          username: participantUsername,
+                          imageUrl: participantImageUrl,
+                          uid: participantUid,
                           lastMessage: conversation['lastMessage'],
                           time: pastTime,
                           conversationId: conversation['id'],

@@ -4,7 +4,7 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_messages.dart';
 import 'package:instagram_clone/widgets/type_new_message.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({
     super.key,
     required this.username,
@@ -28,26 +28,31 @@ class ChatScreen extends StatelessWidget {
   final String? conversationId;
 
   @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: ListTile(
-          onTap: () => conversationId != null
+          onTap: () => widget.conversationId != null
               ? Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => ChatProfileScreen(
-                    uid: uid,
-                    imageUrl: photoUrl,
-                    username: username,
-                    conversationId: conversationId!,
+                    uid: widget.uid,
+                    imageUrl: widget.photoUrl,
+                    username: widget.username,
+                    conversationId: widget.conversationId!,
                   ),
                 ))
               : null,
-          enabled: conversationId != null,
+          enabled: widget.conversationId != null,
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(photoUrl),
+            backgroundImage: NetworkImage(widget.photoUrl),
           ),
           title: Text(
-            username,
+            widget.username,
             style: const TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 20,
@@ -60,16 +65,16 @@ class ChatScreen extends StatelessWidget {
         children: [
           Expanded(
             flex: 11,
-            child: isNewChat
+            child: widget.isNewChat
                 ? const SizedBox()
-                : ChatMessages(conversationId: conversationId!),
+                : ChatMessages(conversationId: widget.conversationId!),
           ),
           TypeNewMessage(
-            isNewChat: isNewChat,
-            username: username,
-            uid: uid,
-            photoUrl: photoUrl,
-            conversationId: isNewChat ? null : conversationId!,
+            isNewChat: widget.isNewChat,
+            username: widget.username,
+            uid: widget.uid,
+            photoUrl: widget.photoUrl,
+            conversationId: widget.isNewChat ? null : widget.conversationId!,
           ),
         ],
       ),

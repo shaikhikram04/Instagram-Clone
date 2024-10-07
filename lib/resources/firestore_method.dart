@@ -271,6 +271,10 @@ class FirestoreMethod {
         },
         timeStamp: Timestamp.now(),
         sendBy: '',
+        participantsId: [
+          selfUid,
+          otherUid,
+        ],
       );
 
       await _firestore
