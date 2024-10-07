@@ -32,6 +32,24 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  late bool isActiveChat;
+  String? conversationId;
+
+  @override
+  void initState() {
+    super.initState();
+
+    isActiveChat = !widget.isNewChat;
+    conversationId = widget.conversationId;
+  }
+
+  void makeChatActive(String cId) {
+    setState(() {
+      isActiveChat = true;
+      conversationId = cId;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,10 +82,9 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            flex: 11,
-            child: widget.isNewChat
+            child: !isActiveChat
                 ? const SizedBox()
-                : ChatMessages(conversationId: widget.conversationId!),
+                : ChatMessages(conversationId: conversationId!),
           ),
           TypeNewMessage(
             isNewChat: widget.isNewChat,
@@ -75,6 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
             uid: widget.uid,
             photoUrl: widget.photoUrl,
             conversationId: widget.isNewChat ? null : widget.conversationId!,
+            makeChatActive: makeChatActive,
           ),
         ],
       ),

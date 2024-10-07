@@ -20,6 +20,7 @@ class TypeNewMessage extends ConsumerStatefulWidget {
     required this.uid,
     required this.photoUrl,
     this.conversationId,
+    required this.makeChatActive,
   });
 
   final bool isNewChat;
@@ -27,6 +28,7 @@ class TypeNewMessage extends ConsumerStatefulWidget {
   final String username;
   final String uid;
   final String photoUrl;
+  final void Function(String cId) makeChatActive;
 
   @override
   ConsumerState<TypeNewMessage> createState() => _TypeNewMessageState();
@@ -119,6 +121,9 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
           widget.username,
           widget.photoUrl,
         );
+
+        widget.makeChatActive(id);
+
         setState(() {
           isNewChat = false;
         });
