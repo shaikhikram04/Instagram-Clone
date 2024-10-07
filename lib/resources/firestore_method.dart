@@ -259,18 +259,16 @@ class FirestoreMethod {
       final conversation = Conversation(
         id: id,
         lastMessage: '',
-        participants: [
-          {
-            'uid': selfUid,
-            'username': selfUsername,
-            'photoUrl': selfPhotoUrl,
-          },
-          {
-            'uid': otherUid,
-            'username': otherUsername,
-            'photoUrl': otherPhotoUrl,
-          }
-        ],
+        participants: {
+          selfUid: [
+            selfUsername,
+            selfPhotoUrl,
+          ],
+          otherUid: [
+            otherUsername,
+            otherPhotoUrl,
+          ]
+        },
         timeStamp: DateTime.now(),
         sendBy: '',
       );

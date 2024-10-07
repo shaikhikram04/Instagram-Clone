@@ -9,7 +9,7 @@ class Conversation {
 
   final String id;
   final String lastMessage;
-  List participants;
+  Map participants;
   final DateTime timeStamp;
   final String sendBy;
 

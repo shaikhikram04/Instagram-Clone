@@ -22,7 +22,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   void sendPost() {
 
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -103,7 +103,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                             if (!snapshot.hasData || snapshot.hasError) {
                               return const Center(
                                 child: Text('Getting Error'),
-                              );
+                              );  
                             }
 
                             final String username =
