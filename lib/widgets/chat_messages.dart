@@ -83,22 +83,51 @@ class _ChatMessagesState extends State<ChatMessages> {
 
             final isnextUserIsSame = currMessageUserid == nextMessageUserId;
 
-            if (isnextUserIsSame) {
-              return MessageBubble.next(
-                messageType: messageData['messageType'],
-                message: messageData['message'],
-                isMe: authenticatedUserId == currMessageUserid,
-              );
-            } else {
-              final currUserData = participantsData[currMessageUserid]!;
-              return MessageBubble(
-                profileImageUrl: currUserData[1],
-                username: currUserData[0],
-                messageType: messageData['messageType'],
-                message: messageData['message'],
-                isMe: authenticatedUserId == currMessageUserid,
-              );
-            }
+            return FutureBuilder(
+              future: messageData['messageType'] == 'post'
+                  ? FirebaseFirestore.instance
+                      .collection('posts')
+                      .doc(messageData['postId'])
+                      .get()
+                  : null,
+              builder: (context, snapshot) {
+                
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error.toString()));
+                }
+
+
+                Map<String, dynamic>? postSnap;
+                if (snapshot.hasData) {
+                  postSnap = snapshot.data!.data();
+                }
+
+                if (isnextUserIsSame) {
+                  return MessageBubble.next(
+                    messageType: messageData['messageType'],
+                    message: messageData['message'],
+                    isMe: authenticatedUserId == currMessageUserid,
+                    imageUrl: messageData['imageUrl'],
+                    postSnap: postSnap,
+                  );
+                } else {
+                  final currUserData = participantsData[currMessageUserid]!;
+                  return MessageBubble(
+                    profileImageUrl: currUserData[1],
+                    username: currUserData[0],
+                    messageType: messageData['messageType'],
+                    message: messageData['message'],
+                    isMe: authenticatedUserId == currMessageUserid,
+                    imageUrl: messageData['imageUrl'],
+                    postSnap: postSnap,
+                  );
+                }
+              },
+            );
           },
         );
       },
