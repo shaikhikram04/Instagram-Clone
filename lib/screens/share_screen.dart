@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/models/chat.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/blue_button.dart';
 
 class ShareScreen extends ConsumerStatefulWidget {
@@ -20,20 +22,17 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
 
   final _collectionRef = FirebaseFirestore.instance.collection('users');
   late TextEditingController _messageController;
-  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _messageController = TextEditingController();
-    _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
     super.dispose();
     _messageController.dispose();
-    _focusNode.dispose();
   }
 
   @override
@@ -42,6 +41,13 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
     List<String> followingList = user.following.cast<String>();
 
     Future<void> sendPost() async {
+      final List<List> participantList = [];
+      final message = _messageController.text.trim();
+
+      for (final participant in _selectedUsers) {
+        participantList.add([user.uid, participant[0]]);
+      }
+
       //* Start the Firestore query
       CollectionReference conversationsRef =
           FirebaseFirestore.instance.collection('conversations');
@@ -49,27 +55,64 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
       //* Create a base query and check for all participants using multiple 'where' clauses
       Query query = conversationsRef;
 
-      for (List participantId in _selectedUsers) {
-        query = query.where('participantsId', arrayContains: participantId[0]);
-      }
+      query = query.where('participantsId', whereIn: participantList);
 
       //* Fetch the documents that match the query
       QuerySnapshot querySnapshot = await query.get();
 
       List<DocumentSnapshot> docs = querySnapshot.docs;
 
-      for (final userData in _selectedUsers) {
-        if (docs.isEmpty) {
-          FirestoreMethod.establishConversation(
-            user.uid,
-            user.username,
-            user.photoUrl,
-            userData[0],
-            userData[1],
-            userData[2],
-          );
-        }
+      List<String> conversationIds = [];
+
+      //* removing fetched user from _selectedUser
+      for (var doc in docs) {
+        List participantsInDoc = doc['participantsId'];
+        conversationIds.add(doc['id']);
+
+        _selectedUsers.removeWhere(
+          (selectedUserData) => participantsInDoc.contains(selectedUserData[0]),
+        );
       }
+
+      //* Now _selectedUser has only those user data who hasn't conversation
+
+      //* Creating a conversation for each _selectedUser
+      for (final userData in _selectedUsers) {
+        final id = await FirestoreMethod.establishConversation(
+          user.uid,
+          user.username,
+          user.photoUrl,
+          userData[0],
+          userData[1],
+          userData[2],
+        );
+
+        conversationIds.add(id);
+      }
+
+      var isSuccessfullySend = true;
+      //* push postMessage on firestore
+      for (final conversationId in conversationIds) {
+        final res = await FirestoreMethod.pushMessage(
+          conversationId: conversationId,
+          uid: user.uid,
+          messageType: MessageType.post,
+          postId: widget.postId,
+          message: message,
+        );
+
+        if (res != 'success') isSuccessfullySend = false;
+      }
+
+      var responseMessage = '';
+      if (isSuccessfullySend) {
+        responseMessage = 'post send successfully';
+      } else {
+        responseMessage = 'post not send successfully to all user';
+      }
+
+      if (!context.mounted) return;
+      showSnackBar(responseMessage, context);
     }
 
     return Stack(
@@ -237,7 +280,6 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 6),
                           child: TextField(
-                            focusNode: _focusNode,
                             controller: _messageController,
                             style: const TextStyle(fontSize: 18.5),
                             decoration: const InputDecoration(

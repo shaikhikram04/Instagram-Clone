@@ -334,7 +334,7 @@ class FirestoreMethod {
               : 'Sent post';
 
       //* update conversation data
-      conversationDocRef.update({
+      await conversationDocRef.update({
         'lastMessage': lastMessage,
         'timeStamp': DateTime.now(),
         'sendBy': uid,
