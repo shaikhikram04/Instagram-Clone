@@ -189,7 +189,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       CircleAvatar(
                         radius: 55,
                         backgroundImage: image,
-                        backgroundColor: Colors.grey,
+                        backgroundColor: imageBgColor,
                       ),
                       const SizedBox(height: 8),
                       TextButton(

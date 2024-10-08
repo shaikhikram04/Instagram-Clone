@@ -67,6 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
               : null,
           enabled: widget.conversationId != null,
           leading: CircleAvatar(
+            backgroundColor: imageBgColor,
             backgroundImage: NetworkImage(widget.photoUrl),
           ),
           title: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 
@@ -27,7 +28,7 @@ class _CommentCardState extends State<CommentCard> {
         children: [
           //* profile picture
           CircleAvatar(
-            backgroundColor: Colors.grey,
+            backgroundColor: imageBgColor,
             backgroundImage: NetworkImage(
               widget.snap['profPicture'],
             ),

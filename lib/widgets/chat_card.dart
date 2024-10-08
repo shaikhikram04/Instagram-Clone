@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/screens/chat_screen.dart';
+import 'package:instagram_clone/utils/colors.dart';
 
 class ChatCard extends StatelessWidget {
   const ChatCard({
@@ -63,6 +64,7 @@ class ChatCard extends StatelessWidget {
           child: Row(
             children: [
               CircleAvatar(
+                backgroundColor: imageBgColor,
                 backgroundImage: NetworkImage(
                   imageUrl,
                 ),

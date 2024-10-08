@@ -44,6 +44,7 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
         child: Column(
           children: [
             CircleAvatar(
+              backgroundColor: imageBgColor,
               backgroundImage: NetworkImage(
                 widget.imageUrl,
               ),

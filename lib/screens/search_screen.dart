@@ -110,7 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       )),
                       leading: CircleAvatar(
-                        backgroundColor: Colors.grey,
+                        backgroundColor: imageBgColor,
                         backgroundImage: NetworkImage(
                           snapshot.data!.docs[index]['photoUrl'],
                         ),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/comment_card.dart';
 
@@ -108,6 +109,7 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
             children: [
               //* profile image
               CircleAvatar(
+                backgroundColor: imageBgColor,
                 backgroundImage: NetworkImage(user.photoUrl),
                 radius: 18,
               ),

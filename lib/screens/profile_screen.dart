@@ -151,7 +151,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         children: [
                           //* profile picture
                           CircleAvatar(
-                            backgroundColor: Colors.grey,
+                            backgroundColor: imageBgColor,
                             backgroundImage: NetworkImage(userData['photoUrl']),
                             radius: 45,
                           ),

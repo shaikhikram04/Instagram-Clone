@@ -120,7 +120,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                     ));
                   },
                   child: CircleAvatar(
-                    backgroundColor: Colors.grey,
+                    backgroundColor: imageBgColor,
                     radius: 20,
                     backgroundImage: NetworkImage(
                       widget.snap['profImage'],

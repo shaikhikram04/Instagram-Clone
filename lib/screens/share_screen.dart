@@ -243,7 +243,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                     right: 20,
                                     child: CircleAvatar(
                                       radius: 45,
-                                      backgroundColor: Colors.grey[800],
+                                      backgroundColor: imageBgColor,
                                       backgroundImage: NetworkImage(
                                         imageUrl,
                                       ),
