@@ -19,6 +19,7 @@ class ShareScreen extends ConsumerStatefulWidget {
 
 class _ShareScreenState extends ConsumerState<ShareScreen> {
   final Set<List> _selectedUsers = {};
+  var isSendingPost = false;
 
   final _collectionRef = FirebaseFirestore.instance.collection('users');
   late TextEditingController _messageController;
@@ -48,71 +49,86 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
         participantList.add([user.uid, participant[0]]);
       }
 
-      //* Start the Firestore query
-      CollectionReference conversationsRef =
-          FirebaseFirestore.instance.collection('conversations');
+      setState(() {
+        isSendingPost = true;
+      });
 
-      //* Create a base query and check for all participants using multiple 'where' clauses
-      Query query = conversationsRef;
+      try {
+        //* Start the Firestore query
+        CollectionReference conversationsRef =
+            FirebaseFirestore.instance.collection('conversations');
 
-      query = query.where('participantsId', whereIn: participantList);
+        //* Create a base query and check for all participants using multiple 'where' clauses
+        Query query = conversationsRef;
 
-      //* Fetch the documents that match the query
-      QuerySnapshot querySnapshot = await query.get();
+        query = query.where('participantsId', whereIn: participantList);
 
-      List<DocumentSnapshot> docs = querySnapshot.docs;
+        //* Fetch the documents that match the query
+        QuerySnapshot querySnapshot = await query.get();
 
-      List<String> conversationIds = [];
+        List<DocumentSnapshot> docs = querySnapshot.docs;
 
-      //* removing fetched user from _selectedUser
-      for (var doc in docs) {
-        List participantsInDoc = doc['participantsId'];
-        conversationIds.add(doc['id']);
+        List<String> conversationIds = [];
 
-        _selectedUsers.removeWhere(
-          (selectedUserData) => participantsInDoc.contains(selectedUserData[0]),
-        );
+        //* removing fetched user from _selectedUser
+        for (var doc in docs) {
+          List participantsInDoc = doc['participantsId'];
+          conversationIds.add(doc['id']);
+
+          _selectedUsers.removeWhere(
+            (selectedUserData) =>
+                participantsInDoc.contains(selectedUserData[0]),
+          );
+        }
+
+        //* Now _selectedUser has only those user data who hasn't conversation
+
+        //* Creating a conversation for each _selectedUser
+        for (final userData in _selectedUsers) {
+          final id = await FirestoreMethod.establishConversation(
+            user.uid,
+            user.username,
+            user.photoUrl,
+            userData[0],
+            userData[1],
+            userData[2],
+          );
+
+          conversationIds.add(id);
+        }
+
+        var isSuccessfullySend = true;
+        //* push postMessage on firestore
+        for (final conversationId in conversationIds) {
+          final res = await FirestoreMethod.pushMessage(
+            conversationId: conversationId,
+            uid: user.uid,
+            messageType: MessageType.post,
+            postId: widget.postId,
+            message: message,
+          );
+
+          if (res != 'success') isSuccessfullySend = false;
+        }
+
+        var responseMessage = '';
+        if (isSuccessfullySend) {
+          responseMessage = 'post send successfully';
+        } else {
+          responseMessage = 'post not send successfully to all user';
+        }
+
+        if (!context.mounted) return;
+        showSnackBar(responseMessage, context);
+      } catch (e) {
+        return;
       }
 
-      //* Now _selectedUser has only those user data who hasn't conversation
+      setState(() {
+        isSendingPost = false;
+      });
 
-      //* Creating a conversation for each _selectedUser
-      for (final userData in _selectedUsers) {
-        final id = await FirestoreMethod.establishConversation(
-          user.uid,
-          user.username,
-          user.photoUrl,
-          userData[0],
-          userData[1],
-          userData[2],
-        );
-
-        conversationIds.add(id);
-      }
-
-      var isSuccessfullySend = true;
-      //* push postMessage on firestore
-      for (final conversationId in conversationIds) {
-        final res = await FirestoreMethod.pushMessage(
-          conversationId: conversationId,
-          uid: user.uid,
-          messageType: MessageType.post,
-          postId: widget.postId,
-          message: message,
-        );
-
-        if (res != 'success') isSuccessfullySend = false;
-      }
-
-      var responseMessage = '';
-      if (isSuccessfullySend) {
-        responseMessage = 'post send successfully';
-      } else {
-        responseMessage = 'post not send successfully to all user';
-      }
-
-      if (!context.mounted) return;
-      showSnackBar(responseMessage, context);
+      Navigator.pop(context);
     }
 
     return Stack(
@@ -293,6 +309,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                           child: BlueButton(
                             onTap: sendPost,
                             label: 'Send',
+                            isLoading: isSendingPost,
                           ),
                         ),
                         SizedBox(

@@ -317,11 +317,12 @@ class FirestoreMethod {
         );
       } else {
         chat = Chat.post(
-            chatId: chatId,
-            from: uid,
-            timeStamp: Timestamp.now(),
-            postId: postId,
-            message: message);
+          chatId: chatId,
+          from: uid,
+          timeStamp: Timestamp.now(),
+          postId: postId,
+          message: message,
+        );
       }
 
       final conversationDocRef =
