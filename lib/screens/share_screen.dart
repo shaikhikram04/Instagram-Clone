@@ -46,7 +46,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
       final message = _messageController.text.trim();
 
       for (final participant in _selectedUsers) {
-        participantList.add([user.uid, participant[0]]);
+        List temp = [user.uid, participant[0]];
+        temp.sort();
+        participantList.add(temp);
       }
 
       setState(() {

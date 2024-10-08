@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/screens/image_screen.dart';
+import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
-import 'package:instagram_clone/widgets/post_card.dart';
 
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
@@ -145,11 +145,27 @@ class MessageBubble extends StatelessWidget {
   Widget getPostBubble(BuildContext context) {
     return InkWell(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PostCard(snap: postSnap!),
+        builder: (context) => PostScreen(snap: postSnap!),
       )),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[850],
+          gradient: LinearGradient(
+            colors: isMe
+                ? [
+                    Colors.deepPurple,
+                    const Color.fromARGB(255, 59, 25, 118),
+                    const Color.fromARGB(255, 40, 14, 85),
+                    const Color.fromARGB(255, 26, 7, 59),
+                  ]
+                : [
+                    const Color.fromARGB(255, 89, 93, 95),
+                    const Color.fromARGB(255, 82, 86, 87),
+                    const Color.fromARGB(255, 59, 62, 62),
+                    const Color.fromRGBO(48, 48, 48, 1),
+                  ],
+            begin: isMe ? Alignment.bottomRight : Alignment.topRight,
+            end: isMe ? Alignment.topLeft : Alignment.bottomLeft,
+          ),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(20),
             topRight: const Radius.circular(20),

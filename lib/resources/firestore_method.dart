@@ -256,6 +256,9 @@ class FirestoreMethod {
     final String id = uuid.v4();
 
     try {
+      final participants = [selfUid, otherUid];
+      participants.sort();
+
       final conversation = Conversation(
         id: id,
         lastMessage: '',
@@ -271,10 +274,7 @@ class FirestoreMethod {
         },
         timeStamp: Timestamp.now(),
         sendBy: '',
-        participantsId: [
-          selfUid,
-          otherUid,
-        ],
+        participantsId: participants,
       );
 
       await _firestore
