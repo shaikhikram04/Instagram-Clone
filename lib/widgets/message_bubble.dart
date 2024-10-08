@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/screens/image_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/widgets/post_card.dart';
 
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
@@ -111,7 +112,7 @@ class MessageBubble extends StatelessWidget {
                           )
                         : messageType == 'image'
                             ? getImageBubble(context)
-                            : getPostBubble(),
+                            : getPostBubble(context),
                   ),
                 ],
               )
@@ -141,7 +142,60 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget getPostBubble() {
-    return Container();
+  Widget getPostBubble(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PostCard(snap: postSnap!),
+      )),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[850],
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(20),
+            topRight: const Radius.circular(20),
+            bottomLeft: isMe ? const Radius.circular(20) : Radius.zero,
+            bottomRight: isMe ? Radius.zero : const Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: imageBgColor,
+                backgroundImage: NetworkImage(postSnap!['profImage']),
+                radius: 21,
+              ),
+              title: Text(
+                postSnap!['username'],
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Image.network(
+              postSnap!['postUrl'],
+              height: 250,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: postSnap!['username'],
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: '  ${postSnap!['description']}')
+                  ],
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

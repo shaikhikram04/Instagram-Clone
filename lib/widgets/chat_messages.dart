@@ -14,6 +14,7 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   final Map participantsData = {};
+  var isLoading = false;
 
   @override
   void initState() {
@@ -23,6 +24,9 @@ class _ChatMessagesState extends State<ChatMessages> {
 
   Future<void> _loadParticipantsData() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       final snap = await FirebaseFirestore.instance
           .collection('conversations')
           .doc(widget.conversationId)
@@ -31,6 +35,10 @@ class _ChatMessagesState extends State<ChatMessages> {
       final Map temp = snap.data()!['participants'];
 
       participantsData.addAll(temp);
+
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       return;
     }
@@ -91,15 +99,14 @@ class _ChatMessagesState extends State<ChatMessages> {
                       .get()
                   : null,
               builder: (context, snapshot) {
-                
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (snapshot.connectionState == ConnectionState.waiting ||
+                    isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
                 if (snapshot.hasError) {
                   return Center(child: Text(snapshot.error.toString()));
                 }
-
 
                 Map<String, dynamic>? postSnap;
                 if (snapshot.hasData) {
