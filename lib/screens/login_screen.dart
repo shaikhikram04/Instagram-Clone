@@ -66,77 +66,75 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            child: IntrinsicHeight(
-              child: Container(
-                padding: MediaQuery.of(context).size.width > webScreenSize
-                    ? EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width / 3.5)
-                    : const EdgeInsets.symmetric(horizontal: 32),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 2,
-                      child: Container(),
-                    ),
-                    SvgPicture.asset(
-                      'assets/images/ic_instagram.svg',
-                      // ignore: deprecated_member_use
-                      color: Colors.white,
-                      height: 64,
-                    ),
-                    const SizedBox(height: 64),
-                    TextFieldInput(
-                      textEditingController: _emailController,
-                      hintText: 'Enter your email',
-                      textInputType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 24),
-                    TextFieldInput(
-                      textEditingController: _passwordController,
-                      hintText: 'Enter your password',
-                      textInputType: TextInputType.text,
-                      isPass: true,
-                    ),
-                    const SizedBox(height: 24),
-                    BlueButton(
-                      isLoading: _isLoading,
-                      onTap: loginUser,
-                      label: 'Login',
-                    ),
-                    const SizedBox(height: 12),
-                    Flexible(
-                      flex: 2,
-                      child: Container(),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: IntrinsicHeight(
+            child: Container(
+              padding: MediaQuery.of(context).size.width > webScreenSize
+                  ? EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width / 3.5)
+                  : const EdgeInsets.symmetric(horizontal: 32),
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Container(),
+                  ),
+                  SvgPicture.asset(
+                    'assets/images/ic_instagram.svg',
+                    // ignore: deprecated_member_use
+                    color: Colors.white,
+                    height: 64,
+                  ),
+                  const SizedBox(height: 64),
+                  TextFieldInput(
+                    textEditingController: _emailController,
+                    hintText: 'Enter your email',
+                    textInputType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    textEditingController: _passwordController,
+                    hintText: 'Enter your password',
+                    textInputType: TextInputType.text,
+                    isPass: true,
+                  ),
+                  const SizedBox(height: 24),
+                  BlueButton(
+                    isLoading: _isLoading,
+                    onTap: loginUser,
+                    label: 'Login',
+                  ),
+                  const SizedBox(height: 12),
+                  Flexible(
+                    flex: 2,
+                    child: Container(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: const Text("Don't have a account?"),
+                      ),
+                      GestureDetector(
+                        onTap: navigateToSignup,
+                        child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: const Text("Don't have a account?"),
-                        ),
-                        GestureDetector(
-                          onTap: navigateToSignup,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: const Text(
-                              " Sign Up.",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                          child: const Text(
+                            " Sign Up.",
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
