@@ -50,6 +50,10 @@ class _SearchScreenState extends State<SearchScreen> {
             controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search',
+              hintStyle: TextStyle(
+                color: Colors.grey[200],
+                fontWeight: FontWeight.normal,
+              ),
               fillColor: Colors.grey.shade900,
               filled: true,
               prefixIcon: const Icon(
@@ -132,30 +136,32 @@ class _SearchScreenState extends State<SearchScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                return StaggeredGrid.count(
-                  axisDirection: AxisDirection.down,
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  children: [
-                    for (var index = 0; index < snapshot.data!.size; index++)
-                      StaggeredGridTile.count(
-                        crossAxisCellCount: (index % 7 == 0) ? 2 : 1,
-                        mainAxisCellCount: (index % 7 == 0) ? 2 : 1,
-                        child: InkWell(
-                          onTap: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => PostScreen(
-                              snap: snapshot.data!.docs[index].data(),
+                return SingleChildScrollView(
+                  child: StaggeredGrid.count(
+                    axisDirection: AxisDirection.down,
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 6,
+                    crossAxisSpacing: 6,
+                    children: [
+                      for (var index = 0; index < snapshot.data!.size; index++)
+                        StaggeredGridTile.count(
+                          crossAxisCellCount: (index % 7 == 0) ? 2 : 1,
+                          mainAxisCellCount: (index % 7 == 0) ? 2 : 1,
+                          child: InkWell(
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => PostScreen(
+                                snap: snapshot.data!.docs[index].data(),
+                              ),
+                            )),
+                            child: Image.network(
+                              snapshot.data!.docs[index]['postUrl'],
+                              fit: BoxFit.cover,
                             ),
-                          )),
-                          child: Image.network(
-                            snapshot.data!.docs[index]['postUrl'],
-                            fit: BoxFit.cover,
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),

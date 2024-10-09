@@ -16,7 +16,7 @@ class TextFieldInput extends StatelessWidget {
     required this.hintText,
     required this.textInputType,
     this.changePasswordVisibility,
-    this.isPassVisible = false,
+    this.isPassVisible = true,
   });
 
   @override
