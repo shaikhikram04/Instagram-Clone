@@ -27,6 +27,7 @@ class _SignupScreenState extends State<SignupScreen> {
   late Uint8List _image;
   bool isLoading = false;
   bool isAssigningImage = false;
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -102,6 +103,12 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
+  void changePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,6 +181,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       hintText: 'Enter your password',
                       textInputType: TextInputType.text,
                       isPass: true,
+                      isPassVisible: _isPasswordVisible,
+                      changePasswordVisibility: changePasswordVisibility,
                     ),
                     const SizedBox(height: 24),
                     TextFieldInput(

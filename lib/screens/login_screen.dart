@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -63,6 +64,12 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
+  void changePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,6 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Enter your password',
                     textInputType: TextInputType.text,
                     isPass: true,
+                    changePasswordVisibility: changePasswordVisibility,
+                    isPassVisible: _isPasswordVisible,
                   ),
                   const SizedBox(height: 24),
                   BlueButton(
