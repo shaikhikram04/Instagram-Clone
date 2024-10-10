@@ -155,9 +155,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             backgroundImage: NetworkImage(userData['photoUrl']),
                             radius: 45,
                           ),
+                          const SizedBox(width: 5),
                           Expanded(
                             child: Column(
                               children: [
+                                //* posts, followers, following count
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -172,11 +174,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [button],
-                                ),
+                                button,
                               ],
                             ),
                           ),
