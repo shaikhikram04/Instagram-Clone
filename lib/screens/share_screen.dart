@@ -225,72 +225,12 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                 snapshot.data!.data()!['username'];
                             final String imageUrl =
                                 snapshot.data!.data()!['photoUrl'];
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (isSelected) {
-                                    _selectedUsers.removeWhere(
-                                      (element) => element[0] == uid,
-                                    );
-                                  } else {
-                                    _selectedUsers
-                                        .add([uid, username, imageUrl]);
-                                  }
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    flex: 9,
-                                    child: Stack(
-                                      children: [
-                                        Positioned(
-                                          top: 5,
-                                          left: 5,
-                                          right: 5,
-                                          bottom: 5,
-                                          child: CircleAvatar(
-                                            backgroundColor: imageBgColor,
-                                            backgroundImage: NetworkImage(
-                                              imageUrl,
-                                            ),
-                                          ),
-                                        ),
-                                        if (isSelected)
-                                          Positioned(
-                                            left: 60,
-                                            right: 1,
-                                            bottom: 0,
-                                            child: CircleAvatar(
-                                              backgroundColor: Colors.grey[900],
-                                              radius: 14,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(0.5),
-                                                child: Icon(
-                                                  Icons.check_circle_rounded,
-                                                  color: blueColor,
-                                                  size: width * 0.07,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Flexible(
-                                    flex: 2,
-                                    child: Wrap(children: [
-                                      Text(
-                                        username,
-                                        maxLines: 2,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ]),
-                                  ),
-                                ],
-                              ),
+                            return getGridChild(
+                              uid,
+                              username,
+                              imageUrl,
+                              isSelected,
+                              width,
                             );
                           },
                         );
@@ -343,6 +283,75 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
           },
         ),
       ],
+    );
+  }
+
+  Widget getGridChild(String uid, String username, String imageUrl,
+      bool isSelected, double width) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (isSelected) {
+            _selectedUsers.removeWhere(
+              (element) => element[0] == uid,
+            );
+          } else {
+            _selectedUsers.add([uid, username, imageUrl]);
+          }
+        });
+      },
+      child: Column(
+        children: [
+          Expanded(
+            flex: 9,
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 5,
+                  left: 5,
+                  right: 5,
+                  bottom: 5,
+                  child: CircleAvatar(
+                    backgroundColor: imageBgColor,
+                    backgroundImage: NetworkImage(
+                      imageUrl,
+                    ),
+                  ),
+                ),
+                if (isSelected)
+                  Positioned(
+                    left: 60,
+                    right: 1,
+                    bottom: 0,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey[900],
+                      radius: 14,
+                      child: Padding(
+                        padding: const EdgeInsets.all(0.5),
+                        child: Icon(
+                          Icons.check_circle_rounded,
+                          color: blueColor,
+                          size: width * 0.07,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 2),
+          Flexible(
+            flex: 2,
+            child: Wrap(children: [
+              Text(
+                username,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+              ),
+            ]),
+          ),
+        ],
+      ),
     );
   }
 }
