@@ -197,7 +197,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: width * 0.001,
-                        mainAxisSpacing: height * 0.02,
+                        mainAxisSpacing: height * 0.03,
                       ),
                       itemCount: followingList.length,
                       itemBuilder: (context, index) {
@@ -241,12 +241,13 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                               child: Column(
                                 children: [
                                   Expanded(
+                                    flex: 9,
                                     child: Stack(
                                       children: [
                                         Positioned(
                                           top: 5,
-                                          left: 0,
-                                          right: 0,
+                                          left: 5,
+                                          right: 5,
                                           bottom: 5,
                                           child: CircleAvatar(
                                             backgroundColor: imageBgColor,
@@ -257,17 +258,19 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                         ),
                                         if (isSelected)
                                           Positioned(
-                                            left: 95,
-                                            top: 70,
+                                            left: 60,
+                                            right: 1,
+                                            bottom: 0,
                                             child: CircleAvatar(
                                               backgroundColor: Colors.grey[900],
-                                              radius: 15,
-                                              child: const Padding(
-                                                padding: EdgeInsets.all(0.5),
+                                              radius: 14,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(0.5),
                                                 child: Icon(
                                                   Icons.check_circle_rounded,
                                                   color: blueColor,
-                                                  size: 30,
+                                                  size: width * 0.07,
                                                 ),
                                               ),
                                             ),
@@ -275,11 +278,16 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    username,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
+                                  const SizedBox(height: 2),
+                                  Flexible(
+                                    flex: 2,
+                                    child: Wrap(children: [
+                                      Text(
+                                        username,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ]),
                                   ),
                                 ],
                               ),
@@ -299,13 +307,19 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 6),
+                            horizontal: 16,
+                            vertical: 6,
+                          ),
                           child: TextField(
                             controller: _messageController,
                             style: const TextStyle(fontSize: 18.5),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Write a message...',
                               border: InputBorder.none,
+                              hintStyle: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey[200],
+                              ),
                             ),
                           ),
                         ),
