@@ -40,6 +40,8 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     List<String> followingList = user.following.cast<String>();
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     Future<void> sendPost() async {
       final List<List> participantList = [];
@@ -192,11 +194,10 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                   Expanded(
                     child: GridView.builder(
                       controller: scrollController, // Attach scrollController
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 20,
+                        crossAxisSpacing: width * 0.001,
+                        mainAxisSpacing: height * 0.02,
                       ),
                       itemCount: followingList.length,
                       itemBuilder: (context, index) {
@@ -237,46 +238,48 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                   }
                                 });
                               },
-                              child: Stack(
+                              child: Column(
                                 children: [
-                                  Positioned(
-                                    top: 10,
-                                    left: 20,
-                                    right: 20,
-                                    child: CircleAvatar(
-                                      radius: 45,
-                                      backgroundColor: imageBgColor,
-                                      backgroundImage: NetworkImage(
-                                        imageUrl,
-                                      ),
-                                    ),
-                                  ),
-                                  if (isSelected)
-                                    Positioned(
-                                      left: 95,
-                                      top: 70,
-                                      child: CircleAvatar(
-                                        backgroundColor: Colors.grey[900],
-                                        radius: 15,
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(0.5),
-                                          child: Icon(
-                                            Icons.check_circle_rounded,
-                                            color: blueColor,
-                                            size: 30,
+                                  Expanded(
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: 5,
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 5,
+                                          child: CircleAvatar(
+                                            backgroundColor: imageBgColor,
+                                            backgroundImage: NetworkImage(
+                                              imageUrl,
+                                            ),
                                           ),
                                         ),
-                                      ),
+                                        if (isSelected)
+                                          Positioned(
+                                            left: 95,
+                                            top: 70,
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.grey[900],
+                                              radius: 15,
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(0.5),
+                                                child: Icon(
+                                                  Icons.check_circle_rounded,
+                                                  color: blueColor,
+                                                  size: 30,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
-                                  Positioned(
-                                    top: 110,
-                                    left: 20,
-                                    right: 20,
-                                    child: Text(
-                                      username,
-                                      maxLines: 2,
-                                      textAlign: TextAlign.center,
-                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    username,
+                                    maxLines: 2,
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
