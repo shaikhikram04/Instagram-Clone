@@ -15,6 +15,14 @@ class MessageScreen extends ConsumerStatefulWidget {
 }
 
 class _MessageScreenState extends ConsumerState<MessageScreen> {
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
   String timeAgo(DateTime dateTime) {
     final Duration difference = DateTime.now().difference(dateTime);
 
@@ -38,6 +46,12 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     }
 
     return 'just now';
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchController.dispose();
   }
 
   @override
@@ -70,22 +84,39 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SearchAnchor(
-                viewBackgroundColor: mobileBackgroundColor,
-                viewHintText: 'Search',
-                builder: (BuildContext context, SearchController controller) {
-                  return SearchBar(
-                    hintText: 'Search',
-                    controller: controller,
-                    padding: const WidgetStatePropertyAll<EdgeInsets>(
-                        EdgeInsets.symmetric(horizontal: 16.0)),
-                    leading: const Icon(Icons.search),
-                  );
-                },
-                suggestionsBuilder:
-                    (BuildContext context, SearchController controller) {
-                  return [];
-                }),
+            TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 50,
+                  vertical: 15,
+                ),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                          });
+                        },
+                        icon: const Icon(Icons.clear))
+                    : null,
+                hintText: 'Search',
+                hintStyle: TextStyle(
+                  color: Colors.grey[200],
+                  fontWeight: FontWeight.normal,
+                ),
+                prefixIcon: const Icon(Icons.search),
+                fillColor: Colors.grey[940],
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
             const SizedBox(height: 15),
             Row(
               children: [
