@@ -8,14 +8,14 @@ import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 
-class AddPostSereen extends ConsumerStatefulWidget {
-  const AddPostSereen({super.key});
+class AddPostScreen extends ConsumerStatefulWidget {
+  const AddPostScreen({super.key});
 
   @override
-  ConsumerState<AddPostSereen> createState() => _AddPostSereenState();
+  ConsumerState<AddPostScreen> createState() => _AddPostSereenState();
 }
 
-class _AddPostSereenState extends ConsumerState<AddPostSereen> {
+class _AddPostSereenState extends ConsumerState<AddPostScreen> {
   Uint8List? _file;
   final _descriptionController = TextEditingController();
   var _isloading = false;

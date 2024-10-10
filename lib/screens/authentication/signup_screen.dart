@@ -6,7 +6,7 @@ import 'package:instagram_clone/resources/auth_method.dart';
 import 'package:instagram_clone/responsive/mobile_screen_layout.dart';
 import 'package:instagram_clone/responsive/responsive_layout_screen.dart';
 import 'package:instagram_clone/responsive/web_screen_layout.dart';
-import 'package:instagram_clone/screens/login_screen.dart';
+import 'package:instagram_clone/screens/authentication/login_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/blue_button.dart';

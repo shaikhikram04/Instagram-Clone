@@ -343,10 +343,13 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
           Flexible(
             flex: 2,
             child: Wrap(children: [
-              Text(
-                username,
-                maxLines: 2,
-                textAlign: TextAlign.center,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  username,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
               ),
             ]),
           ),

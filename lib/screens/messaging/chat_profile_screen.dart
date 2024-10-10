@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/screens/profile_screen.dart';
+import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class ChatProfileScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/screens/chat_profile_screen.dart';
+import 'package:instagram_clone/screens/messaging/chat_profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_messages.dart';
 import 'package:instagram_clone/widgets/type_new_message.dart';

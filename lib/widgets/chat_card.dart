@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:instagram_clone/screens/chat_screen.dart';
+import 'package:instagram_clone/screens/messaging/chat_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class ChatCard extends StatelessWidget {
