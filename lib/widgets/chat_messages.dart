@@ -91,6 +91,10 @@ class _ChatMessagesState extends State<ChatMessages> {
 
             final isnextUserIsSame = currMessageUserid == nextMessageUserId;
 
+            final isNextPost = nextMessageData != null
+                ? nextMessageData['messageType'] == 'post'
+                : false;
+
             return FutureBuilder(
               future: messageData['messageType'] == 'post'
                   ? FirebaseFirestore.instance
@@ -120,6 +124,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                     isMe: authenticatedUserId == currMessageUserid,
                     imageUrl: messageData['imageUrl'],
                     postSnap: postSnap,
+                    isTextAfterPost: isNextPost,
                   );
                 } else {
                   final currUserData = participantsData[currMessageUserid]!;

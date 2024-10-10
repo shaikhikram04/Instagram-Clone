@@ -14,7 +14,8 @@ class MessageBubble extends StatelessWidget {
     required this.isMe,
     this.imageUrl,
     this.postSnap,
-  }) : isFirstInSequence = true;
+  })  : isFirstInSequence = true,
+        isTextAfterPost = false;
 
   const MessageBubble.next({
     super.key,
@@ -23,6 +24,7 @@ class MessageBubble extends StatelessWidget {
     required this.isMe,
     this.imageUrl,
     this.postSnap,
+    this.isTextAfterPost = false,
   })  : isFirstInSequence = false,
         username = null,
         profileImageUrl = null;
@@ -35,9 +37,13 @@ class MessageBubble extends StatelessWidget {
   final bool isFirstInSequence;
   final String? imageUrl;
   final Map<String, dynamic>? postSnap;
+  final bool isTextAfterPost;
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+
     return Stack(
       children: [
         if (profileImageUrl != null)
@@ -81,17 +87,17 @@ class MessageBubble extends StatelessWidget {
                               : Colors.grey[850]
                           : null,
                       borderRadius: BorderRadius.only(
-                        topLeft: !isMe && isFirstInSequence
+                        topLeft: !isMe && (isFirstInSequence || isTextAfterPost)
                             ? Radius.zero
                             : const Radius.circular(20),
-                        topRight: isMe && isFirstInSequence
+                        topRight: isMe && (isFirstInSequence || isTextAfterPost)
                             ? Radius.zero
                             : const Radius.circular(20),
                         bottomLeft: const Radius.circular(20),
                         bottomRight: const Radius.circular(20),
                       ),
                     ),
-                    constraints: const BoxConstraints(maxWidth: 250),
+                    constraints: BoxConstraints(maxWidth: width * 0.65),
                     padding: EdgeInsets.symmetric(
                       vertical: messageType == 'text' ? 12 : 2,
                       horizontal: messageType == 'text' ? 14 : 2,
@@ -111,8 +117,8 @@ class MessageBubble extends StatelessWidget {
                             softWrap: true,
                           )
                         : messageType == 'image'
-                            ? getImageBubble(context)
-                            : getPostBubble(context),
+                            ? getImageBubble(context, height)
+                            : getPostBubble(context, height),
                   ),
                 ],
               )
@@ -123,7 +129,7 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget getImageBubble(BuildContext context) {
+  Widget getImageBubble(BuildContext context, double height) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
@@ -134,7 +140,7 @@ class MessageBubble extends StatelessWidget {
         },
         child: Image.network(
           imageUrl!,
-          height: 270,
+          height: height * 0.3,
           width: 250,
           fit: BoxFit.cover,
         ),
@@ -142,7 +148,7 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget getPostBubble(BuildContext context) {
+  Widget getPostBubble(BuildContext context, double height) {
     return InkWell(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreen(snap: postSnap!),
@@ -189,7 +195,7 @@ class MessageBubble extends StatelessWidget {
             ),
             Image.network(
               postSnap!['postUrl'],
-              height: 250,
+              height: height * 0.3,
               width: double.infinity,
               fit: BoxFit.cover,
             ),

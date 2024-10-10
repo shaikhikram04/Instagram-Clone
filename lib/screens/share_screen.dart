@@ -104,13 +104,21 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
         var isSuccessfullySend = true;
         //* push postMessage on firestore
         for (final conversationId in conversationIds) {
-          final res = await FirestoreMethod.pushMessage(
+          var res = await FirestoreMethod.pushMessage(
             conversationId: conversationId,
             uid: user.uid,
             messageType: MessageType.post,
             postId: widget.postId,
-            message: message,
           );
+
+          if (message.isNotEmpty) {
+            res = await FirestoreMethod.pushMessage(
+              conversationId: conversationId,
+              uid: user.uid,
+              messageType: MessageType.text,
+              message: message,
+            );
+          }
 
           if (res != 'success') isSuccessfullySend = false;
         }
