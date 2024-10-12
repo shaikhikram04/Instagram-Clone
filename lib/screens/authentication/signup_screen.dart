@@ -113,117 +113,115 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context)
-                  .size
-                  .height, // Ensures Column takes up full height
-            ),
-            child: IntrinsicHeight(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      flex: 2,
-                      child: Container(),
-                    ),
-                    SvgPicture.asset(
-                      'assets/images/ic_instagram.svg',
-                      // ignore: deprecated_member_use
-                      color: primaryColor,
-                      height: 64,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.07,
-                    ),
-                    //* Profile image
-                    isAssigningImage
-                        ? const CircularProgressIndicator(color: blueColor)
-                        : Stack(
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                radius: 64,
-                                backgroundImage: MemoryImage(_image),
-                              ),
-                              Positioned(
-                                bottom: -10,
-                                left: 80,
-                                child: IconButton(
-                                  onPressed: selectImage,
-                                  icon: const Icon(Icons.add_a_photo),
-                                  iconSize: 30,
-                                  color: primaryColor,
-                                ),
-                              )
-                            ],
-                          ),
-                    const SizedBox(height: 24),
-                    TextFieldInput(
-                      textEditingController: _usernameController,
-                      hintText: 'Enter your Username',
-                      textInputType: TextInputType.text,
-                    ),
-                    const SizedBox(height: 24),
-                    TextFieldInput(
-                      textEditingController: _emailController,
-                      hintText: 'Enter your email',
-                      textInputType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 24),
-                    TextFieldInput(
-                      textEditingController: _passwordController,
-                      hintText: 'Enter your password',
-                      textInputType: TextInputType.text,
-                      isPass: true,
-                      isPassVisible: _isPasswordVisible,
-                      changePasswordVisibility: changePasswordVisibility,
-                    ),
-                    const SizedBox(height: 24),
-                    TextFieldInput(
-                      textEditingController: _bioController,
-                      hintText: 'Enter your bio',
-                      textInputType: TextInputType.text,
-                    ),
-                    const SizedBox(height: 24),
-                    BlueButton(
-                      onTap: signupUser,
-                      label: 'Send',
-                    ),
-                    const SizedBox(height: 12),
-                    Flexible(
-                      flex: 2,
-                      child: Container(),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: const Text("Having an account?"),
-                        ),
-                        GestureDetector(
-                          onTap: () => Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          )),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: const Text(
-                              " Login.",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context)
+                .size
+                .height, // Ensures Column takes up full height
+          ),
+          child: IntrinsicHeight(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Container(),
+                  ),
+                  SvgPicture.asset(
+                    'assets/images/ic_instagram.svg',
+                    // ignore: deprecated_member_use
+                    color: primaryColor,
+                    height: 64,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.07,
+                  ),
+                  //* Profile image
+                  isAssigningImage
+                      ? const CircularProgressIndicator(color: blueColor)
+                      : Stack(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              radius: 64,
+                              backgroundImage: MemoryImage(_image),
                             ),
+                            Positioned(
+                              bottom: -10,
+                              left: 80,
+                              child: IconButton(
+                                onPressed: selectImage,
+                                icon: const Icon(Icons.add_a_photo),
+                                iconSize: 30,
+                                color: primaryColor,
+                              ),
+                            )
+                          ],
+                        ),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    textEditingController: _usernameController,
+                    hintText: 'Enter your Username',
+                    textInputType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    textEditingController: _emailController,
+                    hintText: 'Enter your email',
+                    textInputType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    textEditingController: _passwordController,
+                    hintText: 'Enter your password',
+                    textInputType: TextInputType.text,
+                    isPass: true,
+                    isPassVisible: _isPasswordVisible,
+                    changePasswordVisibility: changePasswordVisibility,
+                  ),
+                  const SizedBox(height: 24),
+                  TextFieldInput(
+                    textEditingController: _bioController,
+                    hintText: 'Enter your bio',
+                    textInputType: TextInputType.text,
+                  ),
+                  const SizedBox(height: 24),
+                  BlueButton(
+                    onTap: signupUser,
+                    label: 'Send',
+                  ),
+                  const SizedBox(height: 12),
+                  Flexible(
+                    flex: 2,
+                    child: Container(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: const Text("Having an account?"),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context)
+                            .pushReplacement(MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        )),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: const Text(
+                            " Login.",
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

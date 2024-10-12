@@ -22,7 +22,11 @@ class TextFieldInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inputBorder = OutlineInputBorder(
-      borderSide: Divider.createBorderSide(context),
+      borderSide: Divider.createBorderSide(
+        context,
+        color: secondaryColor,
+      ),
+      borderRadius: BorderRadius.circular(10),
     );
     return TextField(
       controller: textEditingController,
