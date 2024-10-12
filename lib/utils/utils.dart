@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram_clone/utils/colors.dart';
 
 Future<Uint8List?> pickImage(ImageSource source) async {
   final ImagePicker imagePicker = ImagePicker();
@@ -16,5 +17,13 @@ Future<Uint8List?> pickImage(ImageSource source) async {
 
 showSnackBar(String content, BuildContext context) {
   ScaffoldMessenger.of(context).clearSnackBars();
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(content)));
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: imageBgColor,
+      content: Text(
+        content,
+        style: const TextStyle(color: primaryColor),
+      ),
+    ),
+  );
 }
