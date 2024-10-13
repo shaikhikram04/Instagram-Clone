@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/auth_method.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/resources/messaging_method.dart';
 import 'package:instagram_clone/utils/global_variables.dart';
 
 class ResponsiveLayout extends ConsumerStatefulWidget {
@@ -31,6 +33,15 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
 
   void addData() async {
     final user = await AuthMethod.getUserDetail();
+    final token = await MessagingMethod.deviceToken;
+
+    //* token not matched with current device token
+    if (token != null && user.deviceToken != token) {
+      //* update token
+      FirestoreMethod.updateDeviceToken(user.uid, token);
+      user.setDeviceToken = token;
+    }
+
     if (!mounted) return;
     ref.read(userProvider.notifier).setUser(user);
   }

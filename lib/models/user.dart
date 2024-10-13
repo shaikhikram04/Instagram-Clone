@@ -11,7 +11,7 @@ class User {
   final String gender;
   final List likedPosts;
   final List savedPosts;
-  final String? deviceToken;
+  String? deviceToken;
 
   User({
     required this.username,
@@ -38,7 +38,7 @@ class User {
         'gender': gender,
         'likedPosts': likedPosts,
         'savedPosts': savedPosts,
-        'deviceToken' : deviceToken,
+        'deviceToken': deviceToken,
       };
 
   static User fromSeed(DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -57,6 +57,10 @@ class User {
       savedPosts: snap['savedPosts'],
       deviceToken: snap['deviceToken'],
     );
+  }
+
+  set setDeviceToken(String token) {
+    deviceToken = token;
   }
 
   // User copyWith({
