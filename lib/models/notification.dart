@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum NotificationType {
-  follow,
-  like,
-  comment,
-  post,
-  message,
+  follow, //* userId
+  like, //* postId
+  comment, //* postId
+  newPost, //* postId
 }
 
 class Notification {
@@ -15,6 +14,7 @@ class Notification {
     required this.title,
     required this.body,
     required this.timestamp,
+    required this.referenceId,
     required this.seen,
   });
 
@@ -23,16 +23,18 @@ class Notification {
   final String title;
   final String body;
   final Timestamp timestamp;
+  final String referenceId;
   final bool seen;
 
   Map<String, dynamic> get toJson {
     return {
-      'notificationId' : notificationId,
-      'type' : type,
-      'title' : title,
-      'body' : body,
-      'timestamp' : timestamp,
-      'seen' : seen,
+      'notificationId': notificationId,
+      'type': type,
+      'title': title,
+      'body': body,
+      'timestamp': timestamp,
+      'seen': seen,
+      'referenceId': referenceId,
     };
   }
 }
