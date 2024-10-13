@@ -11,7 +11,7 @@ class User {
   final String gender;
   final List likedPosts;
   final List savedPosts;
-  final String deviceToken;
+  final String? deviceToken;
 
   User({
     required this.username,

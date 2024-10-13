@@ -46,7 +46,7 @@ class AuthMethod {
         String photoUrl = await StorageMethods.uploadImageToStorage(
             'profilePics', file, false);
 
-        String deviceToken = await MessagingMethod.deviceToken;
+        String? deviceToken = await MessagingMethod.deviceToken;
 
         final user = model.User(
           username: username,
