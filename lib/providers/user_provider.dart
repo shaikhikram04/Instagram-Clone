@@ -14,6 +14,7 @@ class UserNotifier extends StateNotifier<User> {
             following: [],
             likedPosts: [],
             savedPosts: [],
+            deviceToken: '',
           ),
         );
 
@@ -32,6 +33,7 @@ class UserNotifier extends StateNotifier<User> {
     String? gender,
     List? likedPosts,
     List? savedPosts,
+    String? deviceToken,
   }) {
     state = User(
       username: username ?? state.username,
@@ -43,6 +45,7 @@ class UserNotifier extends StateNotifier<User> {
       following: following ?? state.following,
       likedPosts: likedPosts ?? state.likedPosts,
       savedPosts: savedPosts ?? state.savedPosts,
+      deviceToken: deviceToken ?? state.deviceToken,
     );
   }
 }

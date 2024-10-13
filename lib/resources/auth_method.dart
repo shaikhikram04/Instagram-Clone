@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instagram_clone/models/user.dart' as model;
+import 'package:instagram_clone/resources/messaging_method.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
 
 class AuthMethod {
@@ -45,6 +46,8 @@ class AuthMethod {
         String photoUrl = await StorageMethods.uploadImageToStorage(
             'profilePics', file, false);
 
+        String deviceToken = await MessagingMethod.deviceToken;
+
         final user = model.User(
           username: username,
           email: email,
@@ -55,6 +58,7 @@ class AuthMethod {
           following: [],
           likedPosts: [],
           savedPosts: [],
+          deviceToken: deviceToken,
         );
 
         //* add user to firebase

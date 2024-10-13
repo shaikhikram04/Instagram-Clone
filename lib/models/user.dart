@@ -11,6 +11,7 @@ class User {
   final String gender;
   final List likedPosts;
   final List savedPosts;
+  final String deviceToken;
 
   User({
     required this.username,
@@ -18,6 +19,7 @@ class User {
     required this.uid,
     required this.bio,
     required this.photoUrl,
+    required this.deviceToken,
     required this.followers,
     required this.following,
     required this.likedPosts,
@@ -36,6 +38,7 @@ class User {
         'gender': gender,
         'likedPosts': likedPosts,
         'savedPosts': savedPosts,
+        'deviceToken' : deviceToken,
       };
 
   static User fromSeed(DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -52,32 +55,33 @@ class User {
       gender: snap['gender'],
       likedPosts: snap['likedPosts'],
       savedPosts: snap['savedPosts'],
+      deviceToken: snap['deviceToken'],
     );
   }
 
-  User copyWith({
-    String? username,
-    String? email,
-    String? uid,
-    String? bio,
-    String? photoUrl,
-    List? followers,
-    List? following,
-    String? gender,
-    List? likedPosts,
-    List? savedPosts,
-  }) {
-    return User(
-      username: username ?? this.username,
-      email: email ?? this.email,
-      uid: uid ?? this.uid,
-      bio: bio ?? this.bio,
-      photoUrl: photoUrl ?? this.photoUrl,
-      followers: followers ?? this.followers,
-      following: following ?? this.following,
-      gender: gender ?? this.gender,
-      likedPosts: this.likedPosts,
-      savedPosts: this.savedPosts,
-    );
-  }
+  // User copyWith({
+  //   String? username,
+  //   String? email,
+  //   String? uid,
+  //   String? bio,
+  //   String? photoUrl,
+  //   List? followers,
+  //   List? following,
+  //   String? gender,
+  //   List? likedPosts,
+  //   List? savedPosts,
+  // }) {
+  //   return User(
+  //     username: username ?? this.username,
+  //     email: email ?? this.email,
+  //     uid: uid ?? this.uid,
+  //     bio: bio ?? this.bio,
+  //     photoUrl: photoUrl ?? this.photoUrl,
+  //     followers: followers ?? this.followers,
+  //     following: following ?? this.following,
+  //     gender: gender ?? this.gender,
+  //     likedPosts: this.likedPosts,
+  //     savedPosts: this.savedPosts,
+  //   );
+  // }
 }
