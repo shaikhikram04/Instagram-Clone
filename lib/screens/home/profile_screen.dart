@@ -9,6 +9,7 @@ import 'package:instagram_clone/screens/setting_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
+import 'package:instagram_clone/widgets/no_data_found.dart';
 import 'package:instagram_clone/widgets/post_grid.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -245,35 +246,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Text(
                                 'Capture the moment with a friend',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 21),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 21,
+                                ),
                               ),
                               SizedBox(height: 10),
                               Text(
                                 'Create your first post',
                                 style: TextStyle(
-                                    color: blueColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600),
+                                  color: blueColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               )
                             ],
                           ),
                         );
                       } else {
-                        return Center(
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                'assets/images/Insta_NTF.png',
-                                height: 200,
-                              ),
-                              const Text(
-                                'No Posts yet!',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 21),
-                              ),
-                            ],
-                          ),
-                        );
+                        return const NoDataFound(title: 'post');
                       }
                     }
 

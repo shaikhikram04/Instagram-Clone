@@ -188,9 +188,12 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                         Colors.grey[830]),
                                     leading: const Icon(Icons.search),
                                     shape: const WidgetStatePropertyAll(
-                                        RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10)))),
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                               suggestionsBuilder: (context, controller) {
                                 return [];

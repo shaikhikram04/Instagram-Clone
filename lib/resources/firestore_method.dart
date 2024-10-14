@@ -441,9 +441,8 @@ class FirestoreMethod {
   }
 
   static Future<void> updateDeviceToken(String userId, String? token) async {
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .update({'deviceToken': token});
+    await _firestore.collection('users').doc(userId).update(
+      {'deviceToken': token},
+    );
   }
 }

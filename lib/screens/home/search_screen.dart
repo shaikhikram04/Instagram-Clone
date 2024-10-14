@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/widgets/no_data_found.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -129,7 +130,7 @@ class _SearchScreenState extends State<SearchScreen> {
               future: FirebaseFirestore.instance.collection('posts').get(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: Text('No Post'));
+                  return const NoDataFound(title: 'posts');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting ||
                     snapshot.hasError) {

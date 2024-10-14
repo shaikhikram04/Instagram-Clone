@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
-import 'package:instagram_clone/screens/home/comments_screen.dart';
+import 'package:instagram_clone/screens/comments_screen.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/screens/share_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
