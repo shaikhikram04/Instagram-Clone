@@ -250,29 +250,49 @@ class FirestoreMethod {
     }
   }
 
-  Future<void> followUser(String uid, String followId, WidgetRef ref) async {
+  Future<void> followUser(String followId, WidgetRef ref) async {
     try {
-      final snap = await _firestore.collection('users').doc(uid).get();
+      final user = ref.read(userProvider);
+
+      final snap = await _firestore.collection('users').doc(user.uid).get();
       List following = snap.data()!['following'];
 
       if (following.contains(followId)) {
         await _firestore.collection('users').doc(followId).update({
-          'followers': FieldValue.arrayRemove([uid])
+          'followers': FieldValue.arrayRemove([user.uid])
         });
-        await _firestore.collection('users').doc(uid).update({
+        await _firestore.collection('users').doc(user.uid).update({
           'following': FieldValue.arrayRemove([followId])
         });
 
         following.remove(followId);
       } else {
         await _firestore.collection('users').doc(followId).update({
-          'followers': FieldValue.arrayUnion([uid])
+          'followers': FieldValue.arrayUnion([user.uid])
         });
-        await _firestore.collection('users').doc(uid).update({
+        await _firestore.collection('users').doc(user.uid).update({
           'following': FieldValue.arrayUnion([followId])
         });
 
         following.add(followId);
+
+        //* sending notification
+        final notificationId = uuid.v1();
+        final notification = Notification(
+          notificationId: notificationId,
+          type: NotificationType.follow,
+          body: 'Started following you',
+          timestamp: Timestamp.now(),
+          referenceId: user.uid,
+          profileImageUrl: user.photoUrl,
+          username: user.username,
+        );
+        await _firestore
+            .collection('users')
+            .doc(followId)
+            .collection('notifications')
+            .doc(notificationId)
+            .set(notification.toJson);
       }
 
       ref.read(userProvider.notifier).updateField(following: following);
