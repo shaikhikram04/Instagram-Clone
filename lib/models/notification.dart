@@ -11,30 +11,33 @@ class Notification {
   Notification({
     required this.notificationId,
     required this.type,
-    required this.title,
     required this.body,
     required this.timestamp,
     required this.referenceId,
-    required this.seen,
+    required this.profileImageUrl,
+    required this.username,
+    this.seen = false,
   });
 
   final String notificationId;
   final NotificationType type;
-  final String title;
   final String body;
   final Timestamp timestamp;
   final String referenceId;
+  final String profileImageUrl;
+  final String username;
   final bool seen;
 
   Map<String, dynamic> get toJson {
     return {
       'notificationId': notificationId,
       'type': type,
-      'title': title,
       'body': body,
       'timestamp': timestamp,
       'seen': seen,
       'referenceId': referenceId,
+      'profileImageUrl': profileImageUrl,
+      'username': username,
     };
   }
 }

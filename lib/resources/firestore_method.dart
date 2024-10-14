@@ -49,19 +49,20 @@ class FirestoreMethod {
         final notificationId = uuid.v1();
 
         final notification = Notification(
-            notificationId: notificationId,
-            type: NotificationType.newPost,
-            title: 'New Post',
-            body: '$username posted a new image.',
-            timestamp: Timestamp.now(),
-            referenceId: postId,
-            seen: false);
+          notificationId: notificationId,
+          type: NotificationType.newPost,
+          body: 'Posted a new image.',
+          timestamp: Timestamp.now(),
+          referenceId: postId,
+          profileImageUrl: profImage,
+          username: username,
+        );
 
         await _firestore
             .collection('users')
-            .doc(uid)
-            .collection('notifications')
             .doc(followerId)
+            .collection('notifications')
+            .doc(notificationId)
             .set(notification.toJson);
       }
 
@@ -74,17 +75,22 @@ class FirestoreMethod {
   }
 
   static Future<void> likePost(
-      String postId, String uid, List likes, WidgetRef ref) async {
+    String postId,
+    String postUserId,
+    List likes,
+    WidgetRef ref,
+  ) async {
+    final user = ref.read(userProvider);
     try {
       //! if user already liked post
-      if (likes.contains(uid)) {
+      if (likes.contains(user.uid)) {
         //*! remove userId from likes list
         _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove([uid]),
+          'likes': FieldValue.arrayRemove([user.uid]),
         });
 
         //! remove postId from user LidedPost list
-        _firestore.collection('users').doc(uid).update({
+        _firestore.collection('users').doc(user.uid).update({
           'likedPosts': FieldValue.arrayRemove([postId]),
         });
 
@@ -94,16 +100,35 @@ class FirestoreMethod {
         //! is like post
         //*! add userId to likes list
         _firestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion([uid]),
+          'likes': FieldValue.arrayUnion([user.uid]),
         });
 
         //! add postId from to LidedPost list
-        _firestore.collection('users').doc(uid).update({
+        _firestore.collection('users').doc(user.uid).update({
           'likedPosts': FieldValue.arrayUnion([postId]),
         });
 
         likes.add(postId);
         ref.read(userProvider.notifier).updateField(likedPosts: likes);
+
+        //* sending notification to the user who posted
+        final notificationId = uuid.v1();
+        final notification = Notification(
+          notificationId: notificationId,
+          type: NotificationType.like,
+          body: 'Likes your post',
+          timestamp: Timestamp.now(),
+          referenceId: postId,
+          profileImageUrl: user.photoUrl,
+          username: user.username,
+        );
+
+        await _firestore
+            .collection('users')
+            .doc(postUserId)
+            .collection('notifications')
+            .doc(notificationId)
+            .set(notification.toJson);
       }
     } catch (e) {
       return;
