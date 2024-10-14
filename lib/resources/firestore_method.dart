@@ -161,6 +161,7 @@ class FirestoreMethod {
 
   static Future<void> commentToPost(
     String postId,
+    String postUserId,
     String text,
     String uid,
     String username,
@@ -185,6 +186,25 @@ class FirestoreMethod {
             .collection('comments')
             .doc(commentId)
             .set(comment.toJson());
+
+        //* sending notification
+        final notificationId = uuid.v1();
+        final notification = Notification(
+          notificationId: notificationId,
+          type: NotificationType.comment,
+          body: 'Comment to your post',
+          timestamp: Timestamp.now(),
+          referenceId: postId,
+          profileImageUrl: profImage,
+          username: username,
+        );
+
+        await _firestore
+            .collection('users')
+            .doc(postUserId)
+            .collection('notifications')
+            .doc(notificationId)
+            .set(notification.toJson);
       }
     } catch (e) {
       return;

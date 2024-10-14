@@ -10,10 +10,12 @@ import 'package:instagram_clone/widgets/comment_card.dart';
 
 class CommentsScreen extends ConsumerStatefulWidget {
   final String postId;
+  final String postUserId;
   final bool isWrite;
-  const CommentsScreen({
+  const CommentsScreen( {
     super.key,
     required this.postId,
+    required this.postUserId,
     this.isWrite = false,
   });
 
@@ -46,10 +48,15 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
   }
 
   void _comment(User user) async {
+    String commentText = controller.text;
+
+    if (commentText.trim().isEmpty) return;
+
     try {
       await FirestoreMethod.commentToPost(
         widget.postId,
-        controller.text,
+        widget.postUserId,
+        commentText,
         user.uid,
         user.username,
         user.photoUrl,
