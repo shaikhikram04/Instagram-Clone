@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/chat.dart';
 import 'package:instagram_clone/models/comment.dart';
 import 'package:instagram_clone/models/conversation.dart';
+import 'package:instagram_clone/models/notification.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
@@ -22,6 +23,7 @@ class FirestoreMethod {
     String uid,
     String username,
     String profImage,
+    List followers,
   ) async {
     String res = 'some error occcurred';
     try {
@@ -41,6 +43,27 @@ class FirestoreMethod {
       );
 
       await _firestore.collection('posts').doc(postId).set(post.toJson());
+
+      //* push data on notification collection of followers
+      for (final followerId in followers) {
+        final notificationId = uuid.v1();
+
+        final notification = Notification(
+            notificationId: notificationId,
+            type: NotificationType.newPost,
+            title: 'New Post',
+            body: '$username posted a new image.',
+            timestamp: Timestamp.now(),
+            referenceId: postId,
+            seen: false);
+
+        await _firestore
+            .collection('users')
+            .doc(uid)
+            .collection('notifications')
+            .doc(followerId)
+            .set(notification.toJson);
+      }
 
       res = 'success';
     } catch (e) {
@@ -353,6 +376,9 @@ class FirestoreMethod {
   }
 
   static Future<void> updateDeviceToken(String userId, String? token) async {
-    await _firestore.collection('users').doc(userId).update({'deviceToken': token});
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .update({'deviceToken': token});
   }
 }

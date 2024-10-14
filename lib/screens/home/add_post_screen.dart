@@ -62,10 +62,7 @@ class _AddPostSereenState extends ConsumerState<AddPostScreen> {
   }
 
   void _postImage(
-    String uid,
-    String username,
-    String profImage,
-  ) async {
+      String uid, String username, String profImage, List followers) async {
     try {
       setState(() {
         _isloading = true;
@@ -76,6 +73,7 @@ class _AddPostSereenState extends ConsumerState<AddPostScreen> {
         uid,
         username,
         profImage,
+        followers,
       );
       setState(() {
         _isloading = false;
@@ -139,8 +137,12 @@ class _AddPostSereenState extends ConsumerState<AddPostScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () =>
-                      _postImage(user.uid, user.username, user.photoUrl),
+                  onPressed: () => _postImage(
+                    user.uid,
+                    user.username,
+                    user.photoUrl,
+                    user.followers,
+                  ),
                   child: const Text(
                     'Post',
                     style: TextStyle(
