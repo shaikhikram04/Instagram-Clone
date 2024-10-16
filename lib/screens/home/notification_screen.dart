@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
+import 'package:instagram_clone/screens/home/profile_screen.dart';
+import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
 import 'package:instagram_clone/widgets/no_data_found.dart';
@@ -90,18 +92,28 @@ class NotificationScreen extends ConsumerWidget {
 
         final snap = snapshot.data!.data();
         return ListTile(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) {
+                if (collection == 'users') {
+                  return ProfileScreen(uid: notificationData['referenceId']);
+                }
+                return PostScreen(snap: snap!);
+              },
+            ));
+          },
           leading: CircleAvatar(
             radius: 25,
             backgroundColor: imageBgColor,
             backgroundImage: NetworkImage(
-              collection == 'posts' ? snap!['profImage'] : snap!['photoUrl'],
+              notificationData['profileImageUrl'],
             ),
           ),
           title: RichText(
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: snap['username'],
+                  text: notificationData['username'],
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                   ),
@@ -121,20 +133,22 @@ class NotificationScreen extends ConsumerWidget {
               ? SizedBox(
                   width: 80,
                   child: FollowButton(
-                    backgroundColor: blueColor,
-                    borderColor: blueColor,
-                    text: 'Follow',
+                    backgroundColor: isFollowing ? imageBgColor : blueColor,
+                    borderColor: isFollowing ? imageBgColor : blueColor,
+                    text: isFollowing ? 'Following' : 'Follow',
                     textColor: primaryColor,
                     function: () {
                       FirestoreMethod.followUser(
-                          notificationData['referenceId'], ref);
+                        notificationData['referenceId'],
+                        ref,
+                      );
                     },
                   ),
                 )
               : ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    snap['postUrl'],
+                    snap!['postUrl'],
                     fit: BoxFit.cover,
                     height: 50,
                     width: 50,
