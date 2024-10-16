@@ -90,7 +90,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 text: 'Unfollow',
                 textColor: Colors.black,
                 function: () async {
-                  await FirestoreMethod().followUser(
+                  await FirestoreMethod.followUser(
                     userData['uid'],
                     ref,
                   );
@@ -105,7 +105,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 text: 'Follow',
                 textColor: Colors.white,
                 function: () async {
-                  await FirestoreMethod().followUser(
+                  await FirestoreMethod.followUser(
                     userData['uid'],
                     ref,
                   );

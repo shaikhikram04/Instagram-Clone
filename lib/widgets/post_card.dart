@@ -148,8 +148,7 @@ class _PostCardState extends ConsumerState<PostCard> {
                 if (!isFollowing && user.uid != widget.snap['uid'])
                   ElevatedButton(
                     onPressed: () async {
-                      await FirestoreMethod()
-                          .followUser(widget.snap['uid'], ref);
+                      await FirestoreMethod.followUser(widget.snap['uid'], ref);
                       setState(() {
                         isFollowing = !isFollowing;
                       });

@@ -86,7 +86,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> saveEdits() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    final res = await FirestoreMethod().editProfile(
+    final res = await FirestoreMethod.editProfile(
       uid,
       usernameController.text,
       bioController.text,

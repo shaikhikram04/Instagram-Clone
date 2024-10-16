@@ -79,7 +79,7 @@ class _CommentCardState extends State<CommentCard> {
                   smallLike: true,
                   child: InkWell(
                     onTap: () async {
-                      await FirestoreMethod().likeComment(
+                      await FirestoreMethod.likeComment(
                         widget.postId,
                         widget.snap['id'],
                         widget.userId,
