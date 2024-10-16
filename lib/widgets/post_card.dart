@@ -336,6 +336,8 @@ class _PostCardState extends ConsumerState<PostCard> {
                     ),
                   ),
                 ),
+
+                //* Date
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Text(

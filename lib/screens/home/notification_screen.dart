@@ -5,6 +5,7 @@ import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/follow_button.dart';
 import 'package:instagram_clone/widgets/no_data_found.dart';
+import 'package:intl/intl.dart';
 
 class NotificationScreen extends ConsumerWidget {
   const NotificationScreen({super.key});
@@ -93,8 +94,13 @@ class NotificationScreen extends ConsumerWidget {
                         ),
                         TextSpan(
                           text: "  ${notificationData['body']}",
-                        )
+                        ),
                       ]),
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd().format(
+                        notificationData['timestamp'].toDate(),
+                      ),
                     ),
                     trailing: notificationData['type'] == 'follow'
                         ? const SizedBox(
