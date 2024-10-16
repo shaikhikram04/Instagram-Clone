@@ -215,7 +215,7 @@ class FirestoreMethod {
     }
   }
 
-  Future<void> likeComment(
+  static Future<void> likeComment(
     String postId,
     String commentId,
     String uid,
@@ -254,7 +254,7 @@ class FirestoreMethod {
     }
   }
 
-  Future<void> followUser(String followId, WidgetRef ref) async {
+  static Future<void> followUser(String followId, WidgetRef ref) async {
     try {
       final user = ref.read(userProvider);
 
@@ -305,7 +305,7 @@ class FirestoreMethod {
     }
   }
 
-  Future<String> editProfile(
+  static Future<String> editProfile(
     String uid,
     String username,
     String bio,
