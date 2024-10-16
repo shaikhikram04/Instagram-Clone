@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,14 @@ class MobileScreenLayout extends StatefulWidget {
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   int _page = 0;
   late PageController _pageController;
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  late bool isNewNotification;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    checkForNewNotification();
   }
 
   @override
@@ -50,6 +54,21 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     });
   }
 
+  Future<void> checkForNewNotification() async {
+    final snapList = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('notifications')
+        .orderBy('timestamp', descending: true)
+        .limit(1)
+        .get();
+
+    final snap = snapList.docs[0].data();
+    isNewNotification = !snap['seen'];
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +82,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           const AddPostScreen(),
           const NotificationScreen(),
           ProfileScreen(
-            uid: FirebaseAuth.instance.currentUser!.uid,
+            uid: userId,
           ),
         ],
       ),
@@ -72,24 +91,37 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         activeColor: primaryColor,
         inactiveColor: secondaryColor,
         currentIndex: _page,
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             backgroundColor: primaryColor,
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.search),
             backgroundColor: primaryColor,
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.add_box_outlined),
             backgroundColor: primaryColor,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
+            icon: Stack(
+              children: [
+                const Icon(Icons.favorite),
+                if (isNewNotification)
+                  const Positioned(
+                    bottom: 3,
+                    right: 0,
+                    child: CircleAvatar(
+                      radius: 6,
+                      backgroundColor: Colors.red,
+                    ),
+                  )
+              ],
+            ),
             backgroundColor: primaryColor,
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             backgroundColor: primaryColor,
           ),
