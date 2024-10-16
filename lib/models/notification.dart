@@ -31,7 +31,7 @@ class Notification {
   Map<String, dynamic> get toJson {
     return {
       'notificationId': notificationId,
-      'type': type,
+      'type': type.name,
       'body': body,
       'timestamp': timestamp,
       'seen': seen,

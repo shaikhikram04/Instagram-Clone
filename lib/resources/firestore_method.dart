@@ -111,24 +111,26 @@ class FirestoreMethod {
         likes.add(postId);
         ref.read(userProvider.notifier).updateField(likedPosts: likes);
 
-        //* sending notification to the user who posted
-        final notificationId = uuid.v1();
-        final notification = Notification(
-          notificationId: notificationId,
-          type: NotificationType.like,
-          body: 'Likes your post',
-          timestamp: Timestamp.now(),
-          referenceId: postId,
-          profileImageUrl: user.photoUrl,
-          username: user.username,
-        );
+        if (postUserId != user.uid) {
+          //* sending notification to the user who posted
+          final notificationId = uuid.v1();
+          final notification = Notification(
+            notificationId: notificationId,
+            type: NotificationType.like,
+            body: 'Likes your post',
+            timestamp: Timestamp.now(),
+            referenceId: postId,
+            profileImageUrl: user.photoUrl,
+            username: user.username,
+          );
 
-        await _firestore
-            .collection('users')
-            .doc(postUserId)
-            .collection('notifications')
-            .doc(notificationId)
-            .set(notification.toJson);
+          await _firestore
+              .collection('users')
+              .doc(postUserId)
+              .collection('notifications')
+              .doc(notificationId)
+              .set(notification.toJson);
+        }
       }
     } catch (e) {
       return;
@@ -188,23 +190,25 @@ class FirestoreMethod {
             .set(comment.toJson());
 
         //* sending notification
-        final notificationId = uuid.v1();
-        final notification = Notification(
-          notificationId: notificationId,
-          type: NotificationType.comment,
-          body: 'Comment to your post',
-          timestamp: Timestamp.now(),
-          referenceId: postId,
-          profileImageUrl: profImage,
-          username: username,
-        );
+        if (postUserId != uid) {
+          final notificationId = uuid.v1();
+          final notification = Notification(
+            notificationId: notificationId,
+            type: NotificationType.comment,
+            body: 'Comment to your post',
+            timestamp: Timestamp.now(),
+            referenceId: postId,
+            profileImageUrl: profImage,
+            username: username,
+          );
 
-        await _firestore
-            .collection('users')
-            .doc(postUserId)
-            .collection('notifications')
-            .doc(notificationId)
-            .set(notification.toJson);
+          await _firestore
+              .collection('users')
+              .doc(postUserId)
+              .collection('notifications')
+              .doc(notificationId)
+              .set(notification.toJson);
+        }
       }
     } catch (e) {
       return;

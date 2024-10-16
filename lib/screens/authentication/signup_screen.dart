@@ -111,15 +111,14 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context)
-                .size
-                .height, // Ensures Column takes up full height
-          ),
+              minHeight: height // Ensures Column takes up full height
+              ),
           child: IntrinsicHeight(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -129,7 +128,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   Flexible(
                     flex: 2,
-                    child: Container(),
+                    child: Container(
+                      height: 40,
+                    ),
                   ),
                   SvgPicture.asset(
                     'assets/images/ic_instagram.svg',
@@ -138,7 +139,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: 64,
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.07,
+                    height: height * 0.07,
                   ),
                   //* Profile image
                   isAssigningImage

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/utils/colors.dart';
 
 class NoDataFound extends StatelessWidget {
   const NoDataFound({
@@ -12,11 +13,12 @@ class NoDataFound extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 12),
           Image.asset(
             'assets/images/Insta_NTF.png',
-            height: 250,
+            height: 225,
           ),
           const SizedBox(height: 20),
           Text(
@@ -24,6 +26,7 @@ class NoDataFound extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 21,
+              color: primaryColor,
             ),
           ),
         ],

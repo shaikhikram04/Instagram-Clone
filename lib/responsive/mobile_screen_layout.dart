@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/home/add_post_screen.dart';
 import 'package:instagram_clone/screens/home/feed_screen.dart';
+import 'package:instagram_clone/screens/home/notification_screen.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/screens/home/search_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
@@ -60,7 +61,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           FeedScreen(navigateToSearchScreen: navigateToSearchScreen),
           const SearchScreen(),
           const AddPostScreen(),
-          const Center(child: Text('Notification')),
+          const NotificationScreen(),
           ProfileScreen(
             uid: FirebaseAuth.instance.currentUser!.uid,
           ),

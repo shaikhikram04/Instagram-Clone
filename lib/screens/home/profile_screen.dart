@@ -14,7 +14,10 @@ import 'package:instagram_clone/widgets/post_grid.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   final String uid;
-  const ProfileScreen({super.key, required this.uid});
+  const ProfileScreen({
+    super.key,
+    required this.uid,
+  });
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
