@@ -23,15 +23,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     super.initState();
   }
 
-  Future<void> markAsSeen(String lastNotificationId, String userId) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .update({'lastSeenNotificationId': lastNotificationId});
-
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -75,9 +66,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
             padding: const EdgeInsets.symmetric(vertical: 10),
             itemBuilder: (BuildContext context, int index) {
               final notificationData = docs[index].data();
-              if (index == 0) {
-                markAsSeen(notificationData['notificationId'], user.uid);
-              }
 
               final collection =
                   notificationData['type'] == 'follow' ? 'users' : 'posts';

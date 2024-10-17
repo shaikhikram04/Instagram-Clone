@@ -21,6 +21,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   late PageController _pageController;
   final userId = FirebaseAuth.instance.currentUser!.uid;
   bool isNewNotification = false;
+  var lastNotificationId = '';
 
   @override
   void initState() {
@@ -35,7 +36,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     _pageController.dispose();
   }
 
-  void navigationTapped(int page) {
+  Future<void> navigationTapped(int page) async {
+    if (page == 3) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({'lastSeenNotificationId': lastNotificationId});
+      isNewNotification = false;
+    }
     _pageController.jumpToPage(page);
   }
 
@@ -54,6 +62,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     });
   }
 
+ 
+
   Future<void> checkForNewNotification() async {
     try {
       final userDoc =
@@ -69,11 +79,12 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       final String lastSeenNotificationId =
           userSnap.data()!['lastSeenNotificationId'];
 
-      final notificationId = snapList.docs[0].id;
-      isNewNotification = notificationId != lastSeenNotificationId;
+      lastNotificationId = snapList.docs[0].id;
+      isNewNotification = lastNotificationId != lastSeenNotificationId;
     } catch (e) {
       return;
     }
+    if (!mounted) return;
 
     setState(() {});
   }
@@ -89,7 +100,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           FeedScreen(navigateToSearchScreen: navigateToSearchScreen),
           const SearchScreen(),
           const AddPostScreen(),
-          const NotificationScreen(),
+          NotificationScreen(markNotificationReaded: markNotificationAsRead),
           ProfileScreen(
             uid: userId,
           ),
