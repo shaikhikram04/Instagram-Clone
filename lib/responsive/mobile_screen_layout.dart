@@ -100,7 +100,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
           FeedScreen(navigateToSearchScreen: navigateToSearchScreen),
           const SearchScreen(),
           const AddPostScreen(),
-          NotificationScreen(markNotificationReaded: markNotificationAsRead),
+          const NotificationScreen(),
           ProfileScreen(
             uid: userId,
           ),
