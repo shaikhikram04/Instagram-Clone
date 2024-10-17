@@ -20,7 +20,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   int _page = 0;
   late PageController _pageController;
   final userId = FirebaseAuth.instance.currentUser!.uid;
-  late bool isNewNotification;
+  bool isNewNotification = false;
 
   @override
   void initState() {
@@ -55,20 +55,25 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   }
 
   Future<void> checkForNewNotification() async {
-    final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
-    final snapList = await userDoc
-        .collection('notifications')
-        .orderBy('timestamp', descending: true)
-        .limit(1)
-        .get();
+    try {
+      final userDoc =
+          FirebaseFirestore.instance.collection('users').doc(userId);
+      final snapList = await userDoc
+          .collection('notifications')
+          .orderBy('timestamp', descending: true)
+          .limit(1)
+          .get();
 
-    final userSnap = await userDoc.get();
+      final userSnap = await userDoc.get();
 
-    final String lastSeenNotificationId =
-        userSnap.data()!['lastSeenNotificationId'];
+      final String lastSeenNotificationId =
+          userSnap.data()!['lastSeenNotificationId'];
 
-    final notificationId = snapList.docs[0].id;
-    isNewNotification = notificationId != lastSeenNotificationId;
+      final notificationId = snapList.docs[0].id;
+      isNewNotification = notificationId != lastSeenNotificationId;
+    } catch (e) {
+      return;
+    }
 
     setState(() {});
   }

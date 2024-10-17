@@ -10,11 +10,30 @@ import 'package:instagram_clone/widgets/follow_button.dart';
 import 'package:instagram_clone/widgets/no_data_found.dart';
 import 'package:intl/intl.dart';
 
-class NotificationScreen extends ConsumerWidget {
+class NotificationScreen extends ConsumerStatefulWidget {
   const NotificationScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends ConsumerState<NotificationScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> markAsSeen(String lastNotificationId, String userId) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .update({'lastSeenNotificationId': lastNotificationId});
+
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     return Scaffold(
       appBar: AppBar(
@@ -56,6 +75,9 @@ class NotificationScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             itemBuilder: (BuildContext context, int index) {
               final notificationData = docs[index].data();
+              if (index == 0) {
+                markAsSeen(notificationData['notificationId'], user.uid);
+              }
 
               final collection =
                   notificationData['type'] == 'follow' ? 'users' : 'posts';
