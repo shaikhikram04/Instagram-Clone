@@ -55,16 +55,20 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   }
 
   Future<void> checkForNewNotification() async {
-    final snapList = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
+    final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+    final snapList = await userDoc
         .collection('notifications')
         .orderBy('timestamp', descending: true)
         .limit(1)
         .get();
 
-    final snap = snapList.docs[0].data();
-    isNewNotification = !snap['seen'];
+    final userSnap = await userDoc.get();
+
+    final String lastSeenNotificationId =
+        userSnap.data()!['lastSeenNotificationId'];
+
+    final notificationId = snapList.docs[0].id;
+    isNewNotification = notificationId != lastSeenNotificationId;
 
     setState(() {});
   }

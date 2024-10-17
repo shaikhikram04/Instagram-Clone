@@ -16,7 +16,6 @@ class Notification {
     required this.referenceId,
     required this.profileImageUrl,
     required this.username,
-    this.seen = false,
   });
 
   final String notificationId;
@@ -26,7 +25,6 @@ class Notification {
   final String referenceId;
   final String profileImageUrl;
   final String username;
-  final bool seen;
 
   Map<String, dynamic> get toJson {
     return {
@@ -34,7 +32,6 @@ class Notification {
       'type': type.name,
       'body': body,
       'timestamp': timestamp,
-      'seen': seen,
       'referenceId': referenceId,
       'profileImageUrl': profileImageUrl,
       'username': username,
