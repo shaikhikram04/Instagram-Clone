@@ -15,6 +15,7 @@ class UserNotifier extends StateNotifier<User> {
             likedPosts: [],
             savedPosts: [],
             deviceToken: '',
+            lastSeenNotificationId: '',
           ),
         );
 
@@ -34,6 +35,7 @@ class UserNotifier extends StateNotifier<User> {
     List? likedPosts,
     List? savedPosts,
     String? deviceToken,
+    String? lastSeenNotificationId,
   }) {
     state = User(
       username: username ?? state.username,
@@ -46,6 +48,8 @@ class UserNotifier extends StateNotifier<User> {
       likedPosts: likedPosts ?? state.likedPosts,
       savedPosts: savedPosts ?? state.savedPosts,
       deviceToken: deviceToken ?? state.deviceToken,
+      lastSeenNotificationId:
+          lastSeenNotificationId ?? state.lastSeenNotificationId,
     );
   }
 }

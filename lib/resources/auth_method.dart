@@ -59,6 +59,7 @@ class AuthMethod {
           likedPosts: [],
           savedPosts: [],
           deviceToken: deviceToken,
+          lastSeenNotificationId: '',
         );
 
         //* add user to firebase

@@ -12,6 +12,7 @@ class User {
   final List likedPosts;
   final List savedPosts;
   String? deviceToken;
+  final String lastSeenNotificationId;
 
   User({
     required this.username,
@@ -24,6 +25,7 @@ class User {
     required this.following,
     required this.likedPosts,
     required this.savedPosts,
+    required this.lastSeenNotificationId,
     this.gender = 'Prefer not to say',
   });
 
@@ -56,6 +58,7 @@ class User {
       likedPosts: snap['likedPosts'],
       savedPosts: snap['savedPosts'],
       deviceToken: snap['deviceToken'],
+      lastSeenNotificationId: snap['lastSeenNotificationId'],
     );
   }
 
