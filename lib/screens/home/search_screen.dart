@@ -14,8 +14,47 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final _searchController = TextEditingController();
-  bool _isShowUser = false;
+  late TextEditingController _searchController;
+  late bool _isShowUser;
+  late List<DocumentSnapshot> _allUser;
+  late List<DocumentSnapshot> _filteredUser;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _searchController = TextEditingController();
+    _isShowUser = false;
+    _allUser = [];
+    _filteredUser = [];
+
+    _searchController.addListener(
+      () => filterUser,
+    );
+  }
+
+  void fetchUsers() async {
+    //* Fetching all the user from firestore
+    final snapshot = await FirebaseFirestore.instance.collection('users').get();
+
+    setState(() {
+      _allUser = snapshot.docs;
+      _filteredUser = _allUser;
+    });
+  }
+
+  void filterUser() {
+    String query = _searchController.text.toLowerCase();
+
+    setState(() {
+      _filteredUser = _allUser.where(
+        (user) {
+          String fullName = user['username'].toLowerCase();
+          return fullName.contains(query);
+        },
+      ).toList();
+    });
+  }
 
   @override
   void dispose() {
