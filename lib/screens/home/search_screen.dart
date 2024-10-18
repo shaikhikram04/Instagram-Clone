@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
+import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/no_data_found.dart';
 
@@ -14,28 +14,27 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final searchController = TextEditingController();
-
-  bool isShowUser = false;
+  final _searchController = TextEditingController();
+  bool _isShowUser = false;
 
   @override
   void dispose() {
     super.dispose();
-    searchController.dispose;
+    _searchController.dispose;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: isShowUser
+        leading: _isShowUser
             ? IconButton(
                 onPressed: () {
                   //* Close the keyboard
                   FocusScope.of(context).unfocus();
 
                   setState(() {
-                    isShowUser = false;
+                    _isShowUser = false;
                   });
                 },
                 icon: const Icon(Icons.arrow_back))
@@ -45,10 +44,10 @@ class _SearchScreenState extends State<SearchScreen> {
           child: TextFormField(
             onTap: () {
               setState(() {
-                isShowUser = true;
+                _isShowUser = true;
               });
             },
-            controller: searchController,
+            controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search',
               hintStyle: TextStyle(
@@ -61,7 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 Icons.search,
                 color: primaryColor,
               ),
-              suffixIcon: searchController.text.isNotEmpty
+              suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
                       icon: const Icon(
                         Icons.clear,
@@ -69,7 +68,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       onPressed: () {
                         setState(() {
-                          searchController.clear();
+                          _searchController.clear();
                         });
                       },
                     )
@@ -81,19 +80,19 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             onChanged: (value) {
               setState(() {
-                isShowUser = true;
+                _isShowUser = true;
               });
             },
           ),
         ),
       ),
-      body: isShowUser
+      body: _isShowUser
           ? FutureBuilder(
               future: FirebaseFirestore.instance
                   .collection('users')
                   .where(
                     'username',
-                    isGreaterThanOrEqualTo: searchController.text,
+                    isGreaterThanOrEqualTo: _searchController.text,
                   )
                   .get(),
               builder: (context, snapshot) {

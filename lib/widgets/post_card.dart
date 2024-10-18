@@ -48,6 +48,7 @@ class _PostCardState extends ConsumerState<PostCard> {
       }
 
       if (!mounted) return; // Check again after async call
+      
       setState(() {
         isFollowing =
             userSnap.data()!['following'].contains(widget.snap['uid']);
@@ -198,7 +199,7 @@ class _PostCardState extends ConsumerState<PostCard> {
               alignment: Alignment.center,
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.40,
+                  height: 350,
                   width: double.infinity,
                   child: Image.network(
                     widget.snap['postUrl'],
