@@ -20,13 +20,59 @@ class ShareScreen extends ConsumerStatefulWidget {
 class _ShareScreenState extends ConsumerState<ShareScreen> {
   final Set<List> _selectedUsers = {};
   var isSendingPost = false;
-  final _collectionRef = FirebaseFirestore.instance.collection('users');
   late TextEditingController _messageController;
+  late TextEditingController _searchController;
+  late List<DocumentSnapshot> _usersToShare;
+  late List<DocumentSnapshot> _filterdUser;
+  late bool _isLoading;
 
   @override
   void initState() {
     super.initState();
     _messageController = TextEditingController();
+    _searchController = TextEditingController();
+    
+    _searchController.addListener(
+      () => filteringUsers,
+    );
+
+    _usersToShare = [];
+    _filterdUser = [];
+    _isLoading = false;
+
+    fetchUsers();
+  }
+
+  void fetchUsers() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = ref.read(userProvider);
+
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', whereIn: user.following)
+        .get();
+
+    setState(() {
+      _usersToShare = snap.docs;
+      _filterdUser = _usersToShare;
+      _isLoading = false;
+    });
+  }
+
+  void filteringUsers() async {
+    String query = _searchController.text.toLowerCase();
+
+    setState(() {
+      _filterdUser = _usersToShare.where(
+        (user) {
+          final String username = user['username'].toLowerCase();
+          return username.contains(query);
+        },
+      ).toList();
+    });
   }
 
   @override
@@ -38,7 +84,6 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-    List<String> followingList = user.following.cast<String>();
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
@@ -183,16 +228,37 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                             vertical: 18,
                           ),
                           child: TextField(
+                            controller: _searchController,
+                            style: const TextStyle(
+                                color: primaryColor, fontSize: 17),
+                            onChanged: (value) {
+                              if (value.length == 1 || value.isEmpty) {
+                                setState(() {});
+                              }
+                            },
                             decoration: InputDecoration(
+                              hintText: 'Search',
+                              helperStyle: const TextStyle(
+                                  fontWeight: FontWeight.normal),
                               filled: true,
-                              fillColor: Colors.grey[840],
+                              fillColor: const Color.fromARGB(255, 58, 58, 58),
                               prefixIcon: const Icon(Icons.search),
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(8),
+                                  Radius.circular(10),
                                 ),
                                 borderSide: BorderSide.none,
                               ),
+                              suffixIcon: _searchController.text.isNotEmpty
+                                  ? IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _searchController.clear();
+                                        });
+                                      },
+                                      icon: const Icon(Icons.clear),
+                                    )
+                                  : null,
                             ),
                           ),
                         ),
@@ -200,50 +266,37 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                     ),
                   ),
                   Expanded(
-                    child: GridView.builder(
-                      controller: scrollController, // Attach scrollController
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: width * 0.001,
-                        mainAxisSpacing: height * 0.03,
-                      ),
-                      itemCount: followingList.length,
-                      itemBuilder: (context, index) {
-                        String uid = followingList[index];
-                        bool isSelected = _selectedUsers.any(
-                          (element) => element[0] == uid,
-                        );
-                        return FutureBuilder(
-                          future: _collectionRef.doc(uid).get(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : GridView.builder(
+                            controller:
+                                scrollController, // Attach scrollController
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              crossAxisSpacing: width * 0.001,
+                              mainAxisSpacing: height * 0.03,
+                            ),
+                            itemCount: _filterdUser.length,
+                            itemBuilder: (context, index) {
+                              final userData = _filterdUser[index];
+                              final uid = userData['uid'];
+                              bool isSelected = _selectedUsers.any(
+                                (element) => element[0] == uid,
                               );
-                            }
-
-                            if (!snapshot.hasData || snapshot.hasError) {
-                              return const Center(
-                                child: Text('Getting Error'),
+                              final String username = userData['username'];
+                              final String imageUrl = userData['photoUrl'];
+                              return getGridChild(
+                                uid,
+                                username,
+                                imageUrl,
+                                isSelected,
+                                width,
                               );
-                            }
-
-                            final String username =
-                                snapshot.data!.data()!['username'];
-                            final String imageUrl =
-                                snapshot.data!.data()!['photoUrl'];
-                            return getGridChild(
-                              uid,
-                              username,
-                              imageUrl,
-                              isSelected,
-                              width,
-                            );
-                          },
-                        );
-                      },
-                    ),
+                            },
+                          ),
                   ),
                   Divider(
                     height: 2,
