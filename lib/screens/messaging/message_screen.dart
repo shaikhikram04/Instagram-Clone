@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/screens/messaging/new_message.dart';
 import 'package:instagram_clone/utils/colors.dart';
@@ -25,12 +26,16 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     super.initState();
     _searchController = TextEditingController();
     _searchController.addListener(
-      () {},
+      () {
+        filterringUser();
+      },
     );
 
     _isLoading = false;
     _chattingUser = [];
     _filterUser = [];
+
+    fetchUsers();
   }
 
   void fetchUsers() async {
@@ -40,9 +45,39 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
 
     final user = ref.read(userProvider);
 
-    FirebaseFirestore.instance
+    final snapshot = await FirebaseFirestore.instance
         .collection('conversations')
-        .where('participantsId', arrayContains: user.uid);
+        .where('participantsId', arrayContains: user.uid)
+        .get();
+
+    setState(() {
+      _chattingUser = snapshot.docs;
+      _filterUser = snapshot.docs;
+      _isLoading = false;
+    });
+  }
+
+  void filterringUser() {
+    String query = _searchController.text.toLowerCase();
+    final currUser = ref.read(userProvider);
+
+    setState(() {
+      _filterUser = _chattingUser.where(
+        (user) {
+          String username = '';
+
+          final Map participants = user['participants'];
+          for (final ptp in participants.entries) {
+            if (ptp.key != currUser.uid) {
+              username = ptp.value[0].toLowerCase();
+              break;
+            }
+          }
+
+          return username.contains(query);
+        },
+      ).toList();
+    });
   }
 
   String timeAgo(DateTime dateTime) {
@@ -109,7 +144,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
             TextField(
               controller: _searchController,
               onChanged: (value) {
-                setState(() {});
+                if (_searchController.text.length == 1 ||
+                    _searchController.text.isEmpty) {
+                  setState(() {});
+                }
               },
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
@@ -158,73 +196,85 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
             ),
             const SizedBox(height: 3),
             Expanded(
-              child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('conversations')
-                      .where('participantsId', arrayContains: user.uid)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: blueColor,
+              child: _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : _filterUser.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: _filterUser.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final conversation = _filterUser[index];
+                            String participantUid = '';
+                            String participantUsername = '';
+                            String participantImageUrl = '';
+
+                            final Map participants =
+                                conversation['participants'];
+
+                            for (final ptp in participants.entries) {
+                              if (ptp.key != user.uid) {
+                                participantUid = ptp.key;
+                                participantUsername = ptp.value[0];
+                                participantImageUrl = ptp.value[1];
+                                break;
+                              }
+                            }
+
+                            final pastTime =
+                                timeAgo(conversation['timeStamp'].toDate());
+
+                            final lastMessageSendBy =
+                                conversation['sendBy'] == user.uid
+                                    ? 'You'
+                                    : participantUsername;
+                            return ChatCard(
+                              username: participantUsername,
+                              imageUrl: participantImageUrl,
+                              uid: participantUid,
+                              lastMessage: conversation['lastMessage'],
+                              time: pastTime,
+                              conversationId: conversation['id'],
+                              lastMessageBy: lastMessageSendBy,
+                            );
+                          },
+                        )
+                      : Center(
+                          child: _chattingUser.length == _filterUser.length
+                              ? noChatEstablish
+                              : noChatFound,
                         ),
-                      );
-                    }
-
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(child: Text('No Chats Available'));
-                    }
-
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(snapshot.error.toString()),
-                      );
-                    }
-
-                    final conversationList = snapshot.data!.docs;
-
-                    return ListView.builder(
-                      itemCount: conversationList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final conversation = conversationList[index].data();
-                        String participantUid = '';
-                        String participantUsername = '';
-                        String participantImageUrl = '';
-
-                        final Map participants = conversation['participants'];
-
-                        for (final ptp in participants.entries) {
-                          if (ptp.key != user.uid) {
-                            participantUid = ptp.key;
-                            participantUsername = ptp.value[0];
-                            participantImageUrl = ptp.value[1];
-                          }
-                        }
-
-                        final pastTime =
-                            timeAgo(conversation['timeStamp'].toDate());
-
-                        final lastMessageSendBy =
-                            conversation['sendBy'] == user.uid
-                                ? 'You'
-                                : participantUsername;
-                        return ChatCard(
-                          username: participantUsername,
-                          imageUrl: participantImageUrl,
-                          uid: participantUid,
-                          lastMessage: conversation['lastMessage'],
-                          time: pastTime,
-                          conversationId: conversation['id'],
-                          lastMessageBy: lastMessageSendBy,
-                        );
-                      },
-                    );
-                  }),
             ),
           ],
         ),
       ),
     );
   }
+
+  Widget noChatEstablish = Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      const Text(
+        'No chat started yet!',
+        style: TextStyle(
+            fontSize: 21,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.w700),
+      ),
+      const SizedBox(height: 10),
+      Text(
+        'Click on top-right corner button to start chat with users.',
+        style: GoogleFonts.openSans(fontSize: 15),
+        textAlign: TextAlign.center,
+      ),
+    ],
+  );
+
+  Widget noChatFound = const Text(
+    'No Chat Found!',
+    style: TextStyle(
+      fontSize: 25,
+      fontWeight: FontWeight.bold,
+    ),
+  );
 }
