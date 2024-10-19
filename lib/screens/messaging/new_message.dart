@@ -16,6 +16,19 @@ class NewMessage extends ConsumerStatefulWidget {
 }
 
 class _NewMessageState extends ConsumerState<NewMessage> {
+  late TextEditingController _searchController;
+  late List<DocumentSnapshot> _followingUsers;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+    _followingUsers = [];
+    fetchingUsers();
+  }
+
+  void fetchingUsers() async {}
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
@@ -34,23 +47,25 @@ class _NewMessageState extends ConsumerState<NewMessage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (user.following.isNotEmpty)
-              const Row(
+              Row(
                 children: [
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
+                  const SizedBox(width: 5),
+                  const Text(
                     'To :',
                     style: TextStyle(fontSize: 20),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: TextField(
+                      controller: _searchController,
                       cursorColor: Colors.lightBlue,
-                      style: TextStyle(fontSize: 19, color: primaryColor),
-                      decoration: InputDecoration(
+                      style: const TextStyle(fontSize: 19, color: primaryColor),
+                      decoration: const InputDecoration(
                         hintText: 'Search',
                         border: InputBorder.none,
+                        hintStyle: TextStyle(
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
                   ),

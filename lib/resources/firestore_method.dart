@@ -449,11 +449,4 @@ class FirestoreMethod {
       {'deviceToken': token},
     );
   }
-
-  static Future<List<QueryDocumentSnapshot>> fetchUsers() async {
-    //* Fetching all the user from firestore
-    final snapshot = await _firestore.collection('users').get();
-
-    return snapshot.docs;
-  }
 }
