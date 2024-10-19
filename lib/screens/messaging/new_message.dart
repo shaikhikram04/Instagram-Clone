@@ -18,16 +18,47 @@ class NewMessage extends ConsumerStatefulWidget {
 class _NewMessageState extends ConsumerState<NewMessage> {
   late TextEditingController _searchController;
   late List<DocumentSnapshot> _followingUsers;
+  late List<DocumentSnapshot> _filterUser;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+
     _followingUsers = [];
-    fetchingUsers();
+    fetchUsers();
+    _searchController.addListener(
+      () {
+        filterUser();
+      },
+    );
   }
 
-  void fetchingUsers() async {}
+  void fetchUsers() async {
+    final user = ref.read(userProvider);
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', whereIn: user.following)
+        .get();
+
+    setState(() {
+      _followingUsers = snapshot.docs;
+      _filterUser = _followingUsers;
+    });
+  }
+
+  void filterUser() {
+    String query = _searchController.text.toLowerCase();
+
+    setState(() {
+      _filterUser = _followingUsers.where(
+        (user) {
+          String username = user['username'].toLowerCase();
+          return username.contains(query);
+        },
+      ).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
