@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
-import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/screens/post_screen.dart';
-import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/no_data_found.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -16,13 +15,11 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late List<DocumentSnapshot> _allUser;
-  late List<DocumentSnapshot> _filteredUser;
 
   @override
   void initState() {
     super.initState();
     _allUser = [];
-    _filteredUser = [];
     fetchingUser();
   }
 
@@ -31,36 +28,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     setState(() {
       _allUser = snap;
-      _filteredUser = snap;
     });
-  }
-
-  List<Widget> _buildSearchResult(String query) {
-    _filteredUser = _allUser.where(
-      (user) {
-        String fullName = user['username'].toLowerCase();
-        return fullName.contains(query);
-      },
-    ).toList();
-
-    return _filteredUser.map(
-      (user) {
-        return ListTile(
-          title: Text(user['username']),
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (ctx) => ProfileScreen(
-              uid: user['uid'],
-            ),
-          )),
-          leading: CircleAvatar(
-            backgroundColor: imageBgColor,
-            backgroundImage: NetworkImage(
-              user['photoUrl'],
-            ),
-          ),
-        );
-      },
-    ).toList();
   }
 
   @override
@@ -74,7 +42,12 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           constraints: const BoxConstraints(minHeight: 45),
           suggestionsBuilder: (context, controller) {
-            return _buildSearchResult(controller.text.toLowerCase());
+            return buildSearchResult(
+              query: controller.text.toLowerCase(),
+              allUser: _allUser,
+              context: context,
+              goTo: 'ProfileScreen',
+            );
           },
         ),
       ),
