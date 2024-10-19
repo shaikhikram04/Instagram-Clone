@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
@@ -22,16 +23,15 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     _allUser = [];
     _filteredUser = [];
-    fetchUsers();
+    fetchingUser();
   }
 
-  void fetchUsers() async {
-    //* Fetching all the user from firestore
-    final snapshot = await FirebaseFirestore.instance.collection('users').get();
+  void fetchingUser() async {
+    final snap = await FirestoreMethod.fetchUsers();
 
     setState(() {
-      _allUser = snapshot.docs;
-      _filteredUser = _allUser;
+      _allUser = snap;
+      _filteredUser = snap;
     });
   }
 
