@@ -48,7 +48,7 @@ class _PostCardState extends ConsumerState<PostCard> {
       }
 
       if (!mounted) return; // Check again after async call
-      
+
       setState(() {
         isFollowing =
             userSnap.data()!['following'].contains(widget.snap['uid']);

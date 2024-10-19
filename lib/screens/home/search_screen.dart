@@ -14,23 +14,15 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late TextEditingController _searchController;
-  late bool _isShowUser;
   late List<DocumentSnapshot> _allUser;
   late List<DocumentSnapshot> _filteredUser;
 
   @override
   void initState() {
     super.initState();
-
-    _searchController = TextEditingController();
-    _isShowUser = false;
     _allUser = [];
     _filteredUser = [];
-
-    _searchController.addListener(
-      () => filterUser,
-    );
+    fetchUsers();
   }
 
   void fetchUsers() async {
@@ -43,167 +35,88 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  void filterUser() {
-    String query = _searchController.text.toLowerCase();
+  List<Widget> _buildSearchResult(String query) {
+    _filteredUser = _allUser.where(
+      (user) {
+        String fullName = user['username'].toLowerCase();
+        return fullName.contains(query);
+      },
+    ).toList();
 
-    setState(() {
-      _filteredUser = _allUser.where(
-        (user) {
-          String fullName = user['username'].toLowerCase();
-          return fullName.contains(query);
-        },
-      ).toList();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _searchController.dispose;
+    return _filteredUser.map(
+      (user) {
+        return ListTile(
+          title: Text(user['username']),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (ctx) => ProfileScreen(
+              uid: user['uid'],
+            ),
+          )),
+          leading: CircleAvatar(
+            backgroundColor: imageBgColor,
+            backgroundImage: NetworkImage(
+              user['photoUrl'],
+            ),
+          ),
+        );
+      },
+    ).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: _isShowUser
-            ? IconButton(
-                onPressed: () {
-                  //* Close the keyboard
-                  FocusScope.of(context).unfocus();
-
-                  setState(() {
-                    _isShowUser = false;
-                  });
-                },
-                icon: const Icon(Icons.arrow_back))
-            : null,
-        title: SizedBox(
-          height: 45,
-          child: TextFormField(
-            onTap: () {
-              setState(() {
-                _isShowUser = true;
-              });
-            },
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search',
-              hintStyle: TextStyle(
-                color: Colors.grey[200],
-                fontWeight: FontWeight.normal,
-              ),
-              fillColor: Colors.grey.shade900,
-              filled: true,
-              prefixIcon: const Icon(
-                Icons.search,
-                color: primaryColor,
-              ),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(
-                        Icons.clear,
-                        color: primaryColor,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                        });
-                      },
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _isShowUser = true;
-              });
-            },
+        title: SearchAnchor.bar(
+          barHintText: 'Search',
+          barHintStyle: const WidgetStatePropertyAll(
+            TextStyle(color: Color.fromARGB(255, 218, 218, 218)),
           ),
+          constraints: const BoxConstraints(minHeight: 45),
+          suggestionsBuilder: (context, controller) {
+            return _buildSearchResult(controller.text.toLowerCase());
+          },
         ),
       ),
-      body: _isShowUser
-          ? FutureBuilder(
-              future: FirebaseFirestore.instance
-                  .collection('users')
-                  .where(
-                    'username',
-                    isGreaterThanOrEqualTo: _searchController.text,
-                  )
-                  .get(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData ||
-                    snapshot.hasError ||
-                    snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
+      body: FutureBuilder(
+        future: FirebaseFirestore.instance.collection('posts').get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const NoDataFound(title: 'posts');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.hasError) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
+          return SingleChildScrollView(
+            child: StaggeredGrid.count(
+              axisDirection: AxisDirection.down,
+              crossAxisCount: 3,
+              mainAxisSpacing: 6,
+              crossAxisSpacing: 6,
+              children: [
+                for (var index = 0; index < snapshot.data!.size; index++)
+                  StaggeredGridTile.count(
+                    crossAxisCellCount: (index % 7 == 0) ? 2 : 1,
+                    mainAxisCellCount: (index % 7 == 0) ? 2 : 1,
+                    child: InkWell(
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => ProfileScreen(
-                          uid: snapshot.data!.docs[index]['uid'],
+                        builder: (context) => PostScreen(
+                          snap: snapshot.data!.docs[index].data(),
                         ),
                       )),
-                      leading: CircleAvatar(
-                        backgroundColor: imageBgColor,
-                        backgroundImage: NetworkImage(
-                          snapshot.data!.docs[index]['photoUrl'],
-                        ),
+                      child: Image.network(
+                        snapshot.data!.docs[index]['postUrl'],
+                        fit: BoxFit.cover,
                       ),
-                      title: Text(snapshot.data!.docs[index]['username']),
-                    );
-                  },
-                );
-              },
-            )
-          : FutureBuilder(
-              future: FirebaseFirestore.instance.collection('posts').get(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const NoDataFound(title: 'posts');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    snapshot.hasError) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                return SingleChildScrollView(
-                  child: StaggeredGrid.count(
-                    axisDirection: AxisDirection.down,
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 6,
-                    crossAxisSpacing: 6,
-                    children: [
-                      for (var index = 0; index < snapshot.data!.size; index++)
-                        StaggeredGridTile.count(
-                          crossAxisCellCount: (index % 7 == 0) ? 2 : 1,
-                          mainAxisCellCount: (index % 7 == 0) ? 2 : 1,
-                          child: InkWell(
-                            onTap: () =>
-                                Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => PostScreen(
-                                snap: snapshot.data!.docs[index].data(),
-                              ),
-                            )),
-                            child: Image.network(
-                              snapshot.data!.docs[index]['postUrl'],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                    ],
+                    ),
                   ),
-                );
-              },
+              ],
             ),
+          );
+        },
+      ),
     );
   }
 }
