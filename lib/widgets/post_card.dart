@@ -11,6 +11,7 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class PostCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> snap;
@@ -198,13 +199,11 @@ class _PostCardState extends ConsumerState<PostCard> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                SizedBox(
-                  height: 350,
+                FadeInImage(
+                  placeholder: MemoryImage(kTransparentImage),
+                  image: NetworkImage(widget.snap['postUrl']),
+                  fit: BoxFit.cover,
                   width: double.infinity,
-                  child: Image.network(
-                    widget.snap['postUrl'],
-                    fit: BoxFit.cover,
-                  ),
                 ),
                 AnimatedOpacity(
                   opacity: isLikeAnimating ? 1 : 0,

@@ -20,7 +20,6 @@ class ShareScreen extends ConsumerStatefulWidget {
 class _ShareScreenState extends ConsumerState<ShareScreen> {
   final Set<List> _selectedUsers = {};
   var isSendingPost = false;
-
   final _collectionRef = FirebaseFirestore.instance.collection('users');
   late TextEditingController _messageController;
 
@@ -151,8 +150,8 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
           },
         ),
         DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          minChildSize: 0.5,
+          initialChildSize: 0.58,
+          minChildSize: 0.4,
           maxChildSize: 1.0,
           builder: (BuildContext context, ScrollController scrollController) {
             return Container(
@@ -180,24 +179,22 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 18),
-                          child: SearchAnchor(
-                              builder: (context, controller) => SearchBar(
-                                    hintText: 'Search',
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Colors.grey[830]),
-                                    leading: const Icon(Icons.search),
-                                    shape: const WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(10),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              suggestionsBuilder: (context, controller) {
-                                return [];
-                              }),
+                            horizontal: 12,
+                            vertical: 18,
+                          ),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey[840],
+                              prefixIcon: const Icon(Icons.search),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -318,10 +315,10 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
             child: Stack(
               children: [
                 Positioned(
-                  top: 5,
-                  left: 5,
-                  right: 5,
-                  bottom: 5,
+                  top: 8,
+                  left: 8,
+                  right: 8,
+                  bottom: 8,
                   child: CircleAvatar(
                     backgroundColor: imageBgColor,
                     backgroundImage: NetworkImage(
@@ -360,6 +357,8 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                   username,
                   maxLines: 2,
                   textAlign: TextAlign.center,
+                  style: const TextStyle(color: primaryColor, fontSize: 15),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ]),
