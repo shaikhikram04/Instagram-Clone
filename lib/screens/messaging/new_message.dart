@@ -19,12 +19,13 @@ class _NewMessageState extends ConsumerState<NewMessage> {
   late TextEditingController _searchController;
   late List<DocumentSnapshot> _followingUsers;
   late List<DocumentSnapshot> _filterUser;
+  late bool _isLoading;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-
+    _isLoading = false;
     _followingUsers = [];
     fetchUsers();
     _searchController.addListener(
@@ -35,6 +36,9 @@ class _NewMessageState extends ConsumerState<NewMessage> {
   }
 
   void fetchUsers() async {
+    setState(() {
+      _isLoading = true;
+    });
     final user = ref.read(userProvider);
     final snapshot = await FirebaseFirestore.instance
         .collection('users')
@@ -44,6 +48,7 @@ class _NewMessageState extends ConsumerState<NewMessage> {
     setState(() {
       _followingUsers = snapshot.docs;
       _filterUser = _followingUsers;
+      _isLoading = false;
     });
   }
 
@@ -113,38 +118,22 @@ class _NewMessageState extends ConsumerState<NewMessage> {
             ),
             Expanded(
               child: user.following.isNotEmpty
-                  ? FutureBuilder(
-                      future: FirebaseFirestore.instance
-                          .collection('users')
-                          .where('uid', whereIn: user.following)
-                          .get(),
-                      builder: (BuildContext context, snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            itemCount: snapshot.data!.size,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ChatCard.newChat(
-                                username: snapshot.data!.docs[index]
-                                    ['username'],
-                                bio: snapshot.data!.docs[index]['bio'],
-                                imageUrl: snapshot.data!.docs[index]
-                                    ['photoUrl'],
-                                uid: snapshot.data!.docs[index]['uid'],
-                              );
-                            },
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(snapshot.error.toString()),
-                          );
-                        }
-
-                        return const Center(
-                            child: CircularProgressIndicator(
-                          color: blueColor,
-                        ));
-                      },
-                    )
+                  ? _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ListView.builder(
+                          itemCount: _filterUser.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            DocumentSnapshot snap = _filterUser[index];
+                            return ChatCard.newChat(
+                              username: snap['username'],
+                              bio: snap['bio'],
+                              imageUrl: snap['photoUrl'],
+                              uid: snap['uid'],
+                            );
+                          },
+                        )
                   : Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
