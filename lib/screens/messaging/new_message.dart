@@ -66,6 +66,12 @@ class _NewMessageState extends ConsumerState<NewMessage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _searchController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     return Scaffold(

@@ -16,11 +16,33 @@ class MessageScreen extends ConsumerStatefulWidget {
 
 class _MessageScreenState extends ConsumerState<MessageScreen> {
   late TextEditingController _searchController;
+  late List<DocumentSnapshot> _chattingUser;
+  late List<DocumentSnapshot> _filterUser;
+  late bool _isLoading;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _searchController.addListener(
+      () {},
+    );
+
+    _isLoading = false;
+    _chattingUser = [];
+    _filterUser = [];
+  }
+
+  void fetchUsers() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final user = ref.read(userProvider);
+
+    FirebaseFirestore.instance
+        .collection('conversations')
+        .where('participantsId', arrayContains: user.uid);
   }
 
   String timeAgo(DateTime dateTime) {
