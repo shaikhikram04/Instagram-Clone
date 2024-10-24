@@ -10,14 +10,16 @@ import 'package:instagram_clone/screens/home/search_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 class MobileScreenLayout extends StatefulWidget {
-  const MobileScreenLayout({super.key});
+  const MobileScreenLayout({super.key, this.initialPage = 0});
+
+  final int initialPage;
 
   @override
   State<MobileScreenLayout> createState() => _MobileScreenLayoutState();
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
-  int _page = 0;
+   late int _page;
   late PageController _pageController;
   final userId = FirebaseAuth.instance.currentUser!.uid;
   bool isNewNotification = false;
@@ -26,7 +28,8 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _page = widget.initialPage;
+    _pageController = PageController(initialPage: _page);
     checkForNewNotification();
   }
 
@@ -61,8 +64,6 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       _pageController.jumpToPage(1);
     });
   }
-
- 
 
   Future<void> checkForNewNotification() async {
     try {
