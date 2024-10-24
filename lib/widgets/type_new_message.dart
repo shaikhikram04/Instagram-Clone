@@ -139,6 +139,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
           res = await FirestoreMethod.pushMessage(
             conversationId: id,
             uid: user.uid,
+            username: user.username,
             messageType: messageType,
             message: message,
           );
@@ -147,6 +148,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
             res = await FirestoreMethod.pushMessage(
               conversationId: id,
               uid: user.uid,
+              username: user.username,
               messageType: messageType,
               imageUrl: photoUrl,
             );

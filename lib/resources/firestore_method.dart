@@ -61,11 +61,15 @@ class FirestoreMethod {
 
         final docRef = _firestore.collection('users').doc(followerId);
 
-        // final docSnap = await docRef.get();
-        // final fcmToken = docSnap.data()!['deviceToken'];
+        final docSnap = await docRef.get();
+        final fcmToken = docSnap.data()!['deviceToken'];
 
-
-        // await MessagingMethod.sendFcmMessage(fcmToken, 'New Post', '$username updoaded new post', 'feeds');
+        await MessagingMethod.sendFcmMessage(
+          fcmToken,
+          'New Post',
+          '$username updoaded new post',
+          'notification',
+        );
         await docRef
             .collection('notifications')
             .doc(notificationId)
@@ -130,9 +134,18 @@ class FirestoreMethod {
             username: user.username,
           );
 
-          await _firestore
-              .collection('users')
-              .doc(postUserId)
+          final docRef = _firestore.collection('users').doc(postUserId);
+          final docSnap = await docRef.get();
+          final fcmToken = docSnap.data()!['deviceToken'];
+
+          await MessagingMethod.sendFcmMessage(
+            fcmToken,
+            'Like',
+            '${user.username} liked your post',
+            'notification',
+          );
+
+          await docRef
               .collection('notifications')
               .doc(notificationId)
               .set(notification.toJson);
@@ -198,6 +211,7 @@ class FirestoreMethod {
         //* sending notification
         if (postUserId != uid) {
           final notificationId = uuid.v1();
+
           final notification = Notification(
             notificationId: notificationId,
             type: NotificationType.comment,
@@ -208,9 +222,18 @@ class FirestoreMethod {
             username: username,
           );
 
-          await _firestore
-              .collection('users')
-              .doc(postUserId)
+          final docRef = _firestore.collection('users').doc(postUserId);
+          final docSnap = await docRef.get();
+          final fcmToken = docSnap.data()!['deviceToken'];
+
+          await MessagingMethod.sendFcmMessage(
+            fcmToken,
+            'Comment',
+            '$username comment on your post',
+            'notification',
+          );
+
+          await docRef
               .collection('notifications')
               .doc(notificationId)
               .set(notification.toJson);
@@ -297,9 +320,19 @@ class FirestoreMethod {
           profileImageUrl: user.photoUrl,
           username: user.username,
         );
-        await _firestore
-            .collection('users')
-            .doc(followId)
+
+        final docRef = _firestore.collection('users').doc(followId);
+        final docSnap = await docRef.get();
+        final fcmToken = docSnap.data()!['deviceToken'];
+
+        await MessagingMethod.sendFcmMessage(
+          fcmToken,
+          'New Follower',
+          '${user.username} started following you',
+          'notification',
+        );
+
+        await docRef
             .collection('notifications')
             .doc(notificationId)
             .set(notification.toJson);
@@ -389,6 +422,7 @@ class FirestoreMethod {
   static Future<String> pushMessage({
     required String conversationId,
     required String uid,
+    required String username,
     required MessageType messageType,
     String? message,
     String? postId,
@@ -426,11 +460,26 @@ class FirestoreMethod {
       final conversationDocRef =
           _firestore.collection('conversations').doc(conversationId);
 
+      //* storing userId of all participants except currUser
+      final conversationSnap = await conversationDocRef.get();
+      final List participantsId = conversationSnap.data()!['participantsId'];
+      participantsId.remove(uid);
+
       final lastMessage = messageType == MessageType.text
           ? message
           : messageType == MessageType.image
               ? 'Sent Image'
               : 'Sent post';
+
+
+      final userCollectionRef = _firestore.collection('users');
+      for (final receiverUserId in participantsId) {
+        final userSnap = await userCollectionRef.doc(receiverUserId).get();
+        final token = userSnap.data()!['deviceToken'];
+        await MessagingMethod.sendFcmMessage(token, 'New Message', '$username : $lastMessage', 'message');
+      }
+
+      
 
       //* update conversation data
       await conversationDocRef.update({

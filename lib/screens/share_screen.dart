@@ -151,6 +151,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
           var res = await FirestoreMethod.pushMessage(
             conversationId: conversationId,
             uid: user.uid,
+            username: user.username,
             messageType: MessageType.post,
             postId: widget.postId,
           );
@@ -159,6 +160,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
             res = await FirestoreMethod.pushMessage(
               conversationId: conversationId,
               uid: user.uid,
+              username:  user.username,
               messageType: MessageType.text,
               message: message,
             );
