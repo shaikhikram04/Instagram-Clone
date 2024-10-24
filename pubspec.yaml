@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  app_settings: ^5.1.1
   cached_network_image: ^3.4.1
   cloud_firestore: ^5.2.1
   cupertino_icons: ^1.0.6
@@ -46,6 +47,8 @@ dependencies:
   flutter_svg: ^2.0.10+1
   font_awesome_flutter: ^10.7.0
   google_fonts: ^6.2.1
+  googleapis_auth: ^1.6.0
+  http: ^1.2.2
   image_picker: ^1.1.2
   intl: ^0.19.0
   rename: ^3.0.2

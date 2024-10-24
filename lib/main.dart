@@ -26,7 +26,6 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-  MessagingMethod.initBackgroundMessage();
   runApp(const ProviderScope(child: MyApp()));
 }
 
