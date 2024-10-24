@@ -29,6 +29,8 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
         addData();
       },
     );
+
+    MessagingMethod.requestNotificationPermission();
   }
 
   void addData() async {
