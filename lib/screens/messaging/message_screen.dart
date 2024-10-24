@@ -8,8 +8,11 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_card.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
-  const MessageScreen(this.navigateToSearchScreen, {super.key});
-  final void Function() navigateToSearchScreen;
+  const MessageScreen({
+    super.key,
+    this.navigateToSearchScreen,
+  });
+  final void Function()? navigateToSearchScreen;
 
   @override
   ConsumerState<MessageScreen> createState() => _MessageScreenState();
