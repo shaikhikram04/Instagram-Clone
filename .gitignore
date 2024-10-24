@@ -39,6 +39,7 @@ web/
 windows/
 analysis_options.yaml
 *.lock
+*.env
 
 # Symbolication related
 app.*.symbols

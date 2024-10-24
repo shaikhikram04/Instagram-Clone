@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:googleapis_auth/auth_io.dart' as auth;
+import 'package:http/http.dart' as http;
 import 'package:instagram_clone/responsive/mobile_screen_layout.dart';
 import 'package:instagram_clone/screens/messaging/message_screen.dart';
 
@@ -130,5 +134,66 @@ class MessagingMethod {
 
   static Future<String?> get deviceToken async {
     return await _firebaseMessaging.getToken();
+  }
+
+  static Future<String> getAccessToken() async {
+    final serviceAccountString = dotenv.get('service_account');
+
+    Map<String, dynamic> serviceAccountJson = jsonDecode(serviceAccountString);
+
+    List<String> scopes = [
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/firebase.database',
+      'https://www.googleapis.com/auth/firebase.messaging',
+    ];
+
+    http.Client client = await auth.clientViaServiceAccount(
+      auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
+      scopes,
+    );
+
+    auth.AccessCredentials credencials =
+        await auth.obtainAccessCredentialsViaServiceAccount(
+      auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
+      scopes,
+      client,
+    );
+
+    client.close();
+
+    return credencials.accessToken.data;
+  }
+
+  static Future<void> sendFcmMessage(
+      String fcmToken, String title, String body, String type) async {
+    final String serverKey = await getAccessToken();
+    final String projectId = dotenv.get('project_id');
+    final String fcmEndPoint =
+        'https://fcm.googleapis.com/v1/projects/$projectId/messages:send';
+
+    final currentFcmToken = await FirebaseMessaging.instance.getToken();
+    print('fcm key : $currentFcmToken');
+
+    final Map<String, dynamic> message = {
+      'message': {
+        'token': fcmToken,
+        'notification': {
+          'body': body,
+          'title': title,
+        },
+        'data': {
+          'type': type,
+        },
+      }
+    };
+
+    await http.post(
+      Uri.parse(fcmEndPoint),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $serverKey',
+      },
+      body: jsonEncode(message),
+    );
   }
 }

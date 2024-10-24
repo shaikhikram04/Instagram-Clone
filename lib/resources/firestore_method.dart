@@ -8,6 +8,7 @@ import 'package:instagram_clone/models/conversation.dart';
 import 'package:instagram_clone/models/notification.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/messaging_method.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
@@ -58,9 +59,14 @@ class FirestoreMethod {
           username: username,
         );
 
-        await _firestore
-            .collection('users')
-            .doc(followerId)
+        final docRef = _firestore.collection('users').doc(followerId);
+
+        // final docSnap = await docRef.get();
+        // final fcmToken = docSnap.data()!['deviceToken'];
+
+
+        // await MessagingMethod.sendFcmMessage(fcmToken, 'New Post', '$username updoaded new post', 'feeds');
+        await docRef
             .collection('notifications')
             .doc(notificationId)
             .set(notification.toJson);
