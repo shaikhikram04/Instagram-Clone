@@ -24,7 +24,7 @@ class FeedScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => MessageScreen(navigateToSearchScreen),
+              builder: (ctx) => MessageScreen(navigateToSearchScreen: navigateToSearchScreen),
             )),
             icon: const Icon(
               FontAwesomeIcons.facebookMessenger,
