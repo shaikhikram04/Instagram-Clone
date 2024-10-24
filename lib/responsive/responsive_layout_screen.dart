@@ -31,6 +31,8 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
     );
 
     MessagingMethod.requestNotificationPermission();
+    MessagingMethod.firebaseInit(context);
+    MessagingMethod.setupInteractMessage(context);
   }
 
   void addData() async {
