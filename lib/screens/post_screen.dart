@@ -11,7 +11,9 @@ class PostScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(snap['username']),
       ),
-      body: SafeArea(child: PostCard(snap: snap)),
+      body: SingleChildScrollView(
+        child: PostCard(snap: snap),
+      ),
     );
   }
 }
