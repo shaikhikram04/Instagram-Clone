@@ -54,6 +54,9 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
     if (commentText.trim().isEmpty) return;
 
     try {
+      setState(() {
+        controller.clear();
+      });
       await FirestoreMethod.commentToPost(
         widget.postId,
         widget.postUserId,
@@ -62,10 +65,6 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
         user.username,
         user.photoUrl,
       );
-
-      setState(() {
-        controller.clear();
-      });
     } catch (e) {
       if (!mounted) return;
       showSnackBar('Something goes wrong, try again...', context);
@@ -134,6 +133,7 @@ class _CommentsScreenState extends ConsumerState<CommentsScreen> {
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       hintText: 'Comment as ${user.username}',
+                      hintStyle: const TextStyle(fontWeight: FontWeight.normal),
                       border: InputBorder.none,
                     ),
                   ),
