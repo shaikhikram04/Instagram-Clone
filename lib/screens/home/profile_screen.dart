@@ -145,7 +145,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       }
     }
 
-    return PostGrid(postList: _userPostsSnap);
+    return PostGrid(
+      postList: _userPostsSnap,
+      scrollcontroller: scrollController,
+    );
   }
 
   @override

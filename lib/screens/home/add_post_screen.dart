@@ -67,6 +67,7 @@ class _AddPostSereenState extends ConsumerState<AddPostScreen> {
       setState(() {
         _isloading = true;
       });
+      _descriptionController.clear();
       String res = await FirestoreMethod.uploadPost(
         _descriptionController.text,
         _file!,
@@ -175,6 +176,7 @@ class _AddPostSereenState extends ConsumerState<AddPostScreen> {
                         controller: _descriptionController,
                         decoration: const InputDecoration(
                           hintText: 'Write Caption...',
+                          hintStyle: TextStyle(fontWeight: FontWeight.normal),
                           border: InputBorder.none,
                         ),
                         maxLines: 8,
