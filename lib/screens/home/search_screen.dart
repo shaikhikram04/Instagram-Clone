@@ -81,12 +81,13 @@ class _SearchScreenState extends State<SearchScreen> {
       body: FutureBuilder(
         future: FirebaseFirestore.instance.collection('posts').get(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const NoDataFound(title: 'posts');
-          }
           if (snapshot.connectionState == ConnectionState.waiting ||
               snapshot.hasError) {
             return const Center(child: CircularProgressIndicator());
+          }
+          
+          if (!snapshot.hasData) {
+            return const NoDataFound(title: 'posts');
           }
 
           return SingleChildScrollView(
