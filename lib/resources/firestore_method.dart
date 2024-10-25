@@ -338,7 +338,9 @@ class FirestoreMethod {
             .set(notification.toJson);
       }
 
-      ref.read(userProvider.notifier).updateField(following: following);
+      if (ref.exists(userProvider)) {
+        ref.read(userProvider.notifier).updateField(following: following);
+      }
     } catch (e) {
       return;
     }
@@ -471,15 +473,13 @@ class FirestoreMethod {
               ? 'Sent Image'
               : 'Sent post';
 
-
       final userCollectionRef = _firestore.collection('users');
       for (final receiverUserId in participantsId) {
         final userSnap = await userCollectionRef.doc(receiverUserId).get();
         final token = userSnap.data()!['deviceToken'];
-        await MessagingMethod.sendFcmMessage(token, 'New Message', '$username : $lastMessage', 'message');
+        await MessagingMethod.sendFcmMessage(
+            token, 'New Message', '$username : $lastMessage', 'message');
       }
-
-      
 
       //* update conversation data
       await conversationDocRef.update({

@@ -27,7 +27,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
     Future<void> navigateToLikedPost(List likelist,
         CollectionReference<Map<String, dynamic>> postCollection) async {
-      var likePostList = [];
+      List<DocumentSnapshot> likePostList = [];
       try {
         if (likelist.isNotEmpty) {
           final snap = await postCollection
@@ -49,7 +49,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
     Future<void> navigateTosavedPost(List saveList,
         CollectionReference<Map<String, dynamic>> postCollection) async {
-      var savePostList = [];
+      List<DocumentSnapshot> savePostList = [];
       try {
         if (saveList.isNotEmpty) {
           final snap = await postCollection

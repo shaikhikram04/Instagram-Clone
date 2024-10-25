@@ -24,24 +24,58 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  Map<String, dynamic> userData = {};
-  var postLen = 0;
-  var isFollowing = false;
-  var isLoading = false;
-  int following = 0;
-  int followers = 0;
-  late User user;
+  late Map<String, dynamic> _userData;
+  late List<DocumentSnapshot> _userPostsSnap;
+  late bool _isPostsLoading;
+  late int _postLen;
+  late bool _isFollowing;
+  late bool _isLoading;
+  late int _following;
+  late int _followers;
+  late User _user;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    user = ref.read(userProvider);
+    _user = ref.read(userProvider);
+    _userData = {};
+    _userPostsSnap = [];
+    _isPostsLoading = false;
+    _postLen = 0;
+    _isFollowing = false;
+    _isLoading = false;
+    _followers = 0;
+    _following = 0;
+    _scrollController = ScrollController();
     getData();
+    loadPosts();
+  }
+
+  Future<void> loadPosts() async {
+    setState(() {
+      _isPostsLoading = true;
+    });
+
+    try {
+      final postSnap = await FirebaseFirestore.instance
+          .collection('posts')
+          .where('uid', isEqualTo: widget.uid)
+          .get();
+
+      _userPostsSnap = postSnap.docs;
+    } catch (e) {
+      return;
+    }
+
+    setState(() {
+      _isPostsLoading = false;
+    });
   }
 
   void getData() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
     try {
       final snap = await FirebaseFirestore.instance
@@ -54,12 +88,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           .where('uid', isEqualTo: widget.uid)
           .get();
 
-      postLen = postSnap.docs.length;
-      userData = snap.data()!;
-      isFollowing = userData['followers'].contains(user.uid);
+      _postLen = postSnap.docs.length;
+      _userData = snap.data()!;
+      _isFollowing = _userData['followers'].contains(_user.uid);
 
-      followers = userData['followers'].length;
-      following = userData['following'].length;
+      _followers = _userData['followers'].length;
+      _following = _userData['following'].length;
       if (!mounted) return;
       setState(() {});
     } catch (e) {
@@ -68,15 +102,57 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     setState(() {
-      isLoading = false;
+      _isLoading = false;
     });
+  }
+
+  Widget getPostData(String userId, ScrollController scrollController) {
+    if (_isPostsLoading) {
+      return const Center(
+          child: CircularProgressIndicator(
+        color: blueColor,
+      ));
+    }
+
+    if (_userPostsSnap.isEmpty) {
+      if (userId == widget.uid) {
+        return Container(
+          padding: const EdgeInsets.only(top: 50),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Capture the moment with a friend',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 21,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Create your first post',
+                style: TextStyle(
+                  color: blueColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            ],
+          ),
+        );
+      } else {
+        return const NoDataFound(title: 'post');
+      }
+    }
+
+    return PostGrid(postList: _userPostsSnap);
   }
 
   @override
   Widget build(BuildContext context) {
-    user = ref.watch(userProvider);
+    _user = ref.watch(userProvider);
 
-    Widget button = user.uid == widget.uid
+    Widget button = _user.uid == widget.uid
         ? FollowButton(
             backgroundColor: mobileBackgroundColor,
             borderColor: Colors.grey,
@@ -88,21 +164,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ));
             },
           )
-        : isFollowing
+        : _isFollowing
             ? FollowButton(
                 backgroundColor: Colors.white,
                 borderColor: Colors.grey,
                 text: 'Unfollow',
                 textColor: Colors.black,
                 function: () async {
+                  setState(() {
+                    _isFollowing = false;
+                    _followers--;
+                  });
                   await FirestoreMethod.followUser(
-                    userData['uid'],
+                    _userData['uid'],
                     ref,
                   );
-                  setState(() {
-                    isFollowing = false;
-                    followers--;
-                  });
                 },
               )
             : FollowButton(
@@ -111,27 +187,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 text: 'Follow',
                 textColor: Colors.white,
                 function: () async {
+                  setState(() {
+                    _isFollowing = true;
+                    _followers++;
+                  });
                   await FirestoreMethod.followUser(
-                    userData['uid'],
+                    _userData['uid'],
                     ref,
                   );
-                  setState(() {
-                    isFollowing = true;
-                    followers++;
-                  });
                 },
               );
 
     return Scaffold(
       appBar: AppBar(
-        title: isLoading
+        title: _isLoading
             ? Container()
             : Text(
-                userData['username'],
+                _userData['username'],
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
         actions: [
-          if (user.uid == userData['uid'])
+          if (_user.uid == _userData['uid'])
             IconButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -145,12 +221,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
         ],
       ),
-      body: isLoading
+      body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(
               color: blueColor,
             ))
           : ListView(
+              controller: _scrollController,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
@@ -161,7 +238,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           //* profile picture
                           CircleAvatar(
                             backgroundColor: imageBgColor,
-                            backgroundImage: NetworkImage(userData['photoUrl']),
+                            backgroundImage:
+                                NetworkImage(_userData['photoUrl']),
                             radius: 45,
                           ),
                           const SizedBox(width: 5),
@@ -173,9 +251,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    buildStatColumn(postLen, 'Posts'),
-                                    buildStatColumn(followers, 'Followers'),
-                                    buildStatColumn(following, 'Following'),
+                                    buildStatColumn(_postLen, 'Posts'),
+                                    buildStatColumn(_followers, 'Followers'),
+                                    buildStatColumn(_following, 'Following'),
                                   ],
                                 ),
                                 const SizedBox(height: 5),
@@ -189,7 +267,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.only(top: 12),
                         child: Text(
-                          userData['username'],
+                          _userData['username'],
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 17),
                         ),
@@ -198,7 +276,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.only(top: 1),
                         child: Text(
-                          userData['bio'],
+                          _userData['bio'],
                         ),
                       ),
                     ],
@@ -230,52 +308,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 const Divider(
                   color: primaryColor,
                 ),
-                FutureBuilder(
-                  future: FirebaseFirestore.instance
-                      .collection('posts')
-                      .where('uid', isEqualTo: widget.uid)
-                      .get(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    if (snapshot.data!.size == 0) {
-                      if (user.uid == widget.uid) {
-                        return Container(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Capture the moment with a friend',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 21,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                'Create your first post',
-                                style: TextStyle(
-                                  color: blueColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      } else {
-                        return const NoDataFound(title: 'post');
-                      }
-                    }
-
-                    return PostGrid(postList: snapshot.data!.docs);
-                  },
-                ),
+                getPostData(_user.uid, _scrollController)
               ],
             ),
     );

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/widgets/no_data_found.dart';
@@ -6,7 +7,7 @@ import 'package:instagram_clone/widgets/post_grid.dart';
 class PostCollectionScreen extends ConsumerWidget {
   const PostCollectionScreen(this.postList, this.title, {super.key});
   final String title;
-  final List postList;
+  final List<DocumentSnapshot> postList;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
