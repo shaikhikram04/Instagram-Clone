@@ -186,15 +186,15 @@ class _PostCardState extends ConsumerState<PostCard> {
           //* Image section
           GestureDetector(
             onDoubleTap: () async {
+              setState(() {
+                isLikeAnimating = true;
+              });
               await FirestoreMethod.likePost(
                 widget.snap['postId'],
                 widget.snap['uid'],
                 widget.snap['likes'],
                 ref,
               );
-              setState(() {
-                isLikeAnimating = true;
-              });
             },
             child: Stack(
               alignment: Alignment.center,

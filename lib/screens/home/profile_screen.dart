@@ -28,6 +28,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   var postLen = 0;
   var isFollowing = false;
   var isLoading = false;
+  int following = 0;
+  int followers = 0;
   late User user;
 
   @override
@@ -55,6 +57,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       postLen = postSnap.docs.length;
       userData = snap.data()!;
       isFollowing = userData['followers'].contains(user.uid);
+
+      followers = userData['followers'].length;
+      following = userData['following'].length;
       if (!mounted) return;
       setState(() {});
     } catch (e) {
@@ -95,7 +100,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ref,
                   );
                   setState(() {
-                    isFollowing = !isFollowing;
+                    isFollowing = false;
+                    followers--;
                   });
                 },
               )
@@ -110,7 +116,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ref,
                   );
                   setState(() {
-                    isFollowing = !isFollowing;
+                    isFollowing = true;
+                    followers++;
                   });
                 },
               );
@@ -167,12 +174,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     buildStatColumn(postLen, 'Posts'),
-                                    buildStatColumn(
-                                        userData['followers'].length,
-                                        'Followers'),
-                                    buildStatColumn(
-                                        userData['following'].length,
-                                        'Following'),
+                                    buildStatColumn(followers, 'Followers'),
+                                    buildStatColumn(following, 'Following'),
                                   ],
                                 ),
                                 const SizedBox(height: 5),
