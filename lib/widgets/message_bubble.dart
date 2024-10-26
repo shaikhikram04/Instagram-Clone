@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/screens/image_screen.dart';
@@ -36,7 +37,7 @@ class MessageBubble extends StatelessWidget {
   final bool isMe;
   final bool isFirstInSequence;
   final String? imageUrl;
-  final Map<String, dynamic>? postSnap;
+  final DocumentSnapshot? postSnap;
   final bool isTextAfterPost;
 
   @override

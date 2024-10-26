@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/widgets/post_card.dart';
 
 class PostScreen extends StatelessWidget {
   const PostScreen({super.key, required this.snap});
-  final Map<String, dynamic> snap;
+  final DocumentSnapshot snap;
 
   @override
   Widget build(BuildContext context) {

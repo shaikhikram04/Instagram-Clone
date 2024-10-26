@@ -14,7 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class PostCard extends ConsumerStatefulWidget {
-  final Map<String, dynamic> snap;
+  final DocumentSnapshot snap;
   const PostCard({super.key, required this.snap});
 
   @override

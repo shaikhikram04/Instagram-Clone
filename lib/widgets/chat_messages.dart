@@ -112,9 +112,9 @@ class _ChatMessagesState extends State<ChatMessages> {
                   return Center(child: Text(snapshot.error.toString()));
                 }
 
-                Map<String, dynamic>? postSnap;
+                DocumentSnapshot? postSnap;
                 if (snapshot.hasData) {
-                  postSnap = snapshot.data!.data();
+                  postSnap = snapshot.data!;
                 }
 
                 if (isnextUserIsSame) {

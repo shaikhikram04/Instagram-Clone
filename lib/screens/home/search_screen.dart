@@ -104,7 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: InkWell(
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PostScreen(
-                          snap: snapshot.data!.docs[index].data(),
+                          snap: snapshot.data!.docs[index],
                         ),
                       )),
                       child: Image.network(

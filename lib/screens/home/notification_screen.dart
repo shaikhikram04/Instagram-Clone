@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,9 +20,71 @@ class NotificationScreen extends ConsumerStatefulWidget {
 }
 
 class _NotificationScreenState extends ConsumerState<NotificationScreen> {
+  final List<DocumentSnapshot> _notificationList = [];
+  final List<DocumentSnapshot?> _notificationRefSnap = [];
+  late StreamSubscription<QuerySnapshot> _subscription;
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
+
+    _setupFirestoreListener();
+  }
+
+  Future<void> _setupFirestoreListener() async {
+    final user = ref.read(userProvider);
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    _subscription = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('notifications')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .listen((snapshot) async {
+      for (final change in snapshot.docChanges) {
+        if (change.type == DocumentChangeType.added) {
+          _notificationList.add(change.doc);
+
+          if (change.doc['type'] == 'follow') {
+            _notificationRefSnap.add(null);
+          } else {
+            try {
+              final snap = await FirebaseFirestore.instance
+                  .collection('posts')
+                  .doc(change.doc.data()!['referenceId'])
+                  .get();
+              _notificationRefSnap.add(snap);
+            } catch (e) {
+              // Handle fetch failure, possibly by logging
+              _notificationRefSnap.add(null);
+            }
+          }
+        } else if (change.type == DocumentChangeType.modified) {
+          int index =
+              _notificationList.indexWhere((doc) => doc.id == change.doc.id);
+          if (index != -1) {
+            _notificationList[index] = change.doc;
+          }
+        } else if (change.type == DocumentChangeType.removed) {
+          _notificationList.removeWhere((doc) => doc.id == change.doc.id);
+        }
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -36,134 +100,116 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
           ),
         ),
       ),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('notifications')
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const NoDataFound(title: 'Notification');
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-
-          final docs = snapshot.data!.docs;
-
-          return ListView.builder(
-            itemCount: snapshot.data!.size,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            itemBuilder: (BuildContext context, int index) {
-              final notificationData = docs[index].data();
-
-              final collection =
-                  notificationData['type'] == 'follow' ? 'users' : 'posts';
-
-              bool isFollowing = false;
-              if (collection == 'users') {
-                isFollowing =
-                    user.following.contains(notificationData['referenceId']);
-              }
-              return showNotficatinTile(
-                  notificationData, collection, isFollowing, ref);
-            },
-          );
-        },
-      ),
+      body: getContent(user.following),
     );
   }
 
   Widget showNotficatinTile(
     Map<String, dynamic> notificationData,
     String collection,
+    int index,
     bool isFollowing,
     WidgetRef ref,
   ) {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance
-          .collection(collection)
-          .doc(notificationData['referenceId'])
-          .get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    final snap = _notificationRefSnap[index];
 
-        final snap = snapshot.data!.data();
-        return ListTile(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) {
-                if (collection == 'users') {
-                  return ProfileScreen(uid: notificationData['referenceId']);
-                }
-                return PostScreen(snap: snap!);
-              },
-            ));
+    return ListTile(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            if (collection == 'users') {
+              return ProfileScreen(uid: notificationData['referenceId']);
+            }
+            return PostScreen(snap: snap!);
           },
-          leading: CircleAvatar(
-            radius: 25,
-            backgroundColor: imageBgColor,
-            backgroundImage: NetworkImage(
-              notificationData['profileImageUrl'],
+        ));
+      },
+      leading: CircleAvatar(
+        radius: 25,
+        backgroundColor: imageBgColor,
+        backgroundImage: NetworkImage(
+          notificationData['profileImageUrl'],
+        ),
+      ),
+      title: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: notificationData['username'],
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+              ),
             ),
-          ),
-          title: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: notificationData['username'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                TextSpan(
-                  text: "  ${notificationData['body']}",
-                ),
-              ],
+            TextSpan(
+              text: "  ${notificationData['body']}",
             ),
-          ),
-          subtitle: Text(
-            DateFormat.yMMMd().format(
-              notificationData['timestamp'].toDate(),
+          ],
+        ),
+      ),
+      subtitle: Text(
+        DateFormat.yMMMd().format(
+          notificationData['timestamp'].toDate(),
+        ),
+      ),
+      trailing: notificationData['type'] == 'follow'
+          ? SizedBox(
+              width: 80,
+              child: FollowButton(
+                backgroundColor: isFollowing ? imageBgColor : blueColor,
+                borderColor: isFollowing ? imageBgColor : blueColor,
+                text: isFollowing ? 'Following' : 'Follow',
+                textColor: primaryColor,
+                function: () async {
+                  await FirestoreMethod.followUser(
+                    notificationData['referenceId'],
+                    ref,
+                  );
+                },
+              ),
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                (snap!.data() as Map<String, dynamic>)['postUrl'],
+                fit: BoxFit.cover,
+                height: 50,
+                width: 50,
+              ),
             ),
-          ),
-          trailing: notificationData['type'] == 'follow'
-              ? SizedBox(
-                  width: 80,
-                  child: FollowButton(
-                    backgroundColor: isFollowing ? imageBgColor : blueColor,
-                    borderColor: isFollowing ? imageBgColor : blueColor,
-                    text: isFollowing ? 'Following' : 'Follow',
-                    textColor: primaryColor,
-                    function: () {
-                      FirestoreMethod.followUser(
-                        notificationData['referenceId'],
-                        ref,
-                      );
-                    },
-                  ),
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    snap!['postUrl'],
-                    fit: BoxFit.cover,
-                    height: 50,
-                    width: 50,
-                  ),
-                ),
+    );
+  }
+
+  Widget getContent(List userFollowing) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (_notificationList.isEmpty) {
+      return const NoDataFound(title: 'Notification');
+    }
+
+    return ListView.builder(
+      itemCount: _notificationList.length,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      itemBuilder: (BuildContext context, int index) {
+        Map<String, dynamic> notificationData =
+            _notificationList[index].data() as Map<String, dynamic>;
+
+        final collection =
+            notificationData['type'] == 'follow' ? 'users' : 'posts';
+
+        bool isFollowing = false;
+        if (collection == 'users') {
+          isFollowing = userFollowing.contains(notificationData['referenceId']);
+        }
+        return showNotficatinTile(
+          notificationData,
+          collection,
+          index,
+          isFollowing,
+          ref,
         );
       },
     );

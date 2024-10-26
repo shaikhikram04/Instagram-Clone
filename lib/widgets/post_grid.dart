@@ -29,7 +29,7 @@ class PostGrid extends StatelessWidget {
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => PostScreen(
-                snap: postList[index].data() as Map<String, dynamic>,
+                snap: postList[index],
               ),
             ));
           },
