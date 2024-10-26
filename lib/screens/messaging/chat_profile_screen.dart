@@ -165,7 +165,7 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
                       controller: _tabController,
                       children: [
                         _sharedImages.isEmpty
-                            ? const NoDataFound(title: 'Images Shared')
+                            ? const NoDataFound(title: 'Images shared')
                             : GridView.builder(
                                 itemCount: _sharedImages.length,
                                 gridDelegate:
@@ -183,7 +183,9 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
                                   );
                                 },
                               ),
-                        PostGrid(postList: _sharedPosts)
+                        _sharedPosts.isEmpty
+                            ? const NoDataFound(title: 'Posts share')
+                            : PostGrid(postList: _sharedPosts)
                       ],
                     ),
             ),
