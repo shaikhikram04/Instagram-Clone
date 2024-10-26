@@ -299,6 +299,7 @@ class FirestoreMethod {
         });
 
         following.remove(followId);
+        ref.read(userProvider.notifier).updateField(following: following);
       } else {
         await _firestore.collection('users').doc(followId).update({
           'followers': FieldValue.arrayUnion([user.uid])
@@ -308,6 +309,7 @@ class FirestoreMethod {
         });
 
         following.add(followId);
+        ref.read(userProvider.notifier).updateField(following: following);
 
         //* sending notification
         final notificationId = uuid.v1();
@@ -336,10 +338,6 @@ class FirestoreMethod {
             .collection('notifications')
             .doc(notificationId)
             .set(notification.toJson);
-      }
-
-      if (ref.exists(userProvider)) {
-        ref.read(userProvider.notifier).updateField(following: following);
       }
     } catch (e) {
       return;
