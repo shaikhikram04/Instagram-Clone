@@ -55,14 +55,14 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       _subscription = FirebaseFirestore.instance
           .collection('conversations')
           .where('participantsId', arrayContains: user.uid)
-          .orderBy('timeStamp', descending: true)
+          .orderBy('timeStamp', descending: false)
           .snapshots()
           .listen(
         (snapshot) {
           for (final change in snapshot.docChanges) {
             if (change.type == DocumentChangeType.added) {
-              _chattingUser.add(change.doc);
-              _filterUser.add(change.doc);
+              _chattingUser.insert(0, change.doc);
+              _filterUser.insert(0, change.doc);
             } else if (change.type == DocumentChangeType.modified) {
               int index =
                   _chattingUser.indexWhere((doc) => doc.id == change.doc.id);
