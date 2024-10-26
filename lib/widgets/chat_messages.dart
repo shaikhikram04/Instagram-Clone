@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,19 +16,72 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   final Map participantsData = {};
-  var isLoading = false;
+  late StreamSubscription<QuerySnapshot> _subcription;
+  final List<DocumentSnapshot<Map<String, dynamic>>> _chatsData = [];
+  final List<DocumentSnapshot<Map<String, dynamic>>?> _postsSnap = [];
+  var _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadParticipantsData();
+    _setupFirestoreListener();
+  }
+
+  void _setupFirestoreListener() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      _loadParticipantsData();
+
+      _subcription = FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(widget.conversationId)
+          .collection('chats')
+          .orderBy('timeStamp', descending: false)
+          .snapshots()
+          .listen(
+        (snapshot) async {
+          for (final change in snapshot.docChanges) {
+            if (change.type == DocumentChangeType.added) {
+              _chatsData.insert(0, change.doc);
+              if (change.doc.data()!['messageType'] == 'post') {
+                final postSnap = await FirebaseFirestore.instance
+                    .collection('posts')
+                    .doc(change.doc.data()!['postId'])
+                    .get();
+                _postsSnap.insert(0, postSnap);
+              } else {
+                _postsSnap.insert(0, null);
+              }
+            } else if (change.type == DocumentChangeType.modified) {
+              int index = _chatsData.indexWhere(
+                (doc) => doc.id == change.doc.id,
+              );
+              if (index != -1) {
+                _chatsData[index] = change.doc;
+              }
+            } else if (change.type == DocumentChangeType.removed) {
+              _chatsData.removeWhere((doc) => doc.id == change.doc.id);
+            }
+          }
+
+          setState(() {
+            _isLoading = false;
+          });
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
   }
 
   Future<void> _loadParticipantsData() async {
     try {
-      setState(() {
-        isLoading = true;
-      });
       final snap = await FirebaseFirestore.instance
           .collection('conversations')
           .doc(widget.conversationId)
@@ -35,119 +90,75 @@ class _ChatMessagesState extends State<ChatMessages> {
       final Map temp = snap.data()!['participants'];
 
       participantsData.addAll(temp);
-
-      setState(() {
-        isLoading = false;
-      });
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
       return;
     }
+  }
+
+  @override
+  void dispose() {
+    _subcription.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final authenticatedUserId = FirebaseAuth.instance.currentUser!.uid;
 
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('conversations')
-          .doc(widget.conversationId)
-          .collection('chats')
-          .orderBy('timeStamp', descending: true)
-          .snapshots(),
-      builder: (ctx, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
+    return _isLoading
+        ? const Center(
             child: CircularProgressIndicator(color: blueColor),
-          );
-        }
+          )
+        : _chatsData.isEmpty
+            ? const Center(
+                child: Text('No message found!'),
+              )
+            : ListView.builder(
+                itemCount: _chatsData.length,
+                reverse: true,
+                padding: const EdgeInsets.only(bottom: 40),
+                itemBuilder: (BuildContext context, int index) {
+                  final messageData = _chatsData[index].data()!;
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          const Center(
-            child: Text('No message found!'),
-          );
-        }
+                  final nextMessageData = index + 1 < _chatsData.length
+                      ? _chatsData[index + 1].data()
+                      : null;
 
-        if (snapshot.hasError) {
-          const Center(
-            child: Text('Something went wrong...'),
-          );
-        }
+                  final currMessageUserid = messageData['from'];
+                  final nextMessageUserId =
+                      nextMessageData != null ? nextMessageData['from'] : null;
 
-        final loadedMessage = snapshot.data!.docs;
+                  final isnextUserIsSame =
+                      currMessageUserid == nextMessageUserId;
 
-        return ListView.builder(
-          itemCount: loadedMessage.length,
-          reverse: true,
-          padding: const EdgeInsets.only(bottom: 40),
-          itemBuilder: (BuildContext context, int index) {
-            final messageData = loadedMessage[index].data();
+                  final isNextPost = nextMessageData != null
+                      ? nextMessageData['messageType'] == 'post'
+                      : false;
 
-            final nextMessageData = index + 1 < loadedMessage.length
-                ? loadedMessage[index + 1].data()
-                : null;
+                  DocumentSnapshot? postSnap = _postsSnap[index];
 
-            final currMessageUserid = messageData['from'];
-            final nextMessageUserId =
-                nextMessageData != null ? nextMessageData['from'] : null;
-
-            final isnextUserIsSame = currMessageUserid == nextMessageUserId;
-
-            final isNextPost = nextMessageData != null
-                ? nextMessageData['messageType'] == 'post'
-                : false;
-
-            return FutureBuilder(
-              future: messageData['messageType'] == 'post'
-                  ? FirebaseFirestore.instance
-                      .collection('posts')
-                      .doc(messageData['postId'])
-                      .get()
-                  : null,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting ||
-                    isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error.toString()));
-                }
-
-                DocumentSnapshot? postSnap;
-                if (snapshot.hasData) {
-                  postSnap = snapshot.data!;
-                }
-
-                if (isnextUserIsSame) {
-                  return MessageBubble.next(
-                    messageType: messageData['messageType'],
-                    message: messageData['message'],
-                    isMe: authenticatedUserId == currMessageUserid,
-                    imageUrl: messageData['imageUrl'],
-                    postSnap: postSnap,
-                    isTextAfterPost: isNextPost,
-                  );
-                } else {
-                  final currUserData = participantsData[currMessageUserid]!;
-                  return MessageBubble(
-                    profileImageUrl: currUserData[1],
-                    username: currUserData[0],
-                    messageType: messageData['messageType'],
-                    message: messageData['message'],
-                    isMe: authenticatedUserId == currMessageUserid,
-                    imageUrl: messageData['imageUrl'],
-                    postSnap: postSnap,
-                  );
-                }
-              },
-            );
-          },
-        );
-      },
-    );
+                  if (isnextUserIsSame) {
+                    return MessageBubble.next(
+                      messageType: messageData['messageType'],
+                      message: messageData['message'],
+                      isMe: authenticatedUserId == currMessageUserid,
+                      imageUrl: messageData['imageUrl'],
+                      postSnap: postSnap,
+                      isTextAfterPost: isNextPost,
+                    );
+                  } else {
+                    final currUserData = participantsData[currMessageUserid]!;
+                    return MessageBubble(
+                      profileImageUrl: currUserData[1],
+                      username: currUserData[0],
+                      messageType: messageData['messageType'],
+                      message: messageData['message'],
+                      isMe: authenticatedUserId == currMessageUserid,
+                      imageUrl: messageData['imageUrl'],
+                      postSnap: postSnap,
+                    );
+                  }
+                },
+              );
   }
 }
