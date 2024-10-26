@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/widgets/no_data_found.dart';
+import 'package:instagram_clone/widgets/post_grid.dart';
 
 class ChatProfileScreen extends StatefulWidget {
   const ChatProfileScreen({
@@ -23,11 +26,64 @@ class ChatProfileScreen extends StatefulWidget {
 class _ChatProfileScreenState extends State<ChatProfileScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late List<String> _sharedImages;
+  late List<DocumentSnapshot> _sharedPosts;
+  bool _isLoading = false;
+
+  get itemBuilder => null;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _sharedImages = [];
+    _sharedPosts = [];
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final collectionRef = FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(widget.conversationId)
+          .collection('chats');
+
+      //* Loading Images
+      QuerySnapshot<Map<String, dynamic>>? chatsImagesSnap = await collectionRef
+          .where('messageType', isEqualTo: 'image')
+          .orderBy('timeStamp', descending: true)
+          .get();
+
+      final chatsImages = chatsImagesSnap.docs;
+      for (final chat in chatsImages) {
+        _sharedImages.add(chat.data()['imageUrl']);
+      }
+
+      //* Loading Posts
+      final chatPostsSnap = await collectionRef
+          .where('messageType', isEqualTo: 'post')
+          .orderBy('timeStamp', descending: true)
+          .get();
+      final chatPosts = chatPostsSnap.docs;
+      final postIds = [];
+      for (final chat in chatPosts) {
+        postIds.add(chat.data()['postId']);
+      }
+
+      final postsSnap = await FirebaseFirestore.instance
+          .collection('posts')
+          .where('postId', whereIn: postIds)
+          .get();
+      _sharedPosts = postsSnap.docs;
+    } catch (e) {
+      return;
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -103,13 +159,33 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
               indicatorSize: TabBarIndicatorSize.tab,
             ),
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: const [
-                  Center(child: Text('Shared Images Grid')),
-                  Center(child: Text('Shared posts grid')),
-                ],
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _sharedImages.isEmpty
+                            ? const NoDataFound(title: 'Images Shared')
+                            : GridView.builder(
+                                itemCount: _sharedImages.length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 5,
+                                  mainAxisSpacing: 1.5,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    child: Image.network(
+                                      _sharedImages[index],
+                                      fit: BoxFit.cover,
+                                    ),
+                                  );
+                                },
+                              ),
+                        PostGrid(postList: _sharedPosts)
+                      ],
+                    ),
             ),
           ],
         ),
