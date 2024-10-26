@@ -40,6 +40,9 @@ class _ChatMessagesState extends State<ChatMessages> {
         isLoading = false;
       });
     } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       return;
     }
   }
@@ -57,7 +60,9 @@ class _ChatMessagesState extends State<ChatMessages> {
           .snapshots(),
       builder: (ctx, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(color: blueColor);
+          return const Center(
+            child: CircularProgressIndicator(color: blueColor),
+          );
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
