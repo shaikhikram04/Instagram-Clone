@@ -72,18 +72,23 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
       for (final chat in chatPosts) {
         postIds.add(chat.data()['postId']);
       }
+      if (postIds.isNotEmpty) {
+        final postsSnap = await FirebaseFirestore.instance
+            .collection('posts')
+            .where('postId', whereIn: postIds)
+            .get();
+        _sharedPosts = postsSnap.docs;
+      }
 
-      final postsSnap = await FirebaseFirestore.instance
-          .collection('posts')
-          .where('postId', whereIn: postIds)
-          .get();
-      _sharedPosts = postsSnap.docs;
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
@@ -160,7 +165,7 @@ class _ChatProfileScreenState extends State<ChatProfileScreen>
             ),
             Expanded(
               child: _isLoading
-                  ? const CircularProgressIndicator()
+                  ? const Center(child: CircularProgressIndicator())
                   : TabBarView(
                       controller: _tabController,
                       children: [

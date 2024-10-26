@@ -204,6 +204,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         if (collection == 'users') {
           isFollowing = userFollowing.contains(notificationData['referenceId']);
         }
+        
         return showNotficatinTile(
           notificationData,
           collection,

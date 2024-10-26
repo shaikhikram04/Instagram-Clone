@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +24,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   late TextEditingController _searchController;
   late List<DocumentSnapshot> _chattingUser;
   late List<DocumentSnapshot> _filterUser;
+  late StreamSubscription<QuerySnapshot> _subscription;
   late bool _isLoading;
 
   @override
@@ -38,26 +41,52 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
     _chattingUser = [];
     _filterUser = [];
 
-    fetchUsers();
+    _setupFirestoreListener();
   }
 
-  void fetchUsers() async {
+  void _setupFirestoreListener() {
+    final user = ref.read(userProvider);
+
     setState(() {
       _isLoading = true;
     });
 
-    final user = ref.read(userProvider);
+    try {
+      _subscription = FirebaseFirestore.instance
+          .collection('conversations')
+          .where('participantsId', arrayContains: user.uid)
+          .orderBy('timeStamp', descending: true)
+          .snapshots()
+          .listen(
+        (snapshot) {
+          for (final change in snapshot.docChanges) {
+            if (change.type == DocumentChangeType.added) {
+              _chattingUser.add(change.doc);
+              _filterUser.add(change.doc);
+            } else if (change.type == DocumentChangeType.modified) {
+              int index =
+                  _chattingUser.indexWhere((doc) => doc.id == change.doc.id);
+              if (index != -1) {
+                _chattingUser[index] = change.doc;
+              }
 
-    final snapshot = await FirebaseFirestore.instance
-        .collection('conversations')
-        .where('participantsId', arrayContains: user.uid)
-        .get();
-
-    setState(() {
-      _chattingUser = snapshot.docs;
-      _filterUser = snapshot.docs;
-      _isLoading = false;
-    });
+              index = _filterUser.indexWhere((doc) => doc.id == change.doc.id);
+              if (index != -1) {
+                _filterUser[index] = change.doc;
+              }
+            } else if (change.type == DocumentChangeType.removed) {
+              _chattingUser.removeWhere((doc) => doc.id == change.doc.id);
+              _filterUser.removeWhere((doc) => doc.id == change.doc.id);
+            }
+          }
+          setState(() {
+            _isLoading = false;
+          });
+        },
+      );
+    } catch (e) {
+      return;
+    }
   }
 
   void filterringUser() {
@@ -101,9 +130,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
       return '${difference.inHours}h ago';
     } else if (difference.inMinutes > 0) {
       return '${difference.inMinutes} min ago';
-    } else if (difference.inSeconds > 0) {
-      return '${difference.inSeconds}s ago';
     }
+    // else if (difference.inSeconds > 0) {
+    //   return '${difference.inSeconds}s ago';
+    // }
 
     return 'just now';
   }
@@ -112,6 +142,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
   void dispose() {
     super.dispose();
     _searchController.dispose();
+    _subscription.cancel();
   }
 
   @override

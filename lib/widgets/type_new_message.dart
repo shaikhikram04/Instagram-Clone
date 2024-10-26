@@ -187,10 +187,11 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     return Column(
       children: [
         Container(
-          height: 65,
+          height: height * 0.069,
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: const BoxDecoration(
             color: Color.fromARGB(76, 21, 142, 242),
