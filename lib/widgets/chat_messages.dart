@@ -34,6 +34,7 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
 
     Future.microtask(
       () async {
+        ref.read(localChatProvider.notifier).clearLocalChat();
         final chatsData = await _getChatsData();
         ref.read(localChatProvider.notifier).setLocalChat(chatsData);
         setState(() {
@@ -69,19 +70,25 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
                 chatId: chatId,
                 from: from,
                 message: message,
-                timeStamp: timeStamp)
+                timeStamp: timeStamp,
+                messageStatus: MessageStatus.sent,
+              )
             : type == 'image'
                 ? LocalChat.image(
                     chatId: chatId,
                     from: from,
                     timeStamp: timeStamp,
-                    imageUrl: imageUrl)
+                    imageUrl: imageUrl,
+                    messageStatus: MessageStatus.sent,
+                  )
                 : LocalChat.post(
                     chatId: chatId,
                     from: from,
                     timeStamp: timeStamp,
                     postId: postId,
-                    message: message);
+                    message: message,
+                    messageStatus: MessageStatus.sent,
+                  );
 
         chatsData.insert(0, localChat);
 
@@ -172,6 +179,7 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
                       imageUrl: messageData.imageUrl,
                       postSnap: postSnap,
                       isTextAfterPost: isNextPost,
+                      messageStatus: messageData.messageStatus,
                     );
                   } else {
                     final currUserData = participantsData[currMessageUserid]!;
@@ -183,6 +191,7 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
                       isMe: authenticatedUserId == currMessageUserid,
                       imageUrl: messageData.imageUrl,
                       postSnap: postSnap,
+                      messageStatus: messageData.messageStatus,
                     );
                   }
                 },

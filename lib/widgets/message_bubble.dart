@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:instagram_clone/models/local_chat.dart';
 import 'package:instagram_clone/screens/image_screen.dart';
 import 'package:instagram_clone/screens/post_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
@@ -12,6 +13,7 @@ class MessageBubble extends StatelessWidget {
     required this.username,
     required this.messageType,
     this.message,
+    required this.messageStatus,
     required this.isMe,
     this.imageUrl,
     this.postSnap,
@@ -23,6 +25,7 @@ class MessageBubble extends StatelessWidget {
     required this.messageType,
     this.message,
     required this.isMe,
+    required this.messageStatus,
     this.imageUrl,
     this.postSnap,
     this.isTextAfterPost = false,
@@ -39,6 +42,7 @@ class MessageBubble extends StatelessWidget {
   final String? imageUrl;
   final DocumentSnapshot? postSnap;
   final bool isTextAfterPost;
+  final MessageStatus messageStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +51,7 @@ class MessageBubble extends StatelessWidget {
 
     return Stack(
       children: [
+        //* profile Picture
         if (profileImageUrl != null)
           Positioned(
             top: 15,
@@ -59,6 +64,26 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ),
+        if (isMe)
+          Positioned(
+            right: 30,
+            bottom: 10,
+            child: messageStatus == MessageStatus.sending
+                ? const SizedBox.square(
+                    dimension: 8,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                    ),
+                  )
+                : messageStatus == MessageStatus.sent
+                    ? const Icon(
+                        Icons.sms_failed_rounded,
+                        size: 25,
+                        color: Colors.red,
+                      )
+                    : const SizedBox(),
+          ),
+        //* Message Box
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 46),
           child: Row(
