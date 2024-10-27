@@ -171,9 +171,6 @@ class MessagingMethod {
     final String fcmEndPoint =
         'https://fcm.googleapis.com/v1/projects/$projectId/messages:send';
 
-    final currentFcmToken = await FirebaseMessaging.instance.getToken();
-    print('fcm key : $currentFcmToken');
-
     final Map<String, dynamic> message = {
       'message': {
         'token': fcmToken,

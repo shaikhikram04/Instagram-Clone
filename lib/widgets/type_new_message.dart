@@ -229,10 +229,11 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Container(
-          height: height * 0.069,
+          height: height * 0.075,
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: const BoxDecoration(
             color: Color.fromARGB(76, 21, 142, 242),
@@ -246,10 +247,12 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                   controller: _messageController,
                   focusNode: _focusNode,
                   readOnly: isShowingEmojiPicker,
-                  style: const TextStyle(color: primaryColor, fontSize: 19),
+                  style:
+                      TextStyle(color: primaryColor, fontSize: height * 0.028),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Message...',
+                    hintStyle: TextStyle(fontWeight: FontWeight.normal),
                     contentPadding: EdgeInsets.only(
                       left: 63,
                       right: 90,
@@ -271,8 +274,8 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               Positioned(
                 left: isMessaging ? 5 : null,
                 right: isMessaging ? null : 5,
-                top: 5,
-                bottom: 5,
+                top: height * 0.001,
+                bottom: height * 0.001,
                 child: IconButton(
                   onPressed: () async {
                     if (isShowingEmojiPicker) {
@@ -292,7 +295,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                         ? Icons.keyboard
                         : Icons.emoji_emotions,
                     color: primaryColor,
-                    size: 35,
+                    size: height * 0.05,
                   ),
                 ),
               ),
@@ -300,13 +303,14 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               //* Send Button
               if (isMessaging)
                 Positioned(
-                  top: 11,
-                  bottom: 11,
+                  top: height * 0.01,
+                  bottom: height * 0.01,
                   right: 11,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: blueColor,
-                        fixedSize: const Size(60, 40)),
+                      backgroundColor: blueColor,
+                      fixedSize: const Size(60, 40),
+                    ),
                     onPressed: sendMessage,
                     child: const Icon(
                       Icons.send,
@@ -318,18 +322,18 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               //* Camera Button
               if (!isMessaging)
                 Positioned(
-                  top: 5,
-                  bottom: 5,
+                  top: 0.001,
+                  bottom: 0.001,
                   left: 10,
                   child: CircleAvatar(
-                    radius: 23,
+                    radius: height * 0.03,
                     backgroundColor: const Color(0xFF088DE5),
                     child: IconButton(
                       onPressed: clickImage,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.camera_alt,
                         color: primaryColor,
-                        size: 31,
+                        size: height * 0.038,
                       ),
                     ),
                   ),
@@ -338,15 +342,15 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               //* gellery image button
               if (!isMessaging)
                 Positioned(
-                  right: 55,
-                  top: 5,
-                  bottom: 5,
+                  right: width * 0.14,
+                  top: 0.00001,
+                  bottom: 0.00001,
                   child: IconButton(
                     onPressed: selectMultipleImagesFromgallary,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.insert_photo,
                       color: primaryColor,
-                      size: 35,
+                      size: height * 0.05,
                     ),
                   ),
                 ),
@@ -355,7 +359,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
         ),
         if (isShowingEmojiPicker)
           SizedBox(
-            height: 320,
+            height: height * 0.4,
             width: double.infinity,
             child: EmojiPicker(
               textEditingController: _messageController,
