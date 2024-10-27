@@ -18,6 +18,10 @@ class LocalChatNotifier extends StateNotifier<List<LocalChat>> {
       return msg;
     }).toList();
   }
+
+  void clearLocalChat() {
+    state = [];
+  }
 }
 
 final localChatProvider =
