@@ -33,4 +33,33 @@ class LocalChat extends Chat {
   }) : super.post();
 
   final MessageStatus messageStatus;
+
+  LocalChat updateMessageStatus(MessageStatus msgStatus) {
+    if (type == MessageType.text) {
+      return LocalChat.text(
+        chatId: chatId,
+        from: from,
+        message: message,
+        timeStamp: timeStamp,
+        messageStatus: msgStatus,
+      );
+    } else if (type == MessageType.image) {
+      return LocalChat.image(
+        chatId: chatId,
+        from: from,
+        timeStamp: timeStamp,
+        imageUrl: imageUrl,
+        messageStatus: msgStatus,
+      );
+    } else {
+      return LocalChat.post(
+        chatId: chatId,
+        from: from,
+        timeStamp: timeStamp,
+        postId: postId,
+        message: message,
+        messageStatus: msgStatus,
+      );
+    }
+  }
 }
