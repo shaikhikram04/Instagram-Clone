@@ -75,7 +75,7 @@ class MessageBubble extends StatelessWidget {
                       strokeWidth: 3,
                     ),
                   )
-                : messageStatus == MessageStatus.sent
+                : messageStatus == MessageStatus.failed
                     ? const Icon(
                         Icons.sms_failed_rounded,
                         size: 25,
