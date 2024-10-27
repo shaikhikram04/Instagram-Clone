@@ -48,7 +48,7 @@ class Chat {
       'from': from,
       'message': message,
       'messageType': type.name.toString(),
-      'timeStamp': timeStamp.toString(),
+      'timeStamp': timeStamp,
       'postId': postId,
       'imageUrl': imageUrl,
     };

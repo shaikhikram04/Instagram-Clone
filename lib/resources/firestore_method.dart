@@ -476,7 +476,11 @@ class FirestoreMethod {
         final userSnap = await userCollectionRef.doc(receiverUserId).get();
         final token = userSnap.data()!['deviceToken'];
         await MessagingMethod.sendFcmMessage(
-            token, 'New Message', '$username : $lastMessage', 'message');
+          token,
+          'New Message',
+          '$username : $lastMessage',
+          'message',
+        );
       }
 
       //* update conversation data
