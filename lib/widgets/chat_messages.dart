@@ -129,6 +129,9 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
     final authenticatedUserId = FirebaseAuth.instance.currentUser!.uid;
 
     final localMessages = ref.watch(localChatProvider);
+    while (localMessages.length != _postsSnap.length) {
+      _postsSnap.insert(0, null);
+    }
 
     return _isLoading
         ? const Center(

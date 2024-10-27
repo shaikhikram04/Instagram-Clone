@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -5,12 +6,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/models/chat.dart';
+import 'package:instagram_clone/models/local_chat.dart';
 import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/providers/message_provider.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/utils/utils.dart';
+import 'package:uuid/uuid.dart';
 
 class TypeNewMessage extends ConsumerStatefulWidget {
   const TypeNewMessage({
@@ -136,6 +140,16 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
       } else {
         String res = '';
         if (photoUrlList.isEmpty) {
+          final chatId = const Uuid().v1();
+          LocalChat localChat = LocalChat.text(
+            chatId: chatId,
+            from: user.uid,
+            message: message,
+            timeStamp: Timestamp.now(),
+          );
+
+          ref.read(localChatProvider.notifier).addLocalChat(localChat);
+
           res = await FirestoreMethod.pushMessage(
             conversationId: id,
             uid: user.uid,
@@ -143,7 +157,28 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
             messageType: messageType,
             message: message,
           );
+
+          final messageStatus =
+              res == 'success' ? MessageStatus.sent : MessageStatus.failed;
+
+          ref
+              .read(localChatProvider.notifier)
+              .updateStatus(chatId, messageStatus);
         } else {
+          final chatIds = [];
+          for (final photoUrl in photoUrlList) {
+            final chatId = const Uuid().v1();
+            chatIds.add(chatId);
+            final localChat = LocalChat.image(
+              chatId: chatId,
+              from: user.uid,
+              timeStamp: Timestamp.now(),
+              imageUrl: photoUrl,
+            );
+            ref.read(localChatProvider.notifier).addLocalChat(localChat);
+          }
+
+          int chatIndex = 0;
           for (final photoUrl in photoUrlList) {
             res = await FirestoreMethod.pushMessage(
               conversationId: id,
@@ -152,6 +187,12 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               messageType: messageType,
               imageUrl: photoUrl,
             );
+            final messageStatus =
+                res == 'success' ? MessageStatus.sent : MessageStatus.failed;
+
+            ref
+                .read(localChatProvider.notifier)
+                .updateStatus(chatIds[chatIndex], messageStatus);
           }
         }
 
