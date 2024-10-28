@@ -11,8 +11,13 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/message_bubble.dart';
 
 class ChatMessages extends ConsumerStatefulWidget {
-  const ChatMessages({super.key, required this.conversationId});
+  const ChatMessages({
+    super.key,
+    required this.conversationId,
+    this.isJustActive = false,
+  });
   final String conversationId;
+  final bool isJustActive;
 
   @override
   ConsumerState<ChatMessages> createState() => _ChatMessagesState();
@@ -40,16 +45,15 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
   Future<void> _loadChatsData() async {
     try {
       await _loadParticipantsData();
+      List<LocalChat> chatsData;
 
-      final chatsData = ref.read(localChatProvider);
-
-      //* At the time of making chat active on first Message
-      //* (there will be chat in provider and there is no need to search in firestore for chat)
-
-      //! and there is no data on provider initially then we have to search on firebase
-      if (chatsData.isEmpty) {
-        final loadedChatsData = await _getChatsData();
-        chatsData.addAll(loadedChatsData);
+      if (widget.isJustActive) {
+        //* At the time of making chat active on first Message
+        //* (there will be chat in provider and there is no need to search in firestore for chat)
+        chatsData = ref.read(localChatProvider);
+      } else {
+        //* and there is no data on provider initially then we have to search on firebase
+        chatsData = await _getChatsData();
       }
 
       ref.read(localChatProvider.notifier).setLocalChat(chatsData);
@@ -144,12 +148,7 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
 
   @override
   void dispose() {
-    _clearLocalChat();
     super.dispose();
-  }
-
-  void _clearLocalChat() {
-    ref.read(localChatProvider.notifier).clearLocalChat();
   }
 
   @override

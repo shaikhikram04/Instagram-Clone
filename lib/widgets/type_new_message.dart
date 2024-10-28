@@ -59,6 +59,12 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
     user = ref.read(userProvider);
     isNewChat = widget.isNewChat;
     id = widget.conversationId ?? '';
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        ref.read(localChatProvider.notifier).clearLocalChat();
+      },
+    );
   }
 
   @override
@@ -248,14 +254,14 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                   focusNode: _focusNode,
                   readOnly: isShowingEmojiPicker,
                   style:
-                      TextStyle(color: primaryColor, fontSize: height * 0.028),
-                  decoration: const InputDecoration(
+                      TextStyle(color: primaryColor, fontSize: height * 0.024),
+                  decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Message...',
-                    hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                    hintStyle: const TextStyle(fontWeight: FontWeight.normal),
                     contentPadding: EdgeInsets.only(
-                      left: 63,
-                      right: 90,
+                      left: width * 0.17,
+                      right: width * 0.2,
                     ),
                   ),
                   onTapAlwaysCalled: false,
@@ -272,8 +278,8 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
 
               //* Emoji / Keyboard Button
               Positioned(
-                left: isMessaging ? 5 : null,
-                right: isMessaging ? null : 5,
+                left: isMessaging ? width * 0.01 : null,
+                right: isMessaging ? null : width * 0.01,
                 top: height * 0.001,
                 bottom: height * 0.001,
                 child: IconButton(
@@ -305,7 +311,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                 Positioned(
                   top: height * 0.01,
                   bottom: height * 0.01,
-                  right: 11,
+                  right: width * 0.02,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: blueColor,
@@ -324,7 +330,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
                 Positioned(
                   top: 0.001,
                   bottom: 0.001,
-                  left: 10,
+                  left: width * 0.02,
                   child: CircleAvatar(
                     radius: height * 0.03,
                     backgroundColor: const Color(0xFF088DE5),

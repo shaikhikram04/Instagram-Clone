@@ -34,6 +34,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   late bool isActiveChat;
   String? conversationId;
+  bool isJustActive = false;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       isActiveChat = true;
       conversationId = cId;
+      isJustActive = true;
     });
   }
 
@@ -85,7 +87,10 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: !isActiveChat
                 ? const SizedBox()
-                : ChatMessages(conversationId: conversationId!),
+                : ChatMessages(
+                    conversationId: conversationId!,
+                    isJustActive: isJustActive,
+                  ),
           ),
           TypeNewMessage(
             isNewChat: widget.isNewChat,
