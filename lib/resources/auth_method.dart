@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instagram_clone/models/user.dart' as model;
+import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/resources/messaging_method.dart';
 import 'package:instagram_clone/resources/storage_methods.dart';
 
@@ -103,6 +104,8 @@ class AuthMethod {
 
   static Future<void> signOutUser() async {
     try {
+      final userId = _auth.currentUser!.uid;
+      await FirestoreMethod.updateDeviceToken(userId, '');
       await _auth.signOut();
     } catch (e) {
       return;
