@@ -39,8 +39,19 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
 
   Future<void> _loadChatsData() async {
     try {
-      // ref.read(localChatProvider.notifier).clearLocalChat();
-      final chatsData = await _getChatsData();
+      await _loadParticipantsData();
+
+      final chatsData = ref.read(localChatProvider);
+
+      //* At the time of making chat active on first Message
+      //* (there will be chat in provider and there is no need to search in firestore for chat)
+
+      //! and there is no data on provider initially then we have to search on firebase
+      if (chatsData.isEmpty) {
+        final loadedChatsData = await _getChatsData();
+        chatsData.addAll(loadedChatsData);
+      }
+
       ref.read(localChatProvider.notifier).setLocalChat(chatsData);
     } catch (e) {
       return;
@@ -56,17 +67,12 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
   Future<List<LocalChat>> _getChatsData() async {
     final chatsData = <LocalChat>[];
     try {
-      await _loadParticipantsData();
-
       final snapshot = await FirebaseFirestore.instance
           .collection('conversations')
           .doc(widget.conversationId)
           .collection('chats')
           .orderBy('timeStamp', descending: false)
-          .get()
-          .timeout(const Duration(seconds: 10), onTimeout: () {
-        throw TimeoutException("Firestore request timed out");
-      });
+          .get();
 
       for (final doc in snapshot.docs) {
         String type = doc['messageType'];

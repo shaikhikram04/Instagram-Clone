@@ -261,7 +261,7 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                             final lastMessageSendBy =
                                 conversation['sendBy'] == user.uid
                                     ? 'You'
-                                    : participantUsername;
+                                    : conversation['sendBy'];
                             return ChatCard(
                               username: participantUsername,
                               imageUrl: participantImageUrl,
