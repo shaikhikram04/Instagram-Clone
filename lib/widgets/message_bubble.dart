@@ -175,6 +175,35 @@ class MessageBubble extends StatelessWidget {
   }
 
   Widget getPostBubble(BuildContext context, double height) {
+    if (postSnap == null || postSnap!.data() == null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: const Color.fromARGB(255, 32, 29, 29),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              const Text(
+                'Message Unavailable',
+                style: TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'This post is deleted by owner.',
+                style: GoogleFonts.lato(color: primaryColor),
+              )
+            ],
+          ),
+        ),
+      );
+    }
     return InkWell(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PostScreen(snap: postSnap!),

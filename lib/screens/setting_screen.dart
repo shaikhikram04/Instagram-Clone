@@ -25,14 +25,12 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
     final postCollection = FirebaseFirestore.instance.collection('posts');
 
-    Future<void> navigateToLikedPost(List likelist,
-        CollectionReference<Map<String, dynamic>> postCollection) async {
+    Future<void> navigateToLikedPost(List likelist) async {
       List<DocumentSnapshot> likePostList = [];
       try {
         if (likelist.isNotEmpty) {
-          final snap = await postCollection
-              .where(FieldPath.documentId, whereIn: likelist)
-              .get();
+          final snap =
+              await postCollection.where('postId', whereIn: likelist).get();
 
           likePostList = snap.docs;
         }
@@ -47,14 +45,12 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       ));
     }
 
-    Future<void> navigateTosavedPost(List saveList,
-        CollectionReference<Map<String, dynamic>> postCollection) async {
+    Future<void> navigateTosavedPost(List saveList) async {
       List<DocumentSnapshot> savePostList = [];
       try {
         if (saveList.isNotEmpty) {
-          final snap = await postCollection
-              .where(FieldPath.documentId, whereIn: saveList)
-              .get();
+          final snap =
+              await postCollection.where('postId', whereIn: saveList).get();
 
           savePostList = snap.docs;
         }
@@ -83,12 +79,12 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           SettingsButton(
             text: 'Saved',
             iconData: Icons.bookmark_border,
-            onTap: () => navigateTosavedPost(saveList, postCollection),
+            onTap: () => navigateTosavedPost(saveList),
           ),
           SettingsButton(
             text: 'Liked',
             iconData: Icons.favorite_border,
-            onTap: () => navigateToLikedPost(likeList, postCollection),
+            onTap: () => navigateToLikedPost(likeList),
           ),
           SettingsButton(
             text: 'Log out',
