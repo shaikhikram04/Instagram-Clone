@@ -20,8 +20,6 @@ class ChatMessages extends ConsumerStatefulWidget {
 
 class _ChatMessagesState extends ConsumerState<ChatMessages> {
   final Map participantsData = {};
-  // late StreamSubscription<QuerySnapshot> _subcription;
-  // final List<DocumentSnapshot<Map<String, dynamic>>> _chatsData = [];
   final List<DocumentSnapshot<Map<String, dynamic>>?> _postsSnap = [];
   var _isLoading = false;
 
@@ -32,16 +30,27 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
       _isLoading = true;
     });
 
-    Future.microtask(
-      () async {
-        ref.read(localChatProvider.notifier).clearLocalChat();
-        final chatsData = await _getChatsData();
-        ref.read(localChatProvider.notifier).setLocalChat(chatsData);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        _loadChatsData();
+      },
+    );
+  }
+
+  Future<void> _loadChatsData() async {
+    try {
+      // ref.read(localChatProvider.notifier).clearLocalChat();
+      final chatsData = await _getChatsData();
+      ref.read(localChatProvider.notifier).setLocalChat(chatsData);
+    } catch (e) {
+      return;
+    } finally {
+      if (mounted) {
         setState(() {
           _isLoading = false;
         });
-      },
-    );
+      }
+    }
   }
 
   Future<List<LocalChat>> _getChatsData() async {
@@ -54,7 +63,10 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
           .doc(widget.conversationId)
           .collection('chats')
           .orderBy('timeStamp', descending: false)
-          .get();
+          .get()
+          .timeout(const Duration(seconds: 10), onTimeout: () {
+        throw TimeoutException("Firestore request timed out");
+      });
 
       for (final doc in snapshot.docs) {
         String type = doc['messageType'];
@@ -126,9 +138,12 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
 
   @override
   void dispose() {
-    // _subcription.cancel();
-
+    _clearLocalChat();
     super.dispose();
+  }
+
+  void _clearLocalChat() {
+    ref.read(localChatProvider.notifier).clearLocalChat();
   }
 
   @override
@@ -136,7 +151,7 @@ class _ChatMessagesState extends ConsumerState<ChatMessages> {
     final authenticatedUserId = FirebaseAuth.instance.currentUser!.uid;
 
     final localMessages = ref.watch(localChatProvider);
-    while (localMessages.length != _postsSnap.length) {
+    while (localMessages.length != _postsSnap.length && !_isLoading) {
       _postsSnap.insert(0, null);
     }
 
