@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/screens/post_screen.dart';
-import 'package:instagram_clone/utils/colors.dart';
 
 class PostGrid extends StatelessWidget {
   const PostGrid({
@@ -10,7 +9,7 @@ class PostGrid extends StatelessWidget {
     this.scrollcontroller,
   });
 
-  final List<DocumentSnapshot?> postList;
+  final List<DocumentSnapshot> postList;
   final ScrollController? scrollcontroller;
 
   @override
@@ -27,29 +26,17 @@ class PostGrid extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: postList[index] != null
-              ? () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PostScreen(
-                      snap: postList[index]!,
-                    ),
-                  ));
-                }
-              : null,
-          child: postList[index] != null
-              ? Image.network(
-                  postList[index]!['postUrl'],
-                  fit: BoxFit.cover,
-                )
-              : Container(
-                  color: mobileBackgroundColor,
-                  child: const Column(
-                    children: [
-                      Text('Message Unavailable'),
-                      Text('This post is deleted by the owner.'),
-                    ],
-                  ),
-                ),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => PostScreen(
+                snap: postList[index],
+              ),
+            ));
+          },
+          child: Image.network(
+            postList[index]['postUrl'],
+            fit: BoxFit.cover,
+          ),
         );
       },
     );
