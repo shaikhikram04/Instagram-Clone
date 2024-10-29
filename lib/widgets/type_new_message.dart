@@ -92,6 +92,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
     var messageType = MessageType.text;
 
     final List<String> photoUrlList = [];
+    final List<String> chatIds = [];
 
     try {
       if (message.trim().isNotEmpty) {
@@ -113,6 +114,16 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               'sharedImages', image, true);
 
           photoUrlList.add(message);
+
+          final chatId = const Uuid().v1();
+          chatIds.add(chatId);
+          final localChat = LocalChat.image(
+            chatId: chatId,
+            from: user.uid,
+            timeStamp: Timestamp.now(),
+            imageUrl: message,
+          );
+          ref.read(localChatProvider.notifier).addLocalChat(localChat);
         }
 
         _selectedImages.clear();
@@ -171,18 +182,18 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               .read(localChatProvider.notifier)
               .updateStatus(chatId, messageStatus);
         } else {
-          final chatIds = [];
-          for (final photoUrl in photoUrlList) {
-            final chatId = const Uuid().v1();
-            chatIds.add(chatId);
-            final localChat = LocalChat.image(
-              chatId: chatId,
-              from: user.uid,
-              timeStamp: Timestamp.now(),
-              imageUrl: photoUrl,
-            );
-            ref.read(localChatProvider.notifier).addLocalChat(localChat);
-          }
+          // final chatIds = [];
+          // for (final photoUrl in photoUrlList) {
+          //   final chatId = const Uuid().v1();
+          //   chatIds.add(chatId);
+          //   final localChat = LocalChat.image(
+          //     chatId: chatId,
+          //     from: user.uid,
+          //     timeStamp: Timestamp.now(),
+          //     imageUrl: photoUrl,
+          //   );
+          //   ref.read(localChatProvider.notifier).addLocalChat(localChat);
+          // }
 
           int chatIndex = 0;
           for (final photoUrl in photoUrlList) {
@@ -198,7 +209,7 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
 
             ref
                 .read(localChatProvider.notifier)
-                .updateStatus(chatIds[chatIndex], messageStatus);
+                .updateStatus(chatIds[chatIndex++], messageStatus);
           }
         }
 
