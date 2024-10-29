@@ -8,8 +8,8 @@ class TextFieldInput extends StatelessWidget {
   final void Function()? changePasswordVisibility;
   final bool isPassVisible;
   final String keyValue;
-  final void Function(String value) onSaved;
-  final String? Function(String value) validator;
+  final void Function(String? value) onSaved;
+  final String? Function(String? value) validator;
 
   const TextFieldInput({
     super.key,
@@ -34,14 +34,8 @@ class TextFieldInput extends StatelessWidget {
     );
     return TextFormField(
       key: ValueKey(hintText),
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Empty value is not accepted';
-        }
-
-        return null;
-      },
-      onSaved: (value) {},
+      validator: validator,
+      onSaved: onSaved,
       style: const TextStyle(color: primaryColor),
       decoration: InputDecoration(
         hintText: hintText,

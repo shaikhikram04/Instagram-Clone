@@ -79,6 +79,10 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         _isLoading = false;
       });
     });
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -185,7 +189,8 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                     borderRadius: BorderRadius.circular(7),
                     color: const Color.fromARGB(255, 32, 29, 29),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                   child: const Text(
                     'Post Unavailable',
                     style: TextStyle(color: primaryColor),
