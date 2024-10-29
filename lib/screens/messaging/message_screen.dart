@@ -67,12 +67,14 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               int index =
                   _chattingUser.indexWhere((doc) => doc.id == change.doc.id);
               if (index != -1) {
-                _chattingUser[index] = change.doc;
+                _chattingUser.removeAt(index);
+                _chattingUser.insert(0, change.doc);
               }
 
               index = _filterUser.indexWhere((doc) => doc.id == change.doc.id);
               if (index != -1) {
-                _filterUser[index] = change.doc;
+                _filterUser.removeAt(index);
+                _filterUser.insert(0, change.doc);
               }
             } else if (change.type == DocumentChangeType.removed) {
               _chattingUser.removeWhere((doc) => doc.id == change.doc.id);
