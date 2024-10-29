@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/auth_method.dart';
-import 'package:instagram_clone/screens/authentication/login_screen.dart';
+import 'package:instagram_clone/screens/authentication/authentication_screen.dart';
 import 'package:instagram_clone/screens/post_collection.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/settings_button.dart';
@@ -95,7 +95,9 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               if (!context.mounted) return;
 
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (ctx) => const LoginScreen()),
+                MaterialPageRoute(
+                  builder: (ctx) => const AuthenticationScreen(),
+                ),
                 (route) => false,
               );
             },
