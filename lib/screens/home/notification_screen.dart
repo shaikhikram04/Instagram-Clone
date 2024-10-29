@@ -114,16 +114,18 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
     final snap = _notificationRefSnap[index];
 
     return ListTile(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            if (collection == 'users') {
-              return ProfileScreen(uid: notificationData['referenceId']);
-            }
-            return PostScreen(snap: snap!);
-          },
-        ));
-      },
+      onTap: collection == 'posts' && snap!.data() == null
+          ? null
+          : () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) {
+                  if (collection == 'users') {
+                    return ProfileScreen(uid: notificationData['referenceId']);
+                  }
+                  return PostScreen(snap: snap!);
+                },
+              ));
+            },
       leading: CircleAvatar(
         radius: 25,
         backgroundColor: imageBgColor,
@@ -167,15 +169,29 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
                 },
               ),
             )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                (snap!.data() as Map<String, dynamic>)['postUrl'],
-                fit: BoxFit.cover,
-                height: 50,
-                width: 50,
-              ),
-            ),
+          : snap!.data() != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    (snap.data() as Map<String, dynamic>)['postUrl'],
+                    fit: BoxFit.cover,
+                    height: 50,
+                    width: 50,
+                  ),
+                )
+              : Container(
+                  width: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: const Color.fromARGB(255, 32, 29, 29),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                  child: const Text(
+                    'Post Unavailable',
+                    style: TextStyle(color: primaryColor),
+                    softWrap: true,
+                  ),
+                ),
     );
   }
 
@@ -204,7 +220,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         if (collection == 'users') {
           isFollowing = userFollowing.contains(notificationData['referenceId']);
         }
-        
+
         return showNotficatinTile(
           notificationData,
           collection,

@@ -26,7 +26,7 @@ class ResponsiveLayout extends ConsumerStatefulWidget {
 class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
   final _connectivityService = ConnectivityService();
   late StreamSubscription<ConnectivityResult> _subscription;
-  bool _hasInternet = false;
+  bool _hasInternet = true;
 
   @override
   void initState() {
