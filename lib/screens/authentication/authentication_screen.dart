@@ -21,13 +21,13 @@ class AuthenticationScreen extends StatefulWidget {
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   final _formKey = GlobalKey<FormState>();
-  String username = '';
-  String email = '';
-  String password = '';
-  String bio = '';
+  String _username = '';
+  String _email = '';
+  String _password = '';
+  String _bio = '';
   late Uint8List _image;
-  bool isLoading = false;
-  bool isAssigningImage = false;
+  bool _isLoading = false;
+  bool _isAssigningImage = false;
   bool _isPasswordVisible = false;
   bool _isLogin = true;
   final List<String> _existUsername = [];
@@ -53,13 +53,13 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   Future<void> loadAssetImage() async {
     setState(() {
-      isAssigningImage = true;
+      _isAssigningImage = true;
     });
     final byte =
         await rootBundle.load('assets/images/instagram_default_pfp.png');
     setState(() {
       _image = byte.buffer.asUint8List();
-      isAssigningImage = false;
+      _isAssigningImage = false;
     });
   }
 
@@ -74,18 +74,18 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   Future<void> signupUser() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
     final res = await AuthMethod.signupUser(
-      email: email.trim(),
-      password: password.trim(),
-      username: username.trim(),
-      bio: bio.trim(),
+      email: _email.trim(),
+      password: _password.trim(),
+      username: _username.trim(),
+      bio: _bio.trim(),
       file: _image,
     );
 
     setState(() {
-      isLoading = false;
+      _isLoading = false;
     });
 
     if (!mounted) {
@@ -106,18 +106,18 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
 
   Future<void> loginUser() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     final res = await AuthMethod.loginUser(
-      email: email.trim(),
-      password: password.trim(),
+      email: _email.trim(),
+      password: _password.trim(),
     );
 
     if (!mounted) return;
 
     setState(() {
-      isLoading = false;
+      _isLoading = false;
     });
 
     if (res != 'success') {
@@ -179,7 +179,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                     ),
                     //* Profile image
                     if (!_isLogin)
-                      isAssigningImage
+                      _isAssigningImage
                           ? const CircularProgressIndicator(color: blueColor)
                           : Stack(
                               children: [
@@ -207,7 +207,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         hintText: 'Enter your Username',
                         textInputType: TextInputType.text,
                         onSaved: (value) {
-                          username = value!;
+                          _username = value!;
                         },
                         validator: (value) {
                           if (value!.length < 4) {
@@ -229,7 +229,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       hintText: 'Enter your email',
                       textInputType: TextInputType.emailAddress,
                       onSaved: (value) {
-                        email = value!;
+                        _email = value!;
                       },
                       validator: (value) {
                         if (!value!.contains('@') ||
@@ -249,7 +249,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       isPassVisible: _isPasswordVisible,
                       changePasswordVisibility: changePasswordVisibility,
                       onSaved: (value) {
-                        password = value!;
+                        _password = value!;
                       },
                       validator: (value) {
                         if (value!.length < 7) {
@@ -265,7 +265,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         hintText: 'Enter your bio',
                         textInputType: TextInputType.text,
                         onSaved: (value) {
-                          bio = value!;
+                          _bio = value!;
                         },
                         validator: (value) {
                           return null;
@@ -273,6 +273,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       ),
                     const SizedBox(height: 24),
                     BlueButton(
+                      isLoading: _isLoading,
                       onTap: () async {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
@@ -301,10 +302,10 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              username = '';
-                              password = '';
-                              bio = '';
-                              email = '';
+                              _username = '';
+                              _password = '';
+                              _bio = '';
+                              _email = '';
                               _isLogin = !_isLogin;
                             });
                           },
