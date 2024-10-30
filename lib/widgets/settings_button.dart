@@ -5,12 +5,14 @@ class SettingsButton extends StatelessWidget {
   final IconData iconData;
   final Color color;
   final void Function() onTap;
+  final bool isSelected;
   const SettingsButton({
     super.key,
     required this.text,
     required this.iconData,
     this.color = Colors.white,
     required this.onTap,
+    this.isSelected = false,
   });
 
   @override
@@ -28,7 +30,11 @@ class SettingsButton extends StatelessWidget {
       ),
       label: Text(
         text,
-        style: TextStyle(color: color, fontSize: 20),
+        style: TextStyle(
+          color: color,
+          fontSize: 18,
+          fontWeight: isSelected ? FontWeight.bold : null,
+        ),
       ),
     );
   }

@@ -64,6 +64,9 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/images/insta_clone_logo.png"
+  web:
+    generate: true
+    image_path: "assets/images/insta_clone_logo.png"
 
 flutter_native_splash:
   color: "#21252b"

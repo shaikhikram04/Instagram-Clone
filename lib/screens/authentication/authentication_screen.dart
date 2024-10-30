@@ -159,7 +159,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
             child: Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
-                width: width < webScreenSize ? 400 : width * 0.6,
+                width: width < webScreenSize ? 400 : 550,
                 child: Form(
                   key: _formKey,
                   child: Column(
