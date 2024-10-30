@@ -19,7 +19,7 @@ class MobileScreenLayout extends StatefulWidget {
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
-   late int _page;
+  late int _page;
   late PageController _pageController;
   final userId = FirebaseAuth.instance.currentUser!.uid;
   bool isNewNotification = false;
