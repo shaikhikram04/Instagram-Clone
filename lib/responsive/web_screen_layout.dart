@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:instagram_clone/screens/home/add_post_screen.dart';
-import 'package:instagram_clone/screens/home/feed_screen.dart';
 import 'package:instagram_clone/screens/home/notification_screen.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/screens/home/search_screen.dart';
 import 'package:instagram_clone/screens/messaging/message_screen.dart';
 import 'package:instagram_clone/screens/setting_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/widgets/feeds_content.dart';
 import 'package:instagram_clone/widgets/settings_button.dart';
 
 class WebScreenLayout extends StatefulWidget {
@@ -78,7 +78,14 @@ class _WebScreenLayoutState extends State<WebScreenLayout> {
           const VerticalDivider(
             thickness: 0.4,
           ),
-          Expanded(child: currentContent),
+          Flexible(
+            child: Center(
+              child: SizedBox(
+                width: 600,
+                child: currentContent,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -87,7 +94,7 @@ class _WebScreenLayoutState extends State<WebScreenLayout> {
   Widget getCurrentContent() {
     switch (_selectedIndex) {
       case 0:
-        return FeedScreen(navigateToSearchScreen: navigateToSearchScreen);
+        return const FeedsContent();
       case 1:
         return const SearchScreen();
       case 2:
