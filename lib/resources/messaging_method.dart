@@ -15,7 +15,7 @@ class MessagingMethod {
   static final _firebaseMessaging = FirebaseMessaging.instance;
   static final _localNotification = FlutterLocalNotificationsPlugin();
 
-  static Future<void> requestNotificationPermission() async {
+  static Future<AuthorizationStatus> requestNotificationPermission() async {
     final settings = await _firebaseMessaging.requestPermission(
       alert: true,
       announcement: true,
@@ -26,22 +26,7 @@ class MessagingMethod {
       criticalAlert: true,
     );
 
-    
-
-    print('---------------------------------');
-
-    if (settings.authorizationStatus == AuthorizationStatus.denied) {
-      print('Notification permission denied');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.notDetermined) {
-      print('Notification permission not determined');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      print('Provisional notification permission granted');
-    } else if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('Notification permission granted');
-    }
-    print('---------------------------------');
+    return settings.authorizationStatus;
   }
 
   static void firebaseInit(BuildContext context) {

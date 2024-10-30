@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:instagram_clone/firebase_options.dart';
 import 'package:instagram_clone/responsive/mobile_screen_layout.dart';
 import 'package:instagram_clone/responsive/responsive_layout_screen.dart';
 import 'package:instagram_clone/responsive/web_screen_layout.dart';
@@ -13,26 +13,29 @@ import 'package:instagram_clone/utils/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyAJh7L-6GM5H5drP6NFPKZnXGI5qplX_fk",
-        authDomain: "instagram-clone-a88dc.firebaseapp.com",
-        projectId: "instagram-clone-a88dc",
-        storageBucket: "instagram-clone-a88dc.appspot.com",
-        messagingSenderId: "192984819589",
-        appId: "1:192984819589:web:41a5c994cccc5bf896c6ec",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
+  // if (kIsWeb) {
+  //   await Firebase.initializeApp(
+  //     options: const FirebaseOptions(
+  //         apiKey: "AIzaSyAJh7L-6GM5H5drP6NFPKZnXGI5qplX_fk",
+  //         authDomain: "instagram-clone-a88dc.firebaseapp.com",
+  //         projectId: "instagram-clone-a88dc",
+  //         storageBucket: "instagram-clone-a88dc.appspot.com",
+  //         messagingSenderId: "192984819589",
+  //         appId: "1:192984819589:web:b554929c5132929396c6ec"),
+  //   );
+  // } else {
+  //   await Firebase.initializeApp();
+  // }
+
+  Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   FirebaseMessaging.onBackgroundMessage(
     _backgroungMessagingHandler,
   );
 
-  await dotenv.load(); // Load the .env file
+  await dotenv.load();  //* Load the .env file
 
   runApp(const ProviderScope(child: MyApp()));
 }
