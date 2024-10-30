@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/screens/messaging/new_message.dart';
-import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/chat_card.dart';
 
 class MessageScreen extends ConsumerStatefulWidget {
@@ -214,20 +213,20 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
               ),
             ),
             const SizedBox(height: 15),
-            Row(
+            const Row(
               children: [
-                const Text(
+                Text(
                   'Messages',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
                 ),
-                const Spacer(),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'Request',
-                    style: TextStyle(color: blueColor, fontSize: 18),
-                  ),
-                ),
+                Spacer(),
+                // TextButton(
+                //   onPressed: () {},
+                //   child: const Text(
+                //     'Request',
+                //     style: TextStyle(color: blueColor, fontSize: 18),
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(height: 3),
@@ -261,9 +260,10 @@ class _MessageScreenState extends ConsumerState<MessageScreen> {
                                 timeAgo(conversation['timeStamp'].toDate());
 
                             final lastMessageSendBy =
-                                conversation['sendBy'] == user.uid
+                                conversation['sendBy'] == user.username
                                     ? 'You'
                                     : conversation['sendBy'];
+
                             return ChatCard(
                               username: participantUsername,
                               imageUrl: participantImageUrl,

@@ -85,28 +85,31 @@ class ChatCard extends StatelessWidget {
                         ),
                       ),
                       isActiveChat
-                          ? Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    '$lastMessageBy : $lastMessage',
-                                    style: GoogleFonts.openSans(fontSize: 16),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  time!,
-                                  style: GoogleFonts.exo2(),
-                                ),
-                              ],
-                            )
+                          ? lastMessageBy!.isNotEmpty
+                              ? Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        '$lastMessageBy : $lastMessage',
+                                        style:
+                                            GoogleFonts.openSans(fontSize: 16),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      time!,
+                                      style: GoogleFonts.exo2(),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox()
                           : Text(
                               bio!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                            ),
+                            )
                     ],
                   ),
                 ),
