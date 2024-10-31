@@ -80,7 +80,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
       final String lastSeenNotificationId =
           userSnap.data()!['lastSeenNotificationId'];
 
-      lastNotificationId = snapList.docs[0].id;
+      if (snapList.docs.isNotEmpty) {
+        lastNotificationId = snapList.docs[0].id;
+      }
       isNewNotification = lastNotificationId != lastSeenNotificationId;
     } catch (e) {
       return;

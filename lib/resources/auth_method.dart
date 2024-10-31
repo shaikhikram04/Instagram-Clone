@@ -14,8 +14,11 @@ class AuthMethod {
   static Future<DocumentSnapshot<Map<String, dynamic>>> getUserSnap() async {
     final currentUser = _auth.currentUser!;
 
-    final snap =
-        await _fireStore.collection('users').doc(currentUser.uid).get();
+    var snap = await _fireStore.collection('users').doc(currentUser.uid).get();
+
+    while (snap.data() == null) {
+      snap = await _fireStore.collection('users').doc(currentUser.uid).get();
+    }
 
     return snap;
   }
@@ -45,7 +48,10 @@ class AuthMethod {
             email: email, password: password);
 
         String photoUrl = await StorageMethods.uploadImageToStorage(
-            'profilePics', file, false);
+          'profilePics',
+          file,
+          false,
+        );
 
         String? deviceToken = await MessagingMethod.deviceToken;
 
