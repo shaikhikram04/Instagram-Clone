@@ -19,6 +19,9 @@ class FeedsContent extends StatelessWidget {
             );
           }
           if (snapshot.hasData) {
+            if (snapshot.data!.size == 0) {
+              return const Center(child: Text('No post available'));
+            }
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) => PostCard(

@@ -255,7 +255,7 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                           _password = value!;
                         },
                         validator: (value) {
-                          if (value!.length < 7) {
+                          if (!_isLogin && value!.length < 7) {
                             return 'It should contain atleast 7 character';
                           }
                           return null;
