@@ -36,14 +36,16 @@ windows/
 analysis_options.yaml
 *.lock
 *.env
-*.json
 lib/firebase_options.dart
 firestore.rules
 storage.rules
 n
 functions
 android\build.gradle
-android\app\build.gradle
+android/app/build.gradle
+android/app/google-services.json
+firebase.json
+package-lock.json
 
 
 # Symbolication related
