@@ -42,6 +42,11 @@ analysis_options.yaml
 *.env
 *.json
 lib/firebase_options.dart
+firestore.rules
+storage.rules
+n
+functions
+
 
 # Symbolication related
 app.*.symbols
