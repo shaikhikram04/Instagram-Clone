@@ -182,19 +182,6 @@ class _TypeNewMessageState extends ConsumerState<TypeNewMessage> {
               .read(localChatProvider.notifier)
               .updateStatus(chatId, messageStatus);
         } else {
-          // final chatIds = [];
-          // for (final photoUrl in photoUrlList) {
-          //   final chatId = const Uuid().v1();
-          //   chatIds.add(chatId);
-          //   final localChat = LocalChat.image(
-          //     chatId: chatId,
-          //     from: user.uid,
-          //     timeStamp: Timestamp.now(),
-          //     imageUrl: photoUrl,
-          //   );
-          //   ref.read(localChatProvider.notifier).addLocalChat(localChat);
-          // }
-
           int chatIndex = 0;
           for (final photoUrl in photoUrlList) {
             res = await FirestoreMethod.pushMessage(

@@ -487,7 +487,7 @@ class FirestoreMethod {
       await conversationDocRef.update({
         'lastMessage': lastMessage,
         'timeStamp': DateTime.now(),
-        'sendBy': uid,
+        'sendBy': username,
       });
 
       //* making docs for message
