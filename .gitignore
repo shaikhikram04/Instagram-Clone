@@ -30,11 +30,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-android/
-ios/
 linux
 macos/
-test/
 windows/
 analysis_options.yaml
 *.lock
@@ -45,6 +42,8 @@ firestore.rules
 storage.rules
 n
 functions
+android\build.gradle
+android\app\build.gradle
 
 
 # Symbolication related
