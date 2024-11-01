@@ -79,10 +79,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         _isLoading = false;
       });
     });
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_method.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/global_variables.dart';
 import 'package:instagram_clone/utils/utils.dart';
 
 class AddPostScreen extends ConsumerStatefulWidget {
@@ -109,6 +110,8 @@ class _AddPostSereenState extends ConsumerState<AddPostScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
 
+    final width = MediaQuery.of(context).size.width;
+
     return _file == null
         ? Column(
             mainAxisSize: MainAxisSize.min,
@@ -171,7 +174,7 @@ class _AddPostSereenState extends ConsumerState<AddPostScreen> {
                       backgroundImage: NetworkImage(user.photoUrl),
                     ),
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
+                      width: width < webScreenSize ? width * 0.4 : width * 0.2,
                       child: TextField(
                         controller: _descriptionController,
                         decoration: const InputDecoration(
