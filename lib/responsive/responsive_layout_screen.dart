@@ -54,6 +54,7 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
 
   void addData() async {
     final user = await AuthMethod.getUserDetail();
+    ref.read(userProvider.notifier).setUser(user);
     final token = await MessagingMethod.deviceToken;
 
     //* token not matched with current device token
@@ -64,7 +65,6 @@ class _ResponsiveLayoutState extends ConsumerState<ResponsiveLayout> {
     }
 
     if (!mounted) return;
-    ref.read(userProvider.notifier).setUser(user);
   }
 
   @override

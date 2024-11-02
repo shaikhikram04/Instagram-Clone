@@ -137,7 +137,7 @@ class MessageBubble extends StatelessWidget {
                             message!,
                             style: GoogleFonts.openSans(
                               height: 1.5,
-                              fontSize: height * 0.025,
+                              fontSize: height * 0.020,
                               color: primaryColor,
                             ),
                             softWrap: true,

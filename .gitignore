@@ -46,6 +46,11 @@ android/app/build.gradle
 android/app/google-services.json
 firebase.json
 package-lock.json
+public
+.firebaserc
+firestore.indexes.json
+.firebase
+.github/workflows
 
 
 # Symbolication related

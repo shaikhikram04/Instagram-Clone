@@ -135,6 +135,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       ),
       title: RichText(
         text: TextSpan(
+          style: const TextStyle(color: primaryColor),
           children: [
             TextSpan(
               text: notificationData['username'],

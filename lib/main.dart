@@ -36,7 +36,7 @@ void main() async {
     enabled: true,
 
     // Start with Galaxy A50 as it's a common Android device
-    defaultDevice: Devices.android.mediumPhone,
+    defaultDevice: Devices.android.samsungGalaxyS20,
 
     // Show toolbar to let users test different devices
     isToolbarVisible: true,
