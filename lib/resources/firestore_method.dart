@@ -95,61 +95,61 @@ class FirestoreMethod {
       //! if user already liked post
       if (likes.contains(user.uid)) {
         //*! remove userId from likes list
-        _firestore.collection('posts').doc(postId).update({
+        await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayRemove([user.uid]),
         });
 
         //! remove postId from user LidedPost list
-        _firestore.collection('users').doc(user.uid).update({
+        await _firestore.collection('users').doc(user.uid).update({
           'likedPosts': FieldValue.arrayRemove([postId]),
         });
 
         likes.remove(postId);
         ref.read(userProvider.notifier).updateField(likedPosts: likes);
       } else {
+        likes.add(postId);
+        ref.read(userProvider.notifier).updateField(likedPosts: likes);
+
         //! is like post
         //*! add userId to likes list
-        _firestore.collection('posts').doc(postId).update({
+        await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([user.uid]),
         });
 
         //! add postId from to LidedPost list
-        _firestore.collection('users').doc(user.uid).update({
+        await _firestore.collection('users').doc(user.uid).update({
           'likedPosts': FieldValue.arrayUnion([postId]),
         });
 
-        likes.add(postId);
-        ref.read(userProvider.notifier).updateField(likedPosts: likes);
+        // if (postUserId != user.uid) {
+        //   //* sending notification to the user who posted
+        //   final notificationId = uuid.v1();
+        //   final notification = Notification(
+        //     notificationId: notificationId,
+        //     type: NotificationType.like,
+        //     body: 'Likes your post',
+        //     timestamp: Timestamp.now(),
+        //     referenceId: postId,
+        //     profileImageUrl: user.photoUrl,
+        //     username: user.username,
+        //   );
 
-        if (postUserId != user.uid) {
-          //* sending notification to the user who posted
-          final notificationId = uuid.v1();
-          final notification = Notification(
-            notificationId: notificationId,
-            type: NotificationType.like,
-            body: 'Likes your post',
-            timestamp: Timestamp.now(),
-            referenceId: postId,
-            profileImageUrl: user.photoUrl,
-            username: user.username,
-          );
+        //   final docRef = _firestore.collection('users').doc(postUserId);
+        //   final docSnap = await docRef.get();
+        //   final fcmToken = docSnap.data()!['deviceToken'];
 
-          final docRef = _firestore.collection('users').doc(postUserId);
-          final docSnap = await docRef.get();
-          final fcmToken = docSnap.data()!['deviceToken'];
+        //   await MessagingMethod.sendFcmMessage(
+        //     fcmToken,
+        //     'Like',
+        //     '${user.username} liked your post',
+        //     'notification',
+        //   );
 
-          await MessagingMethod.sendFcmMessage(
-            fcmToken,
-            'Like',
-            '${user.username} liked your post',
-            'notification',
-          );
-
-          await docRef
-              .collection('notifications')
-              .doc(notificationId)
-              .set(notification.toJson);
-        }
+        //   await docRef
+        //       .collection('notifications')
+        //       .doc(notificationId)
+        //       .set(notification.toJson);
+        // }
       }
     } catch (e) {
       return;

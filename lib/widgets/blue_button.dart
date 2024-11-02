@@ -29,8 +29,11 @@ class BlueButton extends StatelessWidget {
         ),
         child: isLoading
             ? const Center(
+                child: SizedBox.square(
+                dimension: 22,
                 child: CircularProgressIndicator(
-                color: primaryColor,
+                  color: primaryColor,
+                ),
               ))
             : Text(
                 label,
