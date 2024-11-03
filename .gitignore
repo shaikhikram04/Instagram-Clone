@@ -50,6 +50,7 @@ public
 firestore.indexes.json
 .firebase
 .github/workflows
+test
 
 
 # Symbolication related
