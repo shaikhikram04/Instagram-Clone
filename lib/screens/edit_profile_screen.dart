@@ -155,7 +155,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
+      // ignore: deprecated_member_use
+      onPopInvoked: (didPop) async {
         if (didPop) return;
 
         if (username != usernameController.text ||
