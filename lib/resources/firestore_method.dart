@@ -78,7 +78,7 @@ class FirestoreMethod {
 
       res = 'success';
     } catch (e) {
-      res = e.toString();
+      res = e.toString(); 
     }
 
     return res;
