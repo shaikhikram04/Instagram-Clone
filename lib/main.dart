@@ -14,6 +14,8 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  await dotenv.load(); //* Load the .env file
+
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp(
@@ -26,8 +28,6 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(
     _backgroungMessagingHandler,
   );
-
-  await dotenv.load(); //* Load the .env file
 
   runApp(DevicePreview(
     backgroundColor: Colors.white,
@@ -117,7 +117,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Instagram Clone',
       locale: DevicePreview.locale(context), // add this line
-      builder: DevicePreview.appBuilder,  // add this line
+      builder: DevicePreview.appBuilder, // add this line
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: mobileBackgroundColor,
