@@ -9,18 +9,33 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0' # Specify your Flutter version
-
-      - name: Install dependencies
+          channel: 'stable'
+      
+      - name: Enable Flutter Web
+        run: flutter config --enable-web
+        
+      - name: Get dependencies
         run: flutter pub get
-
-      - name: Run tests
-        run: flutter test
+        
+      - name: Build Web
+        run: flutter build web --release --base-href /Instagram-Clone/
+        
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          force_orphan: true
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'

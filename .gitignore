@@ -50,7 +50,6 @@ public
 firestore.indexes.json
 .firebase
 .github/workflows
-test/widget_test.dart
 
 # Symbolication related
 app.*.symbols
