@@ -27,7 +27,6 @@ jobs:
         
       - name: Get dependencies
         run: flutter pub get
-<<<<<<< HEAD
         
       - name: Build Web
         run: flutter build web --release --base-href /Instagram-Clone/
@@ -40,8 +39,3 @@ jobs:
           force_orphan: true
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
-=======
-
-      # - name: Run tests
-      #   run: flutter test
->>>>>>> 49733d7090f620d4363782107ef33b23061adb13
