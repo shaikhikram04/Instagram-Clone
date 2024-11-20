@@ -100,7 +100,7 @@ flutter:
     - assets/images/ic_instagram.svg
     - assets/images/instagram_default_pfp.png
     - assets/images/Insta_NTF.png
-    - .env.example
+    - .env
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

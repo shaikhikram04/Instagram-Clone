@@ -33,6 +33,10 @@ migrate_working_dir/
 linux
 macos/
 windows/
+web/
+android/
+ios/
+test/
 analysis_options.yaml
 *.lock
 *.env
