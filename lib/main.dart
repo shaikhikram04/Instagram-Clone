@@ -2,10 +2,10 @@ import 'package:device_preview/device_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:instagram_clone/firebase_options.dart';
 import 'package:instagram_clone/responsive/mobile_screen_layout.dart';
 import 'package:instagram_clone/responsive/responsive_layout_screen.dart';
 import 'package:instagram_clone/responsive/web_screen_layout.dart';
@@ -13,93 +13,39 @@ import 'package:instagram_clone/screens/authentication/authentication_screen.dar
 import 'package:instagram_clone/utils/colors.dart';
 
 void main() async {
-  await dotenv.load(); //* Load the .env file
-
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
+
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    print('Error initializing Firebase: $e');
+    if (kIsWeb) {
+      print('Initializing Firebase for Web');
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyAJh7L-6GM5H5drP6NFPKZnXGI5qplX_fk",
+          authDomain: "instagram-clone-a88dc.firebaseapp.com",
+          projectId: "instagram-clone-a88dc",
+          storageBucket: "instagram-clone-a88dc.appspot.com",
+          messagingSenderId: "192984819589",
+          appId: "1:192984819589:web:b554929c5132929396c6ec",
+        ),
+        name: '[DEFAULT]',
+      );
+      print('Firebase Web Initialization Successful');
+    } else {
+      await Firebase.initializeApp();
+    }
+  } catch (e, stackTrace) {
+    print('Firebase Initialization Error: $e');
+    print('Stack Trace: $stackTrace');
+    rethrow;
   }
 
   FirebaseMessaging.onBackgroundMessage(
     _backgroungMessagingHandler,
   );
 
-  runApp(DevicePreview(
-    backgroundColor: Colors.white,
-
-    // Enable preview by default for web demo
-    enabled: true,
-
-    // Start with Galaxy A50 as it's a common Android device
-    defaultDevice: Devices.android.samsungGalaxyS20,
-
-    // Show toolbar to let users test different devices
-    isToolbarVisible: true,
-
-    // Keep English only to avoid confusion in demos
-    availableLocales: const [Locale('en', 'US')],
-
-    // Customize preview controls
-    tools: const [
-      // Device selection controls
-      DeviceSection(
-        model: true, // Option to change device model to fit your needs
-        orientation: false, // Lock to portrait for consistent demo
-        frameVisibility: false, // Hide frame options
-        virtualKeyboard: false, // Hide keyboard
-      ),
-
-      // Theme switching section
-      // SystemSection(
-      //   locale: false, // Hide language options - we're keeping it English only
-      //   theme: false, // Show theme switcher if your app has dark/light modes
-      // ),
-
-      // Disable accessibility for demo simplicity
-      // AccessibilitySection(
-      //   boldText: false,
-      //   invertColors: false,
-      //   textScalingFactor: false,
-      //   accessibleNavigation: false,
-      // ),
-
-      // Hide extra settings to keep demo focused
-      // SettingsSection(
-      //   backgroundTheme: false,
-      //   toolsTheme: false,
-      // ),
-    ],
-
-    // Curated list of devices for comprehensive preview
-    devices: [
-      // ... Devices.all, // uncomment to see all devices
-
-      // Popular Android Devices
-      Devices.android.samsungGalaxyA50, // Mid-range
-      Devices.android.samsungGalaxyNote20, // Large screen
-      Devices.android.samsungGalaxyS20, // Flagship
-      Devices.android.samsungGalaxyNote20Ultra, // Premium
-      Devices.android.onePlus8Pro, // Different aspect ratio
-      Devices.android.sonyXperia1II, // Tall screen
-      Devices.android.onePlus8Pro,
-      Devices.android.mediumPhone,
-      Devices.android.smallPhone,
-
-      // Popular iOS Devices
-      Devices.ios.iPhoneSE, // Small screen
-      Devices.ios.iPhone12, // Standard size
-      Devices.ios.iPhone12Mini, // Compact
-      Devices.ios.iPhone12ProMax, // Large
-      Devices.ios.iPhone13, // Latest standard
-      Devices.ios.iPhone13ProMax, // Latest large
-      Devices.ios.iPhone13Mini, // Latest compact
-      Devices.ios.iPhoneSE, // Budget option
-    ],
-    builder: (BuildContext context) => const ProviderScope(child: MyApp()),
+  runApp(const ProviderScope(
+    child: MyApp(),
   ));
 }
 

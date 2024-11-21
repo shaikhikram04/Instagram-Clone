@@ -94,9 +94,14 @@
     }
   </style>
 
-  
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-messaging.js"></script>
+
+
   <script>
-    import { initializeApp } from "firebase/app";
     const firebaseConfig = {
       apiKey: "AIzaSyAJh7L-6GM5H5drP6NFPKZnXGI5qplX_fk",
       authDomain: "instagram-clone-a88dc.firebaseapp.com",
@@ -105,7 +110,7 @@
       messagingSenderId: "192984819589",
       appId: "1:192984819589:web:b554929c5132929396c6ec"
     };
-    const app = initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
   </script>
   
 

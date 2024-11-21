@@ -54,6 +54,8 @@ public
 firestore.indexes.json
 .firebase
 .github/workflows
+lib/firebase_options.dart
+node_modules
 
 # Symbolication related
 app.*.symbols
