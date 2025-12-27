@@ -46,33 +46,37 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((snapshot) async {
-      for (final change in snapshot.docChanges) {
-        if (change.type == DocumentChangeType.added) {
-          _notificationList.add(change.doc);
+      try {
+        for (final change in snapshot.docChanges) {
+          if (change.type == DocumentChangeType.added) {
+            _notificationList.add(change.doc);
 
-          if (change.doc['type'] == 'follow') {
-            _notificationRefSnap.add(null);
-          } else {
-            try {
-              final snap = await FirebaseFirestore.instance
-                  .collection('posts')
-                  .doc(change.doc.data()!['referenceId'])
-                  .get();
-              _notificationRefSnap.add(snap);
-            } catch (e) {
-              // Handle fetch failure, possibly by logging
+            if (change.doc['type'] == 'follow') {
               _notificationRefSnap.add(null);
+            } else {
+              try {
+                final snap = await FirebaseFirestore.instance
+                    .collection('posts')
+                    .doc(change.doc.data()!['referenceId'])
+                    .get();
+                _notificationRefSnap.add(snap);
+              } catch (e) {
+                // Handle fetch failure, possibly by logging
+                _notificationRefSnap.add(null);
+              }
             }
+          } else if (change.type == DocumentChangeType.modified) {
+            int index =
+                _notificationList.indexWhere((doc) => doc.id == change.doc.id);
+            if (index != -1) {
+              _notificationList[index] = change.doc;
+            }
+          } else if (change.type == DocumentChangeType.removed) {
+            _notificationList.removeWhere((doc) => doc.id == change.doc.id);
           }
-        } else if (change.type == DocumentChangeType.modified) {
-          int index =
-              _notificationList.indexWhere((doc) => doc.id == change.doc.id);
-          if (index != -1) {
-            _notificationList[index] = change.doc;
-          }
-        } else if (change.type == DocumentChangeType.removed) {
-          _notificationList.removeWhere((doc) => doc.id == change.doc.id);
         }
+      } catch (e) {
+        print(e);
       }
 
       setState(() {
